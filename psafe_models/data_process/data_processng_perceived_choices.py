@@ -8,6 +8,7 @@ import pandas as pd
 import os
 import numpy as np
 
+####### GENERAL
 current_dir = os.path.dirname(os.path.realpath(__file__)) 
 os.chdir(current_dir)
 x=100
@@ -19,6 +20,8 @@ b2["pid"]=range(x,len(b2.index)+x)
 x=300
 b3 = pd.read_csv('raw_data/raw_data_perceived_choices_block3.csv', ',') 
 b3["pid"]=range(x,len(b3.index)+x) 
+####### GENERAL
+
 
 def sociodemo(df):
     # Rename sociodemo columns
@@ -95,7 +98,7 @@ def sociodemo(df):
     df.metro_frequency=df.metro_frequency.replace({'Σχεδόν ποτέ':0,'Μερικές φορές τον χρόνο':1,'Μερικές φορές την εβδομάδα':3,'Μερικές φορές το μήνα':2,'Μερικές φορές τον μήνα':2,'Καθημερινά':4})
     
     return df
-  
+
 socio=pd.DataFrame(sociodemo(b1), columns=['pid','gender','age','education','employment',
                    'income','car_own','moto_own','cycle_own','escoot_own','bike_frequency', 'escooter_frequency', 'PT_frequency',
                    'metro_frequency', 'young'])
