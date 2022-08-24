@@ -5,25 +5,25 @@ Choice data processing
 National Technical University of Athens
 """
 import pandas as pd
-import os
+# import os
 import numpy as np
 
 ####### GENERAL
-current_dir = os.path.dirname(os.path.realpath(__file__)) 
-os.chdir(current_dir)
+#current_dir = os.path.dirname(os.path.realpath(__file__)) 
+#os.chdir(current_dir)
 
-x=100
-b1 = pd.read_csv('raw_data/raw_data_perceived_choices_block1.csv', ',')
-b1["pid"]=range(x,len(b1.index)+x)
-x=200
-b2 = pd.read_csv('raw_data/raw_data_perceived_choices_block2.csv', ',')
-b2["pid"]=range(x,len(b2.index)+x) 
-x=300
-b3 = pd.read_csv('raw_data/raw_data_perceived_choices_block3.csv', ',') 
-b3["pid"]=range(x,len(b3.index)+x)
+#x=100
+#b1 = pd.read_csv('raw_data/raw_data_perceived_choices_block1.csv', ',')
+#b1["pid"]=range(x,len(b1.index)+x)
+#x=200
+#b2 = pd.read_csv('raw_data/raw_data_perceived_choices_block2.csv', ',')
+#b2["pid"]=range(x,len(b2.index)+x) 
+#x=300
+#b3 = pd.read_csv('raw_data/raw_data_perceived_choices_block3.csv', ',') 
+#b3["pid"]=range(x,len(b3.index)+x)
 
-rate = pd.read_csv('ratings/rating_dataset_perceived_choices.csv', ',')
-socio = pd.read_csv('ratings/socio_dataset_perceived_choices.csv', ',')
+#rate = pd.read_csv('ratings/rating_dataset_perceived_choices.csv', ',')
+#socio = pd.read_csv('ratings/socio_dataset_perceived_choices.csv', ',')
 ####### GENERAL
 
 def revese_fun(mat,x): # this function matches choice scenarios with rating scenarios
@@ -111,11 +111,6 @@ def choice_dat(df): # transpose scenario choices from columns into rows, so 12 r
     # merge with the dataset of explanatory variables
     return new_df
 
-choice = choice_dat(choice_repl(sc_ch_rep(b1,1)))
-choice = pd.concat([choice, choice_dat(choice_repl(sc_ch_rep(b2,2)))], axis=0, ignore_index=True)
-choice = pd.concat([choice, choice_dat(choice_repl(sc_ch_rep(b3,3)))], axis=0, ignore_index=True)
-choice =  pd.merge(left=choice, right=socio, how="inner", left_on='pid', right_on='pid')
-
 def psafe_match(rdf, cdf): # function that matces choices with psafe ratings of each respondent for each mode
      for i in range(0, len(cdf)):
          fr1 = rdf.loc[(rdf.pid == cdf.pid.iloc[i]) & (rdf.scenario == revese_fun(cdf.scenario.iloc[i],2)) & (rdf.tmode == 'car'), 'psafe']
@@ -136,8 +131,6 @@ def psafe_match(rdf, cdf): # function that matces choices with psafe ratings of 
          else: cdf.loc[i, 'walkpsafe'] = np.nan
      return cdf
 
-choice = psafe_match(rate, choice)
-
 def int_choice(df):
     df['intchoice']= df.choice.replace({'car':4, 'ebike':3, 'escoot':2, 'walk':1}) # BIOGEME does not use categories, it utilizes number for choice
     df['binchoice1'] = np.where(df.intchoice==4, 1, 0) # create a new choice variable for binary logit
@@ -145,8 +138,6 @@ def int_choice(df):
     df['binchoice3'] = np.where(df.intchoice==2, 1, 0) 
     df['binchoice4'] = np.where(df.intchoice==1, 1, 0) 
     return df
-
-choice = int_choice(choice)
 
 def find_low(df1, df2, df3): # function that reduces sample size, so that same number of observations per block
     # through this function, correlations among x-variables are minimized
@@ -176,6 +167,14 @@ def drop_cor(df, diff1, diff2, diff3):
     for i in range(301, 301 + diff3): df = df.drop(index = i)
     return df
 
-choice = choice.set_index('pid')
-choice = drop_cor(choice, find_low(b1, b2, b3)[0], find_low(b1, b2, b3)[1], find_low(b1, b2, b3)[2]) # save the final choice dataset with no correlations
-choice.to_csv('datasets/choice_dataset_perceived_choices.csv')
+def choice_dats(df1, df2, df3, rdf, sdf):
+    choice = choice_dat(choice_repl(sc_ch_rep(df1,1)))
+    choice = pd.concat([choice, choice_dat(choice_repl(sc_ch_rep(df2,2)))], axis=0, ignore_index=True)
+    choice = pd.concat([choice, choice_dat(choice_repl(sc_ch_rep(df3,3)))], axis=0, ignore_index=True)
+    choice =  pd.merge(left=choice, right=sdf, how="inner", left_on='pid', right_on='pid')
+    choice = psafe_match(rdf, choice)
+    choice = int_choice(choice)
+    # choice = choice.set_index('pid')
+    choice = drop_cor(choice, find_low(df1, df2, df3)[0], find_low(df1, df2, df3)[1], find_low(df1, df2, df3)[2]) # save the final choice dataset with no correlations
+    
+    return choice

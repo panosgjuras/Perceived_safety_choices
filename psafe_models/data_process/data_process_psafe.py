@@ -2,26 +2,12 @@
 Data processing perceived safety rating data
 
 @author: ptzouras
+@collaborator: valpastia
 National Technical University of Athens
 """
 import pandas as pd
-import os
+# import os
 import numpy as np
-
-####### GENERAL
-current_dir = os.path.dirname(os.path.realpath(__file__)) 
-os.chdir(current_dir)
-x=100
-b1 = pd.read_csv('raw_data/raw_data_perceived_choices_block1.csv', ',')
-b1["pid"]=range(x,len(b1.index)+x)
-x=200
-b2 = pd.read_csv('raw_data/raw_data_perceived_choices_block2.csv', ',')
-b2["pid"]=range(x,len(b2.index)+x) 
-x=300
-b3 = pd.read_csv('raw_data/raw_data_perceived_choices_block3.csv', ',') 
-b3["pid"]=range(x,len(b3.index)+x) 
-####### GENERAL
-
 
 def sociodemo(df):
     # Rename sociodemo columns
@@ -99,16 +85,19 @@ def sociodemo(df):
     
     return df
 
-socio=pd.DataFrame(sociodemo(b1), columns=['pid','gender','age','education','employment',
+def socio_dats(df1,df2,df3):    
+    socio=pd.DataFrame(sociodemo(df1), columns=['pid','gender','age','education','employment',
                    'income','car_own','moto_own','cycle_own','escoot_own','bike_frequency', 'escooter_frequency', 'PT_frequency',
                    'metro_frequency', 'young'])
-socio = pd.concat([socio, pd.DataFrame(sociodemo(b2), columns=['pid','gender','age','education','employment',
+    socio = pd.concat([socio, pd.DataFrame(sociodemo(df2), columns=['pid','gender','age','education','employment',
                    'income','car_own','moto_own','cycle_own','escoot_own','bike_frequency', 'escooter_frequency', 'PT_frequency',
                    'metro_frequency','young'])], axis=0, ignore_index=True)
-socio = pd.concat([socio, pd.DataFrame(sociodemo(b3), columns=['pid','gender','age','education','employment',
+    socio = pd.concat([socio, pd.DataFrame(sociodemo(df3), columns=['pid','gender','age','education','employment',
                    'income','car_own','moto_own','cycle_own','escoot_own','bike_frequency', 'escooter_frequency', 'PT_frequency',
                    'metro_frequency', 'young'])], axis=0, ignore_index=True)
-socio.set_index('pid').to_csv('datasets/socio_dataset_perceived_choices.csv') # save dataset with sociodemographic characteristics
+    socio
+    # socio = socio.set_index('pid')
+    return socio
 
 def sc_ren_rep(df,tmode,block): # PANOS: this function renames and replaces scenarios for each mode
     sc=list(df.columns) # save the columns of the dataframe (raw data) in a list
@@ -211,12 +200,12 @@ def drop_cor(df, diff1, diff2, diff3):
     for i in range(301, 301 + diff3): df = df.drop(index = i)
     return df
 
-rate = rating_1(b3,3)
-rate = rating_2(b2,2, rate)
-rate = rating_2(b1,1, rate)
-# at the end, how many observations of psafe? number of respondents in raw data * 12 scenario * 4 modes 
-rate =  pd.merge(left= rate, right=socio, how="inner", left_on='pid', right_on='pid') # merge socio with rate dataset
-
-rate = rate.set_index('pid')
-rate = drop_cor(rate, find_low(b1, b2, b3)[0], find_low(b1, b2, b3)[1], find_low(b1, b2, b3)[2])
-rate.to_csv('datasets/rating_dataset_perceived_choices.csv') # save the final rating dataset with no correlations
+def rate_dats(df1, df2, df3, sdf):
+    rate = rating_1(df3,3)
+    rate = rating_2(df2,2, rate)
+    rate = rating_2(df1,1, rate)
+    # at the end, how many observations of psafe? number of respondents in raw data * 12 scenario * 4 modes 
+    rate =  pd.merge(left= rate, right=sdf, how="inner", left_on='pid', right_on='pid') # merge socio with rate dataset
+    # rate = rate.set_index('pid')
+    rate = drop_cor(rate, find_low(df1, df2, df3)[0], find_low(df1, df2, df3)[1], find_low(df1, df2, df3)[2])
+    return rate
