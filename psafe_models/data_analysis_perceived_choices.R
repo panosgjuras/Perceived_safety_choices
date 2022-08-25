@@ -181,30 +181,34 @@ ggarrange(hist_veh_volume(subset(data1, tmode=='car')),
           hist_ped_volume(subset(data1, tmode=='walk')), 
           nrow = 4, ncol = 3, common.legend = TRUE, legend = 'bottom') # general, general
 
-# 4. simple models - TZOURAS
+# 7. Simple ordered logit models
 data1$psafe<-as.ordered(data1$psafe)
-model_car<-Rchoice(formula =  psafe ~ type1 + type2 + type3 + cross1 + cross2 + pav + obst + veh + ped, 
+model_car<-Rchoice(formula =  psafe ~ type1 + type2 + type4 + cross1 + cross2 + pav + obst, 
                    data = subset(data1, tmode=='car'),
                    family = ordinal("logit"), panel=FALSE, method="bfgs") # estimate ordinal logit model, select y and xs
 summary(model_car) # print model results
 
-data1$type5<-abs(1-data1$type3)
-model_ebike<-Rchoice(formula = psafe ~ type1 + type2 + type3 + cross1 + cross2 + pav + obst + veh + bike + ped, 
+model_ebike<-Rchoice(formula = psafe ~ type1 + type2 + type4 + cross1 + cross2 + pav + obst, 
                    data=subset(data1,tmode=='ebike'),
-                   family=ordinal("logit"), panel=FALSE, method="bfgs") # estimate ordinal logit model, select y and xs
+                   family=ordinal("logit"), panel=FALSE, method="bfgs") 
 summary(model_ebike) # print model results
 
-model_escoot<-Rchoice(formula = psafe ~ type1 + type2 + type3  + cross1 + cross2 + pav + obst + veh + bike + ped, 
+model_escoot<-Rchoice(formula = psafe ~ type1 + type2 + type4  + cross1 + cross2 + pav + obst, 
                    data=subset(data1,tmode=='escoot'),
-                   family=ordinal("logit"), panel=FALSE, method="bfgs") # estimate ordinal logit model, select y and xs
+                   family=ordinal("logit"), panel=FALSE, method="bfgs") 
 summary(model_escoot) # print model results
 
-model_walk<-Rchoice(formula = psafe ~ type1 + type2 + type3 + cross1 + cross2 + pav + obst + veh + bike + ped, 
+model_walk<-Rchoice(formula = psafe ~ type1 + type2 + type4 + cross1 + cross2 + pav + obst, 
                    data=subset(data1, tmode=='walk'),
-                   family=ordinal("logit"), panel=FALSE, method="bfgs") # estimate ordinal logit model, select y and xs
+                   family=ordinal("logit"), panel=FALSE, method="bfgs") 
 summary(model_walk) # print model results
 
-# 5. TRB models...
+sp_models<-data.frame(car = model_car[["coefficients"]], ebike = model_ebike[["coefficients"]],
+                      escoot = model_escoot[["coefficients"]], walk = model_walk[["coefficients"]])
+
+write.csv(sp_models,"psafe_models/outputs/simple_psafe_models.csv") # save coefficients, keep the insignificant too
+
+# 8. TRB ordered logit models
 data1$psafe<-as.ordered(data1$psafe)
 model_car_TRB<-Rchoice(formula = psafe ~ gender + young + type1 + type2 + type4 + pav + cross1 + cross2 + obst + veh + bike + ped,
                       data = subset(data1, tmode=='car'),
@@ -234,6 +238,12 @@ model_walk_TRB<-Rchoice(formula = psafe ~ gender + young + type1 + type2 + type4
                           panel=TRUE, R=2000, print.init = TRUE)
 summary(model_walk_TRB)
 
+trb_models<-data.frame(car = model_car_TRB[["coefficients"]], ebike = model_ebike_TRB[["coefficients"]],
+                      escoot = model_escoot_TRB[["coefficients"]], walk = model_walk_TRB[["coefficients"]])
+
+write.csv(trb_models,"psafe_models/outputs/trb_psafe_models.csv") # save coefficients, keep the insignificant too
+
+# 9. Distribution of random variables
 df <- data.frame(x=1:8, y=1, col=letters[1:8])
 g <- ggplot(df, aes(x=x, y=y, color=col)) + geom_point(size=5) +
   scale_color_brewer(palette="Set1")
@@ -282,15 +292,4 @@ ggplot(data = data.frame(x = c(-12.5, 5)), aes(x)) +
                                                                         labels = c("Car", "E-Bike", "E-Scooter", "Walk")) + 
   scale_linetype_manual(values = c("dashed", "dotted", "solid"), name = 'Infrastructure type',
                         labels = c("1: urban road with sidewalk < 1.5 m", "2: urban road with sidewalk >= 1.5 m", "4: shared space") ) + scale_x_continuous(name = 'Beta variable value') 
-
-
-
-
-# 6. marginal effects - Valentina, better in Python ??
-
-# 99. FIXED models - paper Transport Research Arena
-model_escoot<-Rchoice(formula = psafe ~ gender + type1 + type2 + type3 + cross1 + cross2 + pav + obst + veh + bike + ped, 
-                      data=subset(data1, tmode=='escoot'), # without cross 2 which is insignificant
-                      family=ordinal("logit"), panel=FALSE, method="bfgs") # estimate ordinal logit model, select y and xs
-summary(model_escoot) # print model results
 
