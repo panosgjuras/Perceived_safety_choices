@@ -16,7 +16,13 @@ The beta parameters of the model equations have been estimated based on a survey
 
 <img src="https://user-images.githubusercontent.com/63541107/186911587-1eb1dbb3-eba1-492e-9cd1-d1ef76c13990.png" height="450">
 
-4. contents of the repository
+The Perceived Safety Choices repository contains: 
+- survey_design
+- [raw_data](): collected survey data per survey block
+- [psafe_models](https://github.com/panosgjuras/Perceived_safety_choices/tree/main/psafe_models): it contains the data processing of perceived safety rating data + data analysis of perceived safety ratings in R using [Rchoice](https://github.com/cran/Rchoice) package. The output of this analysis are the beta parameters per mode + figures are included in the folder.
+- [choice_models](https://github.com/panosgjuras/Perceived_safety_choices/tree/main/choice_model): it contains data processing of choice data + model development using [Pandas BIOGEME](https://github.com/michelbierlaire/biogeme). The output of this analysis is beta parameters of choice model
+- [datasets](): datasets of perceived safety ratings, sociodemographic characteristics and mode choices
+- [network_analysis](): using [pyshp](https://github.com/GeospatialPython/pyshp), shps of nodes and links, in a very specific data format (see network examples), are imported to estimate perceived safety per link. The user has to provide these shp and run the code. The output of this process are xml network file capable for MATSim simualtions and csv file, which can be imported in QGIS and joined with shp for mapping purposes. 
 
 +++ contribution to MATSim
 
