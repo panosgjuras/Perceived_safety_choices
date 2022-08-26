@@ -29,10 +29,11 @@ You can run all the steps of the Perceived Safety Choices model from [Perceived_
 
 +++ The contribution to MATSim is under development. In essense, it is an updated version of [Bicycle](https://github.com/matsim-org/matsim-libs/tree/master/contribs/bicycle) contribution following a more universal approach fully based on perceived safety parameter and covering all micro-mobility modes.
 
-5. paperz about the model and presentations
+Papers:
+1. Tzouras, P. G., L. Mitropoulos, E. Stavropoulou, E. Antoniou, K. Koliou, C. Karolemeas, A. Karaloulis, K. Mitropoulos, M. Tarousi, E. I. Vlahogianni, and K. Kepaptsoglou. Agent-Based Models for Simulating e-Scooter Sharing Services: A Review and a Qualitative Assessment. International Journal of Transportation Science and Technology, 2022. https://doi.org/10.1016/j.ijtst.2022.02.001.
 
-6. project logo: SIM4MTRAN
+This model was developed for [SIM4MTRAN](http://sim4mtran.com/#/home) project that aims to develop an innovative integrated decision support tool for the design of micro-mobility systems and services. The results will be used to create a guide for the design of micro-mobility systems in urban areas in Greece supporting policy making process.
 
-7. partners:
+<img src="https://user-images.githubusercontent.com/63541107/186953835-3046c2e6-f965-4abf-b758-5dad32528298.png" height="200">
 
-8. funded by: 
+This research project has been co-financed by the European Regional Development Fund of the European Union and Greek national funds, National Strategic Reference Framework 2014- 2020 (NSRF), through the Operational Program Competitiveness, Entrepreneurship, and Innovation, under the call RESEARCH – CREATE – INNOVATE (project code: T2EDK-02494 and name: SIM4MTRAN).
