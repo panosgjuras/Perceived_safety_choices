@@ -14,7 +14,7 @@ Perceived safety level is integrated as an additional parameter in MATSim scorin
 
 The beta parameters of the model equations have been estimated based on a survey which combines a rating experiment with a stated preferences experiment. Four different road environments are assessed in this survey, namely: type 1: urban road with sidewalk < 1.5 m wide, type 2: urban road with sidewalks ≥ 1.5 m wide, type 3: urban road with cycle lane and type 4: shared space.
 
-<img src="https://user-images.githubusercontent.com/63541107/186911587-1eb1dbb3-eba1-492e-9cd1-d1ef76c13990.png" height="400">
+<img src="https://user-images.githubusercontent.com/63541107/186911587-1eb1dbb3-eba1-492e-9cd1-d1ef76c13990.png" height="450">
 
 4. contents of the repository
 
