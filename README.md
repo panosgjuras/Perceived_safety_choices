@@ -25,7 +25,7 @@ The beta parameters of the model equations have been estimated based on a survey
 - [network_analysis](https://github.com/panosgjuras/Perceived_safety_choices/tree/main/network_analysis): using [pyshp](https://github.com/GeospatialPython/pyshp), shps of nodes and links, in a very specific data format (see network examples), are imported to estimate perceived safety per link. The user has to provide these shp and run the code. The output of this process are xml network file ([lxml toolkit](https://github.com/lxml/lxml) is used) capable for [MATSim](https://github.com/matsim-org) simualtions and csv file, which can be imported in GIS and joined with shp for mapping purposes.
 - prediction_routing
 
-You can run all the steps of the Perceived Safety Choices model from [Perceived_safety_choice_model.py](https://github.com/panosgjuras/Perceived_safety_choices/blob/main/Perceived_safety_choice_model.py). Analytical instructions are included there.
+You can run all the steps of the Perceived Safety Choices model from [Perceived_safety_choice_model.py](https://github.com/panosgjuras/Perceived_safety_choices/blob/main/Perceived_safety_choice_model.py). Analytical instructions are included there (with comments).
 
 +++ The contribution to MATSim is under development. In essense, it is an updated version of [Bicycle](https://github.com/matsim-org/matsim-libs/tree/master/contribs/bicycle) contribution following a more universal approach fully based on perceived safety parameter and covering all micro-mobility modes.
 
