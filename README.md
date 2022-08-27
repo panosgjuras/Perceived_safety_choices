@@ -1,6 +1,6 @@
 # The PERCEIVED SAFETY CHOICES model
 
-While safety seems to be a significant factor when choosing to use these new modes, this model utilizes the notion of perceived safety to model travel behavior in inner urban areas. Therefore, the developed model is built on the hypothesis that perceived safety affects travel behavior of e-scooter users and is related to road environment. It combines ordinal logistic regression model, which predict perceived safety in different road environments under different traffic flow conditions, with discrete choice models which give the mode choice. The input parameter is the road network which consists of links and nodes. 
+While safety seems to be a significant factor when choosing to use these new modes, this model utilizes the notion of perceived safety to model travel behavior in inner urban areas. Therefore, the developed model is built on the hypothesis that perceived safety affects travel behavior of e-scooter users and is related to road environment. It combines ordinal logistic regression model, which predict perceived safety in different road environments under different traffic flow conditions, with discrete choice models which give the mode choice. At the same time, it creates a path to combine agent-based transport modeling with spatial analysis and GIS tools. The input parameter is the road network which consists of links and nodes. 
 
 Perceived safety per urban transport mode is calculated by the following equations:
 
