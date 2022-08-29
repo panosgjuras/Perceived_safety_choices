@@ -58,9 +58,18 @@ coeff = coeff_upd()
 gen_path()
 os.chdir('network_analysis')
 
-from shp_to_xml_tool import read_shapefile # function to read shapefile
+from traffic_params_upd import read_shapefile # function to read shapefile
 lin = read_shapefile('networks_shp/new_equil/simple_network_links.shp') # import links shapefile, it needs a specific format
 nod = read_shapefile('networks_shp/new_equil/simple_network_nodes.shp') # import nodes shapefile, it needs a specific format
 
-from shp_to_xml_tool import upd_links # function to update link traffic parameters ("physical supply")
+from traffic_params_upd import upd_links # function to update link traffic parameters ("physical supply")
 lin = upd_links(lin, nod)
+
+from lin_psafe_calc import lin_psafe
+lin = lin_psafe(lin, coeff)
+
+from shp_to_csv_xml_tool import netcsv_cr
+netcsv_cr(lin, 'output_csv/new_equil_psafe.csv')
+
+from shp_to_csv_xml_tool import netxml_cr
+netxml_cr(lin, nod, 'output_xml/new_equil_network.xml')
