@@ -167,6 +167,13 @@ def drop_cor(df, diff1, diff2, diff3):
     for i in range(301, 301 + diff3): df = df.drop(index = i)
     return df
 
+def drop_row(df):
+    df = df[df['carpsafe'].notna()]
+    df = df[df['ebikepsafe'].notna()]
+    df = df[df['escootpsafe'].notna()]
+    df = df[df['walkpsafe'].notna()]
+    return df
+
 def choice_dats(df1, df2, df3, rdf, sdf):
     choice = choice_dat(choice_repl(sc_ch_rep(df1,1)))
     choice = pd.concat([choice, choice_dat(choice_repl(sc_ch_rep(df2,2)))], axis=0, ignore_index=True)
@@ -176,5 +183,5 @@ def choice_dats(df1, df2, df3, rdf, sdf):
     choice = int_choice(choice)
     # choice = choice.set_index('pid')
     choice = drop_cor(choice, find_low(df1, df2, df3)[0], find_low(df1, df2, df3)[1], find_low(df1, df2, df3)[2]) # save the final choice dataset with no correlations
-    
+    choice = drop_row(choice)
     return choice
