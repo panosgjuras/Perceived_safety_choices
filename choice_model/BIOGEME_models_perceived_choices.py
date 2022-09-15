@@ -2,7 +2,7 @@ import pandas as pd
 import biogeme.database as db
 import biogeme.biogeme as bio
 import os
-import numpy as np
+# import numpy as np
 import biogeme.messaging as msg
 from biogeme import models
 from biogeme.expressions import Beta, DefineVariable, log
@@ -26,8 +26,8 @@ database.getSampleSize()
 globals().update(database.variables) # globalize database variables, still warnings!!
 
 EBIKETIME = DefineVariable('EBIKETIME', acttime, database) # new time variables based on the difference among modes
-ESCOOTIME = DefineVariable('ESCOOTTIME', 0.75 * acttime, database) # new time variables based on the difference among modes
-WALKTIME = DefineVariable('WALKTIME', 0.25 * acttime, database) # new time variables based on the difference among modes
+ESCOOTIME = DefineVariable('ESCOOTTIME', (20/15) * acttime, database) # new time variables based on the difference among modes
+WALKTIME = DefineVariable('WALKTIME',  (20/5) * acttime, database) # new time variables based on the difference among modes
 
 def sel_model(x):
     ASC_CAR = Beta('ASC_CAR', 0, None, None, 0)
