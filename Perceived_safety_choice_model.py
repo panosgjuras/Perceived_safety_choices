@@ -73,3 +73,11 @@ netcsv_cr(lin, 'output_csv/new_equil_psafe.csv')
 
 from shp_to_csv_xml_tool import netxml_cr
 netxml_cr(lin, nod, 'output_xml/new_equil_network.xml')
+
+# In[05]: Choice modeling
+gen_path()
+os.chdir('choice_model')
+
+from BIOGEME_models_perceived_choices import model_estimation
+p = model_estimation(choice.set_index('pid'), 'MNL', 'mode_choice_model')
+

@@ -2,51 +2,44 @@ import pandas as pd
 import biogeme.database as db
 import biogeme.biogeme as bio
 import os
-# import numpy as np
+import numpy as np
 import biogeme.messaging as msg
 from biogeme import models
 from biogeme.expressions import Beta, DefineVariable, log
 
-current_dir = os.path.dirname(os.path.realpath(__file__))
-os.chdir(current_dir)
-data = pd.read_csv('datasets/choice_dataset_perceived_choices.csv',',')
+
+#current_dir = os.path.dirname(os.path.realpath(__file__))
+# os.chdir('C:/Users/panos/Desktop/github_tzouras/Perceived_safety_choices')
+# data = pd.read_csv('datasets/choice_dataset_perceived_choices.csv',',')
 #data.describe()
 
-#def int_choice(df):
-#    df['intchoice']= df.choice.replace({'car':4, 'ebike':3, 'escoot':2, 'walk':1}) # BIOGEME does not use categories, it utilizes number for choice
-#    df['binchoice1'] = np.where(df.intchoice==4, 1, 0) # create a new choice variable for binary logit
-#    df['binchoice2'] = np.where(df.intchoice==3, 1, 0) 
-#    df['binchoice3'] = np.where(df.intchoice==2, 1, 0) 
-#    df['binchoice4'] = np.where(df.intchoice==1, 1, 0) 
-#    return df
+# database = db.Database('Perceived&choices', data.drop(columns = ['scenario','choice']).dropna()) # create a dataset, whithout nan
+# database.getSampleSize()
 
-database = db.Database('Perceived&choices', data.drop(columns = ['scenario','choice']).dropna()) # create a dataset, whithout nan
-database.getSampleSize()
+# globals().update(database.variables) # globalize database variables, still warnings!!
 
-globals().update(database.variables) # globalize database variables, still warnings!!
-
-EBIKETIME = DefineVariable('EBIKETIME', acttime, database) # new time variables based on the difference among modes
-ESCOOTIME = DefineVariable('ESCOOTTIME', (20/15) * acttime, database) # new time variables based on the difference among modes
-WALKTIME = DefineVariable('WALKTIME',  (20/5) * acttime, database) # new time variables based on the difference among modes
+# EBIKETIME = DefineVariable('EBIKETIME', acttime, database) # new time variables based on the difference among modes
+# ESCOOTIME = DefineVariable('ESCOOTTIME', (20/15) * acttime, database) # new time variables based on the difference among modes
+# WALKTIME = DefineVariable('WALKTIME',  (20/5) * acttime, database) # new time variables based on the difference among modes
 
 def sel_model(x):
     ASC_CAR = Beta('ASC_CAR', 0, None, None, 0)
-    BETA_CARTIME = Beta('Beta_cartime',0, None, None,0)
-    BETA_CARCOST = Beta('Beta_carcost',0, None, None,0)
+    BETA_CARTIME = Beta('BETA_CARTIME',0, None, None,0)
+    BETA_CARCOST = Beta('BETA_CARCOST',0, None, None,0)
     
     if x == 1: # model test 1 - MNL
         # define beta variables and constants, set entry values
-        ASC_WALK = Beta('ASC_WALK', 0, None, None, 0)
-        BETA_ACTTIME = Beta('Beta_acttime',0, None, None,0)
-        BETA_ACTTIME_EBIKE = Beta('Beta_acttime_ebike',0, None, None,0)
-        BETA_ACTTIME_ESCOOT = Beta('Beta_acttime_escoot',0, None, None,0)
-        BETA_ACTTIME_WALK = Beta('Beta_acttime_walk',0, None, None,0)
-        BETA_EBIKECOST = Beta('Beta_ebikecost',0, None, None,0)
-        BETA_ESCOOTCOST = Beta('Beta_escootcost',0, None, None,0)
-        BETA_CARPSAFE = Beta('Beta_carpsafe',0, None, None,0)
-        BETA_EBIKEPSAFE = Beta('Beta_ebikepsafe',0, None, None,0)
-        BETA_ESCOOTPSAFE = Beta('Beta_escootpsafe',0, None, None,0)
-        BETA_WALKPSAFE = Beta('Beta_walkpsafe',0, None, None,0)
+        # ASC_WALK = Beta('ASC_WALK', 0, None, None, 0)
+        # BETA_ACTTIME = Beta('Beta_acttime',0, None, None,0)
+        BETA_ACTTIME_EBIKE = Beta('BETA_EBIKETIME',0, None, None,0)
+        BETA_ACTTIME_ESCOOT = Beta('BETA_ESCOOTIME',0, None, None,0)
+        BETA_ACTTIME_WALK = Beta('BETA_WALKTIME',0, None, None,0)
+        BETA_EBIKECOST = Beta('BETA_EBIKECOST',0, None, None,0)
+        BETA_ESCOOTCOST = Beta('BETA_ESCOOTCOST',0, None, None,0)
+        BETA_CARPSAFE = Beta('BETA_CARPSAFE',0, None, None,0)
+        BETA_EBIKEPSAFE = Beta('BETA_EBIKEPSAFE',0, None, None,0)
+        BETA_ESCOOTPSAFE = Beta('BETA_ESCOOTPSAFE',0, None, None,0)
+        BETA_WALKPSAFE = Beta('BETA_WALKPSAFE',0, None, None,0)
         # UTILITY FUNCTIONS
         V1 = ASC_CAR + BETA_CARTIME * cartime + BETA_CARCOST * carcost + BETA_CARPSAFE * carpsafe
         V2 = BETA_ACTTIME_EBIKE * EBIKETIME + BETA_EBIKECOST * ebikecost + BETA_EBIKEPSAFE * ebikepsafe
@@ -55,6 +48,7 @@ def sel_model(x):
         V = {4: V1, 3: V2, 2: V3, 1:V4} # connect alternative choices with defined utility functions
         av = {1:1, 2:1, 3:1, 4:1} # availability of modes
         cho = intchoice*1 # where is the choice set?
+    
     if x == 2: # model test 2 - binary logit
         
         BETA_ACTTIME = Beta('Beta_acttime',0, None, None,0)
@@ -73,15 +67,40 @@ def sel_model(x):
     return V, av, cho
 
 # Logit model        
-logprob = models.loglogit(sel_model(1)[0], sel_model(1)[1], sel_model(1)[2]) # import utilities in loglogit
-logger = msg.bioMessage()
-logger.setSilent() # not sure that this is working, but ok
-biogeme = bio.BIOGEME(database,logprob) # estimate biogeme based on the defined database
+# logprob = models.loglogit(sel_model(1)[0], sel_model(1)[1], sel_model(1)[2]) # import utilities in loglogit
+# logger = msg.bioMessage()
+# logger.setSilent() # not sure that this is working, but ok
+# biogeme = bio.BIOGEME(database,logprob) # estimate biogeme based on the defined database
 
-biogeme.modelName = "MNL_ex1" # how the file is gonna saved, it creates and HTML FILE
-results=biogeme.estimate()
-p=results.getEstimatedParameters()
+# biogeme.modelName = "MNL_ex1" # how the file is gonna saved, it creates and HTML FILE
+# results = biogeme.estimate()
+# p=results.getEstimatedParameters()
 
 
+
+def model_estimation(df, typ, name):
+    
+    database = db.Database('Perceived&choices', df.drop(columns = ['scenario','choice']).dropna()) # create a dataset, whithout nan
+    database.getSampleSize()
+    
+    globals().update(database.variables) # globalize database variables, still warnings!!
+
+    EBIKETIME = database.DefineVariable('EBIKETIME', acttime) # new time variables based on the difference among modes
+    ESCOOTIME = database.DefineVariable('ESCOOTIME', (20/15) * acttime) # new time variables based on the difference among modes
+    WALKTIME = database.DefineVariable('WALKTIME',  (20/5) * acttime) # new time variables based on the difference among modes
+    
+    globals().update(database.variables) # globalize database variables, still warnings!!
+
+    if typ =='MNL':
+        logprob = models.loglogit(sel_model(1)[0], sel_model(1)[1], sel_model(1)[2]) # import utilities in loglogit
+        logger = msg.bioMessage()
+        # logger.setSilent() # not sure that this is working, but ok
+        biogeme = bio.BIOGEME(database,logprob) # estimate biogeme based on the defined database
+    
+    biogeme.modelName = name
+    results = biogeme.estimate()
+    p = results.getEstimatedParameters()
+    
+    return p
 
 
