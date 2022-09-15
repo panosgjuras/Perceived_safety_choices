@@ -1,4 +1,4 @@
-# b. Choice model
+# b) Choice model
 
 TIME + COST + PERC. SAFETY
 
