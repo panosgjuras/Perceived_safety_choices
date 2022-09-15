@@ -81,3 +81,5 @@ os.chdir('choice_model')
 from BIOGEME_models_perceived_choices import model_estimation
 p = model_estimation(choice.set_index('pid'), 'MNL', 'mode_choice_model')
 
+gen_path()
+p.to_csv('choice_model/coeff_choice_model.csv')
