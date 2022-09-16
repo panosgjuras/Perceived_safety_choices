@@ -33,7 +33,7 @@ def opp_cost_calc(df, mode):
         # speed = input("Define mean speed of private car in km/h")
         # dcost = input("Define trip cost of private car in euros/km")
         speed = 40
-        dcost = 8 # ????
+        dcost = 5 # ????
         vot = (mode_params(df, mode)[0]/mode_params(df, mode)[1])*60
         vos1 = (mode_params(df, mode)[2]/mode_params(df, mode)[0])/60
         vos2 = mode_params(df, mode)[2]/(dcost * mode_params(df, mode)[1])

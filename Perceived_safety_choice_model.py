@@ -90,5 +90,7 @@ gen_path()
 os.chdir('choice_model')
 
 from opp_cost_calculator import opp_cost_calc
-opp_cost_calc(p)
-
+opp_cost_calc(p, 'car')
+opp_cost_calc(p, 'ebike')
+opp_cost_calc(p, 'escooter')
+opp_cost_calc(p, 'walk')
