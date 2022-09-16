@@ -1,3 +1,9 @@
+"""
+@author: ptzouras
+National Technical University of Athens
+Research project: SIM4MTRAN
+"""
+
 import pandas as pd
 import biogeme.database as db
 import biogeme.biogeme as bio

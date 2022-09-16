@@ -83,3 +83,12 @@ p = model_estimation(choice.set_index('pid'), 'MNL', 'mode_choice_model')
 
 gen_path()
 p.to_csv('choice_model/coeff_choice_model.csv')
+
+# In[05]: Choice modeling
+# opportunity cost
+gen_path()
+os.chdir('choice_model')
+
+from opp_cost_calculator import opp_cost_calc
+opp_cost_calc(p)
+
