@@ -29,7 +29,9 @@ def sel_model(x):
     
     if x == 1: # model test 1 - MNL
         # define beta variables and constants, set entry values
-        # ASC_WALK = Beta('ASC_WALK', 0, None, None, 0)
+        ASC_WALK = Beta('ASC_WALK', 0, None, None, 0)
+        ASC_EBIKE = Beta('ASC_EBIKE', 0, None, None, 0)
+        ASC_ESCOOT = Beta('ASC_ESCOOT', 0, None, None, 0)
         # BETA_ACTTIME = Beta('Beta_acttime',0, None, None,0)
         BETA_ACTTIME_EBIKE = Beta('BETA_EBIKETIME',0, None, None,0)
         BETA_ACTTIME_ESCOOT = Beta('BETA_ESCOOTIME',0, None, None,0)
@@ -41,10 +43,10 @@ def sel_model(x):
         BETA_ESCOOTPSAFE = Beta('BETA_ESCOOTPSAFE',0, None, None,0)
         BETA_WALKPSAFE = Beta('BETA_WALKPSAFE',0, None, None,0)
         # UTILITY FUNCTIONS
-        V1 = ASC_CAR + BETA_CARTIME * cartime + BETA_CARCOST * carcost + BETA_CARPSAFE * carpsafe
-        V2 = BETA_ACTTIME_EBIKE * EBIKETIME + BETA_EBIKECOST * ebikecost + BETA_EBIKEPSAFE * ebikepsafe
-        V3 = BETA_ACTTIME_ESCOOT * ESCOOTIME + BETA_ESCOOTCOST * escootcost + BETA_ESCOOTPSAFE * escootpsafe
-        V4 = BETA_ACTTIME_WALK * WALKTIME + BETA_WALKPSAFE * walkpsafe
+        V1 = BETA_CARTIME * cartime + BETA_CARCOST * carcost + BETA_CARPSAFE * carpsafe
+        V2 = ASC_EBIKE + BETA_ACTTIME_EBIKE * EBIKETIME + BETA_EBIKECOST * ebikecost + BETA_EBIKEPSAFE * ebikepsafe
+        V3 = ASC_ESCOOT + BETA_ACTTIME_ESCOOT * ESCOOTIME + BETA_ESCOOTCOST * escootcost + BETA_ESCOOTPSAFE * escootpsafe
+        V4 = ASC_WALK + BETA_ACTTIME_WALK * WALKTIME + BETA_WALKPSAFE * walkpsafe
         V = {4: V1, 3: V2, 2: V3, 1:V4} # connect alternative choices with defined utility functions
         av = {1:1, 2:1, 3:1, 4:1} # availability of modes
         cho = intchoice*1 # where is the choice set?
@@ -80,7 +82,10 @@ def sel_model(x):
 
 def model_estimation(df, typ, name):
     
-    database = db.Database('Perceived&choices', df.drop(columns = ['scenario','choice']).dropna()) # create a dataset, whithout nan
+    database = db.Database('Perceived&choices', df.drop(columns = ['scenario','choice', 'gender', 'age', 'education', 'employment',
+    'income', 'car_own', 'moto_own', 'cycle_own', 'escoot_own',
+    'bike_frequency', 'escooter_frequency', 'PT_frequency',
+    'metro_frequency', 'young']).dropna()) # create a dataset, whithout nan
     database.getSampleSize()
     
     globals().update(database.variables) # globalize database variables, still warnings!!
@@ -93,9 +98,10 @@ def model_estimation(df, typ, name):
 
     if typ =='MNL':
         logprob = models.loglogit(sel_model(1)[0], sel_model(1)[1], sel_model(1)[2]) # import utilities in loglogit
-        logger = msg.bioMessage()
+        # logger = msg.bioMessage()
         # logger.setSilent() # not sure that this is working, but ok
         biogeme = bio.BIOGEME(database,logprob) # estimate biogeme based on the defined database
+        biogeme.calculateNullLoglikelihood(sel_model(1)[1])
     
     biogeme.modelName = name
     results = biogeme.estimate()
