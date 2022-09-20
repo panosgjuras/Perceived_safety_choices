@@ -64,6 +64,8 @@ nod = read_shapefile('networks_shp/new_equil/simple_network_nodes.shp') # import
 
 from traffic_params_upd import upd_links # function to update link traffic parameters ("physical supply")
 lin = upd_links(lin, nod)
+nod.set_index('id').to_csv('output_csv/new_equil_nod_coord.csv')
+lin.set_index('id').to_csv('output_csv/new_equil_lin_coord.csv')
 
 from lin_psafe_calc import lin_psafe
 lin = lin_psafe(lin, coeff)
@@ -78,19 +80,17 @@ netxml_cr(lin, nod, 'output_xml/new_equil_network.xml')
 gen_path()
 os.chdir('choice_model')
 
-from BIOGEME_models_perceived_choices import model_estimation
-p = model_estimation(choice.set_index('pid'), 'MNL', 'mode_choice_model')
+# from BIOGEME_models_perceived_choices import model_estimation
+# p = model_estimation(choice.set_index('pid'), 'MNL', 'mode_choice_model')
 
-gen_path()
-p.to_csv('choice_model/coeff_choice_model.csv')
+# gen_path()
+# p.to_csv('choice_model/coeff_choice_model.csv')
 
-# In[05]: Choice modeling
-# opportunity cost
 gen_path()
 os.chdir('choice_model')
 
 from opp_cost_calculator import opp_cost_calc
-opp_cost_calc(p, 'car')
-opp_cost_calc(p, 'ebike')
-opp_cost_calc(p, 'escooter')
-opp_cost_calc(p, 'walk')
+opp_cost_calc(pd.read_csv('coeff_choice_model.csv', ',').set_index('Unnamed: 0'), 'car')
+opp_cost_calc(pd.read_csv('coeff_choice_model.csv', ',').set_index('Unnamed: 0'), 'ebike')
+opp_cost_calc(pd.read_csv('coeff_choice_model.csv', ',').set_index('Unnamed: 0'), 'escooter')
+opp_cost_calc(pd.read_csv('coeff_choice_model.csv', ',').set_index('Unnamed: 0'), 'walk')
