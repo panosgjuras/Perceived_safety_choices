@@ -9,10 +9,10 @@ import pandas as pd
 import dijkstra as dij
 import os
 
-current_dir = os.path.dirname(os.path.realpath(__file__)) 
-os.chdir(current_dir)
-nodes = pd.read_csv("example/new_equil_nod_coord.csv")
-links = pd.read_csv("example/new_equil_lin_coord.csv")
+# current_dir = os.path.dirname(os.path.realpath(__file__)) 
+os.chdir('C:/Users/panos_000/Desktop/github_tzouras/Perceived_safety_choices/network_analysis')
+nodes = pd.read_csv("output_csv/experimental_field_athens_nod_coord.csv")
+links = pd.read_csv("output_csv/experimental_field_athens_links_psafe.csv")
 
 nod = list(nodes.id)
 graph = dij.Graph()
@@ -20,14 +20,23 @@ graph = dij.Graph()
 for i in range(0, len(links)):
     graph.add_edge(links.from1.iloc[i], links.to1.iloc[i], links.length.iloc[i])
 
-dijkstra = dij.DijkstraSPF(graph, 1)
+dijkstra = dij.DijkstraSPF(graph, 3000)
+
+print("%-5s %-5s" % ("label", "distance"))
 for u in nod:
-    print("%-5s %8d" % (u, dijkstra.get_distance(u)))
+    print(u, dijkstra.get_distance(u))
+    # print("%-5s %8d" % (u, dijkstra.get_distance(u)))
 
-print(dijkstra.get_path(12))
+print(dijkstra.get_path(9000))
 
+# In[00]: Inputs
 
+from .graph import Graph, generate_random_graph
+from .dijkstra import DijkstraSPF
 
+__version__ = "0.2.1"
+__author__ = "Jukka Aho <ahojukka5@gmail.com>"
+__all__ = [Graph, DijkstraSPF, generate_random_graph]
 # graph = dij.Graph()
 # graph.add_edge(S, A, 4)
 # graph.add_edge(S, B, 3)
