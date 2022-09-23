@@ -37,12 +37,14 @@ def read_shapefile(shp_path): # function which translates shapefiles to datafram
 
 def nod_match(links,nodes):
     for i in range(0,len(links)): 
-        fr1=nodes.loc[(nodes.x==links.loc[i,'x_start']) & (nodes.y==links.loc[i,'y_start']),'id']
-        fr2=nodes.loc[(nodes.x==links.loc[i,'x_end']) & (nodes.y==links.loc[i,'y_end']),'id']
+        fr1 = nodes.loc[(nodes.x==links.loc[i,'x_start']) & (nodes.y==links.loc[i,'y_start']),'id']
+        fr2 = nodes.loc[(nodes.x==links.loc[i,'x_end']) & (nodes.y==links.loc[i,'y_end']),'id']
         if len(fr1)>0: # check if you found matches, if not 9999
            links.loc[i,'from1']=fr1.iloc[0] # select each time the first match
+        else: links.loc[i,'from1'] = 999
         if len(fr2)>0:
            links.loc[i,'to1']=fr2.iloc[0]
+        else: links.loc[i,'to1'] = 999
     return links.from1, links.to1
 
 def twoway(df):
@@ -56,6 +58,10 @@ def twoway(df):
     df = pd.concat([df, dc], axis=0, ignore_index=True, sort=False).dropna()
     return df
 
+def speed(df):
+    df.freespeed = df.freespeed*1000/3600
+    return df
+
 def capacity(df,simp):
     for i in range(0,len(df)):
         if simp == 'yes': df.capacity.iloc[i] = df.permlanes.iloc[i]*1200 # very simplistic approach.
@@ -66,12 +72,12 @@ def upd_links(lin, nod):
     # macth nodes id with links, starting - ending point
     lin['from1']=999 # node id = 999 id, if unmatched - set from the beginning
     lin['to1']=999
-    df = nod
-    [lin.from1,lin.to1]=nod_match(lin, df) # determine from / to nodes id based on x,y coordinates of starting ana ending points
-    lin=lin.drop(columns=['x_start','y_start','x_end','y_end'])
+    [lin.from1,lin.to1]=nod_match(lin, nod) # determine from / to nodes id based on x,y coordinates of starting ana ending points
+    # lin=lin.drop(columns=['x_start','y_start','x_end','y_end'])
     # create uni-directional links, by making a new one
     lin = twoway(lin).replace({0:1})
     # update the capacity of the links
+    lin = speed(lin)
     lin = capacity(lin, 'yes')
-    lin.modes = lin.modes.replace({'car,bicycle':'bicycle,car'})
+    # lin.modes = lin.modes.replace({'car,bicycle':'bicycle,car'})
     return lin

@@ -59,22 +59,22 @@ gen_path()
 os.chdir('network_analysis')
 
 from traffic_params_upd import read_shapefile # function to read shapefile
-lin = read_shapefile('networks_shp/new_equil/simple_network_links.shp') # import links shapefile, it needs a specific format
-nod = read_shapefile('networks_shp/new_equil/simple_network_nodes.shp') # import nodes shapefile, it needs a specific format
+nod = read_shapefile('networks_shp/experimental/experimental_field_athens_nodes.shp') # import links shapefile, it needs a specific format
+lin = read_shapefile('networks_shp/experimental/experimental_field_athens_links.shp') # import nodes shapefile, it needs a specific format
 
 from traffic_params_upd import upd_links # function to update link traffic parameters ("physical supply")
 lin = upd_links(lin, nod)
-nod.set_index('id').to_csv('output_csv/new_equil_nod_coord.csv')
-lin.set_index('id').to_csv('output_csv/new_equil_lin_coord.csv')
+nod.set_index('id').to_csv('output_csv/experimental_field_athens_nod_coord.csv')
+# lin.set_index('id').to_csv('output_csv/new_equil_lin_coord.csv')
 
 from lin_psafe_calc import lin_psafe
 lin = lin_psafe(lin, coeff)
 
 from shp_to_csv_xml_tool import netcsv_cr
-netcsv_cr(lin, 'output_csv/new_equil_psafe.csv')
+netcsv_cr(lin, 'output_csv/experimental_field_athens_links_psafe.csv')
 
 from shp_to_csv_xml_tool import netxml_cr
-netxml_cr(lin, nod, 'output_xml/new_equil_network.xml')
+netxml_cr(lin, nod, 'output_xml/experimental_field_athens_network.xml')
 
 # In[05]: Choice modeling
 gen_path()

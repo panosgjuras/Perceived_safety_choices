@@ -8,7 +8,7 @@ import lxml.etree as ET
 import pandas as pd
 
 def netcsv_cr(lin, path): # create a csv to be imported in GIS via join.
-    out=pd.DataFrame(lin, columns=['id','car_psafe','ebike_psafe','escoot_psafe','walk_psafe',
+    out=pd.DataFrame(lin, columns=['id','from1', 'to1', 'length','car_psafe','ebike_psafe','escoot_psafe','walk_psafe',
                                'car_psafe_l','ebike_psafe_l','escoot_psafe_l','walk_psafe_l'])
     out.set_index('id').to_csv(path)
 
