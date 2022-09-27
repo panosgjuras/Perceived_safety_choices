@@ -12,15 +12,16 @@ import os
 # current_dir = os.path.dirname(os.path.realpath(__file__)) 
 os.chdir('C:/Users/panos_000/Desktop/github_tzouras/Perceived_safety_choices/network_analysis')
 nodes = pd.read_csv("output_csv/experimental_field_athens_nod_coord.csv")
-links = pd.read_csv("output_csv/experimental_field_athens_links_psafe.csv")
+links = pd.read_csv("output_csv/experimental_field_athens_links_psafe_scenario1.csv")
 
+links["utils"] = -10.0 * (links.length/(15*1000)) -0.00082 * links.length + 2.12331 * links.escoot_psafe_l
 nod = list(nodes.id)
 graph = dij.Graph()
 
 for i in range(0, len(links)):
-    graph.add_edge(links.from1.iloc[i], links.to1.iloc[i], links.length.iloc[i])
+    graph.add_edge(links.from1.iloc[i], links.to1.iloc[i], links.utils.iloc[i])
 
-dijkstra = dij.DijkstraSPF(graph, 3000)
+dijkstra = dij.DijkstraSPF(graph, 4000)
 
 print("%-5s %-5s" % ("label", "distance"))
 for u in nod:
