@@ -49,10 +49,10 @@ def sel_model(x):
         BETA_ESCOOTPSAFE = Beta('BETA_ESCOOTPSAFE',0, None, None,0)
         BETA_WALKPSAFE = Beta('BETA_WALKPSAFE',0, None, None,0)
         # UTILITY FUNCTIONS
-        V1 = BETA_CARTIME * cartime + BETA_CARCOST * carcost + BETA_CARPSAFE * carpsafe
-        V2 = ASC_EBIKE + BETA_ACTTIME_EBIKE * EBIKETIME + BETA_EBIKECOST * ebikecost + BETA_EBIKEPSAFE * ebikepsafe
-        V3 = ASC_ESCOOT + BETA_ACTTIME_ESCOOT * ESCOOTIME + BETA_ESCOOTCOST * escootcost + BETA_ESCOOTPSAFE * escootpsafe
-        V4 = ASC_WALK + BETA_ACTTIME_WALK * WALKTIME + BETA_WALKPSAFE * walkpsafe
+        V1 = BETA_CARTIME * cartime + BETA_CARCOST * carcost + BETA_CARPSAFE * CARPSAFE
+        V2 = ASC_EBIKE + BETA_ACTTIME_EBIKE * EBIKETIME + BETA_EBIKECOST * ebikecost + BETA_EBIKEPSAFE * EBIKEPSAFE
+        V3 = ASC_ESCOOT + BETA_ACTTIME_ESCOOT * ESCOOTIME + BETA_ESCOOTCOST * escootcost + BETA_ESCOOTPSAFE * ESCOOTPSAFE
+        V4 = ASC_WALK + BETA_ACTTIME_WALK * WALKTIME + BETA_WALKPSAFE * WALKPSAFE
         V = {4: V1, 3: V2, 2: V3, 1:V4} # connect alternative choices with defined utility functions
         av = {1:1, 2:1, 3:1, 4:1} # availability of modes
         cho = intchoice*1 # where is the choice set?
@@ -99,6 +99,10 @@ def model_estimation(df, typ, name):
     EBIKETIME = database.DefineVariable('EBIKETIME', acttime) # new time variables based on the difference among modes
     ESCOOTIME = database.DefineVariable('ESCOOTIME', (20/15) * acttime) # new time variables based on the difference among modes
     WALKTIME = database.DefineVariable('WALKTIME',  (20/5) * acttime) # new time variables based on the difference among modes
+    CARPSAFE = database.DefineVariable('CARPSAFE',  carpsafe - 4)
+    EBIKEPSAFE = database.DefineVariable('EBIKEPSAFE',  ebikepsafe - 4)
+    ESCOOTPSAFE = database.DefineVariable('ESCOOTPSAFE',  escootpsafe - 4)
+    WALKPSAFE = database.DefineVariable('WALKPSAFE',  walkpsafe - 4)
     
     globals().update(database.variables) # globalize database variables, still warnings!!
 
