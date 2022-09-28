@@ -12,24 +12,29 @@ import os
 # current_dir = os.path.dirname(os.path.realpath(__file__)) 
 os.chdir('C:/Users/panos_000/Desktop/github_tzouras/Perceived_safety_choices/network_analysis')
 nodes = pd.read_csv("output_csv/experimental_field_athens_nod_coord.csv")
-links = pd.read_csv("output_csv/experimental_field_athens_links_psafe_scenario1.csv")
+links = pd.read_csv("output_csv/experimental_field_athens_links_psafe.csv")
 
-links["utils"] = -10.0 * (links.length/(15*1000)) -0.00082 * links.length + 2.12331 * links.escoot_psafe_l
+links["car_utils"] = + 6.0 * (links.length/(40*1000)) + 0.73822 * links.length - 0.90838 * (links.car_psafe_l-4) * (links.length/1000)
+links["ebike_utils"] = + 6.0 * (links.length/(20*1000)) + 1.10523 * (8/(20*1000)) * links.length - 1.41532 * (links.ebike_psafe_l - 4) * (links.length/1000)
+links["escoot_utils"] = + 6.0 * (links.length/(15*1000)) + 1.05452 * (7/(15*1000)) * links.length - 1.27399 * (links.escoot_psafe_l - 4) * (links.length/1000)
+links["walk_utils"] = + 6.0 * (links.length/(5*1000)) + 0.86911 * (links.walk_psafe_l - 4) * (links.length/1000)
+links["ps"] =  - links.escoot_psafe_l * (links.length/4917.710000000001)
 nod = list(nodes.id)
 graph = dij.Graph()
 
-for i in range(0, len(links)):
-    graph.add_edge(links.from1.iloc[i], links.to1.iloc[i], links.utils.iloc[i])
 
-dijkstra = dij.DijkstraSPF(graph, 4000)
+
+for i in range(0, len(links)):
+    graph.add_edge(links.from1.iloc[i], links.to1.iloc[i], links.walk_utils.iloc[i])
+
+dijkstra = dij.DijkstraSPF(graph, 9000)
 
 print("%-5s %-5s" % ("label", "distance"))
 for u in nod:
     print(u, dijkstra.get_distance(u))
     # print("%-5s %8d" % (u, dijkstra.get_distance(u)))
 
-print(dijkstra.get_path(9000))
-
+print(dijkstra.get_path(4000))
 # In[00]: Inputs
 
 from .graph import Graph, generate_random_graph
