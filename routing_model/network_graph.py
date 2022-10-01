@@ -1,83 +1,89 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Sep 21 15:31:59 2022
-
-@author: kkoli
-"""
 
 import pandas as pd
 import dijkstra as dij
 import os
 
 # current_dir = os.path.dirname(os.path.realpath(__file__)) 
-os.chdir('C:/Users/panos_000/Desktop/github_tzouras/Perceived_safety_choices/network_analysis')
+os.chdir('C:/Users/panos/Desktop/github_tzouras/Perceived_safety_choices/network_analysis')
 nodes = pd.read_csv("output_csv/experimental_field_athens_nod_coord.csv")
 links = pd.read_csv("output_csv/experimental_field_athens_links_psafe.csv")
+os.chdir('C:/Users/panos/Desktop/github_tzouras/Perceived_safety_choices/routing_model')
+coeff = pd.read_csv("coeff_choice_model.csv").set_index('param')
 
-links["car_utils"] = + 6.0 * (links.length/(40*1000)) + 0.73822 * links.length - 0.90838 * (links.car_psafe_l-4) * (links.length/1000)
-links["ebike_utils"] = + 6.0 * (links.length/(20*1000)) + 1.10523 * (8/(20*1000)) * links.length - 1.41532 * (links.ebike_psafe_l - 4) * (links.length/1000)
-links["escoot_utils"] = + 6.0 * (links.length/(15*1000)) + 1.05452 * (7/(15*1000)) * links.length - 1.27399 * (links.escoot_psafe_l - 4) * (links.length/1000)
-links["walk_utils"] = + 6.0 * (links.length/(5*1000)) + 0.86911 * (links.walk_psafe_l - 4) * (links.length/1000)
-links["ps"] =  - links.escoot_psafe_l * (links.length/4917.710000000001)
-nod = list(nodes.id)
-graph = dij.Graph()
-
-
-
-for i in range(0, len(links)):
-    graph.add_edge(links.from1.iloc[i], links.to1.iloc[i], links.walk_utils.iloc[i])
-
-dijkstra = dij.DijkstraSPF(graph, 9000)
-
-print("%-5s %-5s" % ("label", "distance"))
-for u in nod:
-    print(u, dijkstra.get_distance(u))
-    # print("%-5s %8d" % (u, dijkstra.get_distance(u)))
-
-print(dijkstra.get_path(4000))
-# In[00]: Inputs
-
-from .graph import Graph, generate_random_graph
-from .dijkstra import DijkstraSPF
-
-__version__ = "0.2.1"
-__author__ = "Jukka Aho <ahojukka5@gmail.com>"
-__all__ = [Graph, DijkstraSPF, generate_random_graph]
-# graph = dij.Graph()
-# graph.add_edge(S, A, 4)
-# graph.add_edge(S, B, 3)
-# graph.add_edge(S, D, 7)
-# graph.add_edge(A, C, 1)
-# graph.add_edge(B, S, 3)
-# graph.add_edge(B, D, 4)
-# graph.add_edge(C, E, 1)
-# graph.add_edge(C, D, 3)
-# graph.add_edge(D, E, 1)
-# graph.add_edge(D, T, 3)
-# graph.add_edge(D, F, 5)
-# graph.add_edge(E, G, 2)
-# graph.add_edge(G, E, 2)
-# graph.add_edge(G, T, 3)
-# graph.add_edge(T, F, 5)
-
-# dijkstra = dij.DijkstraSPF(graph, S)
-
-# print("%-5s %-5s" % ("label", "distance"))
-# for u in nod:
-#    print("%-5s %8d" % (u, dijkstra.get_distance(u)))
-# print(" -> ".join(dijkstra.get_path(T)))
-
-# network=pd.read_csv("C:/Users/kkoli/Desktop/NTUA/SIM4MTRAN/Perceived_safety_choices-main/Perceived_safety_choices-main/network_analysis/output_csv/new_equil_lin_coord.csv")
+def utils_cal(df, cf, dmax):
+    df["car_utils"] = - ( cf.loc['btime', 'car'] * (df.length/(cf.loc['speed', 'car'] * 1000)) \
+        + cf.loc['bcost', 'car'] * (cf.loc['consum', 'car']/1000) * cf.loc['ltcost', 'car'] * df.length \
+        + cf.loc['bpsafe', 'car'] * (df.car_psafe_l - 4) * (df.length/dmax))
     
-# mynetwork=network[['from1','to1','length']]
+    df["ebike_utils"] = - (cf.loc['btime', 'ebike'] * (df.length/(cf.loc['speed', 'ebike'] * 1000)) \
+        + cf.loc['bcost', 'ebike'] * (cf.loc['speed', 'ebike']/(cf.loc['speed', 'ebike'] * 1000)) * df.length \
+        + cf.loc['bpsafe', 'ebike'] * (df.ebike_psafe_l - 4) * (df.length/dmax))
+    
+    df["escoot_utils"] = - (cf.loc['btime', 'escooter'] * (df.length/(cf.loc['speed', 'escooter'] * 1000)) \
+        + cf.loc['bcost', 'escooter'] * (cf.loc['speed', 'escooter']/(cf.loc['speed', 'escooter'] * 1000)) * df.length \
+        + cf.loc['bpsafe', 'escooter'] * (df.escoot_psafe_l - 4) * (df.length/dmax))
+    
+    df["walk_utils"] = - (cf.loc['btime', 'walk'] * (df.length/(cf.loc['speed', 'walk']  * 1000)) \
+        + cf.loc['bpsafe', 'walk'] * (df.walk_psafe_l - 4) * (df.length/dmax))
+    return df
 
-#######################################################################################
-#G =nx.Graph()
-# G=nx.from_pandas_edgelist(network,'from1','to1',edge_attr='length')
+def dij_graph(ln, tmode, minv, mth):
+    graph = dij.Graph()
+    
+    for i in range(0, len(ln)):
+        x = 0
+        if tmode == 'car':
+            psafe = ln.car_psafe_l.iloc[i]
+            weight = ln.car_utils.iloc[i]
+        elif tmode == 'ebike':
+            psafe = ln.ebike_psafe_l.iloc[i]
+            weight = ln.ebike_utils.iloc[i]
+        elif tmode == 'escooter':
+            psafe = ln.escoot_psafe_l.iloc[i]
+            weight = ln.escoot_utils.iloc[i]          
+        elif tmode == 'walk':
+            psafe = ln.walk_psafe_l.iloc[i]
+            weight = ln.walk_utils.iloc[i]
+        else:
+            x = 999
+            print('no mode')
+            break
+        if mth == 'shortest': weight = ln.length.iloc[i]
+        elif mth == 'best': weight = weight 
+        else: 
+            x = 999
+            print('wrong method')
+            break
+        text = ln.modes.iloc[i]
+        if tmode in text:
+            if psafe>=minv: graph.add_edge(ln.from1.iloc[i], ln.to1.iloc[i], weight)    
+    return graph, x
 
-# from matplotlib.pyplot import figure
-# figure(figsize=(10, 8))
-# nx.draw_shell(G, with_labels=True)
+def dij_run(ln, nd, tmode, fr, to, mth, minv, dmax, coeff):
+    
+    ln = utils_cal(ln, coeff, dmax)
+    
+    graph = dij_graph(ln, tmode, minv, mth)[0]
+    check = dij_graph(ln, tmode, minv, mth)[1]
+    
+    if check != 999:
+        dijkstra = dij.DijkstraSPF(graph, fr)
+        nod = list(nd.id)
+        # print("%-5s %-5s" % ("label", "distance"))
+        # for u in nod: 
+        #    print(u, dijkstra.get_distance(u))
+        print(dijkstra.get_path(to))
+        x = dijkstra.get_path(to)
+    return x 
 
-# dijkstra = DijkstraSPF(G, 11)
-####################################################################################
+def dij_dist_calc (path, ln):
+    suml = 0
+    for i in range (len(path) - 1):
+        matchid = ln.index[(ln.from1 == path[i]) & (ln.to1 == path[i + 1])].tolist()
+        add = ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'length']
+        suml = suml + add[matchid[0]]
+    return suml
+
+path = dij_run(links, nodes, 'car', 9000, 4000, 'shortest', 2, 10000, coeff)
+path_length = dij_dist_calc (path, links)
+print(path_length)
