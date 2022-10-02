@@ -351,16 +351,6 @@
         <attribute name="bicycleInfrastructureSpeedFactor" class="java.lang.Double">1.0</attribute>
       </attributes>
     </link>
-    <link id="10009" from="1000" to="19" length="1061.447" capacity="1200.0" freespeed="13.88888888888889" permlanes="1" oneway="1" modes="car,bicycle,escooter,walk" origid="">
-      <attributes>
-        <attribute name="carpsafe" class="java.lang.Integer">6</attribute>
-        <attribute name="ebikepsafe" class="java.lang.Integer">6</attribute>
-        <attribute name="escootpsafe" class="java.lang.Integer">6</attribute>
-        <attribute name="walkpsafe" class="java.lang.Integer">6</attribute>
-        <attribute name="type" class="java.lang.String">primary</attribute>
-        <attribute name="bicycleInfrastructureSpeedFactor" class="java.lang.Double">1.0</attribute>
-      </attributes>
-    </link>
     <link id="10010" from="19" to="12" length="198.003" capacity="1200.0" freespeed="13.88888888888889" permlanes="1" oneway="1" modes="car,bicycle,escooter,walk" origid="">
       <attributes>
         <attribute name="carpsafe" class="java.lang.Integer">6</attribute>
@@ -4352,16 +4342,6 @@
       </attributes>
     </link>
     <link id="110008" from="19" to="9000" length="639.999" capacity="1200.0" freespeed="13.88888888888889" permlanes="1" oneway="1" modes="car,bicycle,escooter,walk" origid="">
-      <attributes>
-        <attribute name="carpsafe" class="java.lang.Integer">6</attribute>
-        <attribute name="ebikepsafe" class="java.lang.Integer">6</attribute>
-        <attribute name="escootpsafe" class="java.lang.Integer">6</attribute>
-        <attribute name="walkpsafe" class="java.lang.Integer">6</attribute>
-        <attribute name="type" class="java.lang.String">primary</attribute>
-        <attribute name="bicycleInfrastructureSpeedFactor" class="java.lang.Double">1.0</attribute>
-      </attributes>
-    </link>
-    <link id="110009" from="19" to="1000" length="1061.447" capacity="1200.0" freespeed="13.88888888888889" permlanes="1" oneway="1" modes="car,bicycle,escooter,walk" origid="">
       <attributes>
         <attribute name="carpsafe" class="java.lang.Integer">6</attribute>
         <attribute name="ebikepsafe" class="java.lang.Integer">6</attribute>

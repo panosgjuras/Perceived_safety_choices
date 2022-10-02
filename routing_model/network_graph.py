@@ -6,7 +6,7 @@ import os
 # current_dir = os.path.dirname(os.path.realpath(__file__)) 
 os.chdir('C:/Users/panos/Desktop/github_tzouras/Perceived_safety_choices/network_analysis')
 nodes = pd.read_csv("output_csv/experimental_field_athens_nod_coord.csv")
-links = pd.read_csv("output_csv/experimental_field_athens_links_psafe.csv")
+links = pd.read_csv("output_csv/experimental_field_athens_links_psafe_scenario1.csv")
 os.chdir('C:/Users/panos/Desktop/github_tzouras/Perceived_safety_choices/routing_model')
 coeff = pd.read_csv("coeff_choice_model.csv").set_index('param')
 
@@ -84,6 +84,6 @@ def dij_dist_calc (path, ln):
         suml = suml + add[matchid[0]]
     return suml
 
-path = dij_run(links, nodes, 'car', 9000, 4000, 'shortest', 2, 10000, coeff)
+path = dij_run(links, nodes, 'escooter', 9000, 4000, 'best', 3, 1000, coeff)
 path_length = dij_dist_calc (path, links)
 print(path_length)
