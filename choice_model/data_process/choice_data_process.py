@@ -5,7 +5,7 @@ Choice data processing
 National Technical University of Athens
 """
 import pandas as pd
-# import os
+import os
 import numpy as np
 
 ####### GENERAL
@@ -27,7 +27,9 @@ import numpy as np
 ####### GENERAL
 
 def revese_fun(mat,x): # this function matches choice scenarios with rating scenarios
-    match =  pd.read_csv('scenarios/SC_SCC.csv', ',')
+    match =  pd.read_csv(os.path.join(
+        os.path.dirname(__file__), 'scenarios','SC_SCC.csv'
+        ), sep=',')
     if x==1:
         mat = match.loc[match.sc == mat, 'scc'] # from rating scenarios to choice scenarios
         if len(mat)>0: new_mat = mat.iloc[0]
@@ -44,7 +46,9 @@ def sc_ch_rep(df,block): # PANOS: this function renames scenarios for each mode 
     sc=list(df.columns) # save the columns of the dataframe (raw data) in a list
     i = 22
     # DOUBLE CHECK DOUBLE CHECK
-    match =pd.read_csv('scenarios/SC_SCC.csv', ',') # not necessary, as there is a function, it should be fixed
+    match =pd.read_csv(os.path.join(
+        os.path.dirname(__file__), 'scenarios', 'SC_SCC.csv'
+        ), sep=',') # not necessary, as there is a function, i should be fixed
     match = match.set_index('sc')
     new_df=pd.DataFrame(df,columns=['pid',sc[i], sc[i+5], sc[i+10], sc[i+15],sc[i+20],
                                 sc[i+25],sc[i+30], sc[i+35], sc[i+40], sc[i+45], sc[i+50], sc[i+55]]) # create a new dataframe with the evaluations only
@@ -89,7 +93,9 @@ def choice_repl(df):
     return df
 
 def choice_expl(): # it loads the choice explanatory dataset.
-    expl=pd.read_csv('scenarios/choice_scenarios_perceived_choices.csv', ',') # import scenario table
+    expl=pd.read_csv(os.path.join(
+        os.path.dirname(__file__), 'scenarios', 'choice_scenarios_perceived_choices.csv'
+    ), sep=',') # import scenario table
     expl=expl.set_index('scenario') # set index, i.e. the scenario name
     expl.cartime=expl.cartime.replace({1:40,2:20,3:5}) # replace the leveles with real times, and costs
     expl.carcost=expl.carcost.replace({1:3.5,2:5,3:6.5})

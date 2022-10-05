@@ -7,90 +7,79 @@ Research project: SIM4MTRAN
 """
 import pandas as pd
 import os
-# import numpy as np
+from psafe_models.data_process.data_process_psafe import socio_dats, rate_dats
+from choice_model.data_process.choice_data_process import choice_dats
+from choice_model.opp_cost_calculator import opp_cost_calc
+from psafe_models.psafe_coeff_update import coeff_upd
+from network_analysis.traffic_params_upd import read_shapefile, upd_links
+from network_analysis.lin_psafe_calc import lin_psafe
+from network_analysis.shp_to_csv_xml_tool import netcsv_cr, netxml_cr
 
-def gen_path():
-    current_dir = os.path.dirname(os.path.realpath(__file__)) 
-    os.chdir(current_dir)
+root_dir = os.path.dirname(os.path.realpath(__file__))
+
 # In[00]: Inputs
-gen_path()
+b1 = pd.read_csv(
+    os.path.join(root_dir, 'raw_data', 'raw_data_perceived_choices_block1.csv'), ',')  # data, as it were downloaded from QuestionPro
+b1["pid"] = range(100, len(b1.index)+100)
+b2 = pd.read_csv(os.path.join(root_dir, 'raw_data',
+                 'raw_data_perceived_choices_block2.csv'), sep=',')
+b2["pid"] = range(200, len(b2.index)+200)
+b3 = pd.read_csv(os.path.join(root_dir, 'raw_data',
+                 'raw_data_perceived_choices_block3.csv'), sep=',')
+b3["pid"] = range(300, len(b3.index)+300)
 
-b1 = pd.read_csv('raw_data/raw_data_perceived_choices_block1.csv', ',') # data, as it were downloaded from QuestionPro
-b1["pid"]=range(100,len(b1.index)+100)
-b2 = pd.read_csv('raw_data/raw_data_perceived_choices_block2.csv', ',')
-b2["pid"]=range(200,len(b2.index)+200)
-b3 = pd.read_csv('raw_data/raw_data_perceived_choices_block3.csv', ',') 
-b3["pid"]=range(300,len(b3.index)+300)
 # In[01]: Sociodmographic and rating data processing
-gen_path()
-os.chdir('psafe_models/data_process')
-
-from data_process_psafe import socio_dats
 socio = socio_dats(b1, b2, b3)
-
-from data_process_psafe import rate_dats
 rate = rate_dats(b1, b2, b3, socio)
 
-gen_path()
 # save the outputs of data processing
-socio.set_index('pid').to_csv('datasets/socio_dataset_perceived_choices.csv')
-rate.set_index('pid').to_csv('datasets/rating_dataset_perceived_choices.csv') # save the final perceived safety rating dataset
+socio.set_index('pid').to_csv(os.path.join(
+    root_dir, 'datasets', 'socio_dataset_perceived_choices.csv'))
+# save the final perceived safety rating dataset
+rate.set_index('pid').to_csv(os.path.join(
+    root_dir, 'datasets', 'rating_dataset_perceived_choices.csv'))
 
 # In[02]: Choice data processing
-gen_path()
-os.chdir('choice_model/data_process')
-
-from choice_data_process import choice_dats
 choice = choice_dats(b1, b2, b3, rate, socio)
 
-gen_path()
 # save the outputs of choice data processing
-choice.set_index('pid').to_csv('datasets/choice_dataset_perceived_choices.csv')
+choice.set_index('pid').to_csv(os.path.join(
+    root_dir, 'datasets', 'choice_dataset_perceived_choices.csv'))
 
 # In[03]: Development of psafe models
-os.chdir(os.path.dirname(os.path.realpath(__file__)))
-os.chdir('psafe_models')
-
-from psafe_coeff_update import coeff_upd
 coeff = coeff_upd()
 
 # In[04]: Network analysis
-gen_path()
-os.chdir('network_analysis')
+nod = read_shapefile(
+    os.path.join(root_dir, 'network_analysis', 'networks_shp',
+                 'experimental', 'experimental_field_athens_nodes.shp')
+)  # import links shapefile, it needs a specific format
+lin = read_shapefile(
+    os.path.join(root_dir, 'network_analysis',
+                 'networks_shp', 'experimental', 'experimental_field_athens_links_scenario1.shp')
+)  # import nodes shapefile, it needs a specific format
 
-from traffic_params_upd import read_shapefile # function to read shapefile
-nod = read_shapefile('networks_shp/experimental/experimental_field_athens_nodes.shp') # import links shapefile, it needs a specific format
-lin = read_shapefile('networks_shp/experimental/experimental_field_athens_links_scenario1.shp') # import nodes shapefile, it needs a specific format
-
-from traffic_params_upd import upd_links # function to update link traffic parameters ("physical supply")
+# update link traffic parameters ("physical supply")
 lin = upd_links(lin, nod)
-nod.set_index('id').to_csv('output_csv/experimental_field_athens_nod_coord.csv')
-# lin.set_index('id').to_csv('output_csv/new_equil_lin_coord.csv')
-
-from lin_psafe_calc import lin_psafe
+nod.set_index('id').to_csv(
+    os.path.join(root_dir, 'network_analysis', 'output_csv',
+                 'experimental_field_athens_nod_coord.csv')
+)
 lin = lin_psafe(lin, coeff)
 
-from shp_to_csv_xml_tool import netcsv_cr
-netcsv_cr(lin, 'output_csv/experimental_field_athens_links_psafe_scenario1.csv')
-
-from shp_to_csv_xml_tool import netxml_cr
-netxml_cr(lin, nod, 'output_xml/experimental_field_athens_network_scenario1.xml')
+netcsv_cr(lin, os.path.join(root_dir, 'network_analysis',
+                            'output_csv', 'experimental_field_athens_links_psafe_scenario1.csv'))
+netxml_cr(lin, nod, os.path.join(root_dir, 'network_analysis', 'output_xml',
+                                 'experimental_field_athens_network_scenario1.xml'))
 
 # In[05]: Choice modeling
-gen_path()
-os.chdir('choice_model')
-
-# from BIOGEME_models_perceived_choices import model_estimation
-# p = model_estimation(choice.set_index('pid'), 'MNL', 'mode_choice_model')
-
-# gen_path()
-# p.to_csv('choice_model/coeff_choice_model.csv')
-
-gen_path()
-os.chdir('choice_model')
-
-from opp_cost_calculator import opp_cost_calc
-opp_cost_calc(pd.read_csv('coeff_choice_model.csv', ',').set_index('Unnamed: 0'), 'car')
-opp_cost_calc(pd.read_csv('coeff_choice_model.csv', ',').set_index('Unnamed: 0'), 'ebike')
-opp_cost_calc(pd.read_csv('coeff_choice_model.csv', ',').set_index('Unnamed: 0'), 'escooter')
-opp_cost_calc(pd.read_csv('coeff_choice_model.csv', ',').set_index('Unnamed: 0'), 'walk')
+path_choice_model = os.path.join(
+    root_dir, 'choice_model', 'coeff_choice_model.csv')
+opp_cost_calc(pd.read_csv(path_choice_model,
+              sep=',').set_index('Unnamed: 0'), 'car')
+opp_cost_calc(pd.read_csv(path_choice_model,
+              sep=',').set_index('Unnamed: 0'), 'ebike')
+opp_cost_calc(pd.read_csv(path_choice_model, sep=',').set_index(
+    'Unnamed: 0'), 'escooter')
+opp_cost_calc(pd.read_csv(path_choice_model,
+              sep=',').set_index('Unnamed: 0'), 'walk')

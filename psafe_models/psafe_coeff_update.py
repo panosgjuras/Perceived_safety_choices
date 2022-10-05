@@ -5,11 +5,13 @@ PSAFE coefficients update
 National Technical University of Athens
 """
 import pandas as pd
-# import OS
+import os
 import numpy as np
 
 def coeff_upd():
-    coeff = pd.read_csv('outputs/simple_psafe_models.csv', ',')
+    coeff = pd.read_csv(os.path.join(
+        os.path.dirname(__file__), 'outputs', 'simple_psafe_models.csv'
+        ), sep=',')
     coeff = coeff.rename(columns = {'Unnamed: 0':'coeffs'})
     coeff = coeff.set_index('coeffs')
     coeff.loc['kappa.1'] = coeff.loc['kappa.1'] - coeff.loc['constant']
