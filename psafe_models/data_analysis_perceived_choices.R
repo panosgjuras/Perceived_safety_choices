@@ -115,8 +115,8 @@ ggarrange(hist_psafe(subset(data1, gender == 0)) + ggtitle('Females'),
 summary(aov(data1$psafe~factor(data1$gender))) # gender is definetely a factor of perceived safety in general, very high significance!!!
 
 # histograms: psafe vs mode vs age group
-ggarrange(hist_psafe_100(subset(data1, young == 1)) + ggtitle('Age < 30 years old'),
-          hist_psafe_100(subset(data1, young == 0)) + ggtitle('Age >= 30 years old'),
+ggarrange(hist_psafe_100(subset(data1, gender == 0)) + ggtitle('Females'),
+          hist_psafe_100(subset(data1, gender == 1)) + ggtitle('Males'),
           common.legend = TRUE, legend = 'bottom', ncol = 2) # only noticeable differences is how not young perceive safety of esooters
 
 # histograms: psafe vs mode vs infrastructure type
