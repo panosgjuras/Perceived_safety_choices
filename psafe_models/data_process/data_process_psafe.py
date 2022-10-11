@@ -6,7 +6,7 @@ Data processing perceived safety rating data
 National Technical University of Athens
 """
 import pandas as pd
-# import os
+import os
 import numpy as np
 
 def sociodemo(df):
@@ -128,7 +128,10 @@ def sc_ren_rep(df,tmode,block): # PANOS: this function renames and replaces scen
     return new_df # create a new dataframe
 
 def expl_rat():
-    expl=pd.read_csv('scenarios/rating_scenarios_perceived_choices.csv', ',') # import scenario table
+    expl=pd.read_csv(
+        os.path.join(os.path.dirname(__file__), 
+        'scenarios','rating_scenarios_perceived_choices.csv'
+        ), sep=',') # import scenario table
     expl=expl.set_index('scenario') # set index, i.e. the scenario name
     expl['type1']=np.where(expl.type==1, 1, 0) # PANOS: I developed dummy coding for infrastructure variables (non-linearities)
     # we will speak about it, it is a technique
