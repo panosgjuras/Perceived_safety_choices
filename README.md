@@ -15,14 +15,13 @@ The beta parameters of the model equations have been estimated based on a survey
 <img src="https://user-images.githubusercontent.com/63541107/186911587-1eb1dbb3-eba1-492e-9cd1-d1ef76c13990.png" height="450">
 
 **The Perceived Safety Choices repository contains:**
-- survey_design
+- survey_design: tools to design a survey, so that beta parameters can be calibrated. 
 - [raw_data](https://github.com/panosgjuras/Perceived_safety_choices/tree/main/raw_data): collected survey data per survey block
 - [psafe_models](https://github.com/panosgjuras/Perceived_safety_choices/tree/main/psafe_models): it contains the data processing of perceived safety rating data + data analysis of perceived safety ratings in R using [Rchoice](https://github.com/cran/Rchoice) package. The output of this analysis are the beta parameters per mode + figures are included in the folder.
 - [choice_models](https://github.com/panosgjuras/Perceived_safety_choices/tree/main/choice_model): it contains data processing of choice data + model development using [PandasBiogeme](https://github.com/michelbierlaire/biogeme). The output of this analysis is beta parameters of choice model
 - [datasets](https://github.com/panosgjuras/Perceived_safety_choices/tree/main/datasets): datasets of perceived safety ratings, sociodemographic characteristics and mode choices. These datasets can be used in other road networks (no need for new data collection).
 - [network_analysis](https://github.com/panosgjuras/Perceived_safety_choices/tree/main/network_analysis): using [pyshp](https://github.com/GeospatialPython/pyshp), shps of nodes and links, in a very specific data format (see network examples), are imported to estimate perceived safety per link. The user has to provide these shp and run the code. The output of this process are xml network file ([lxml toolkit](https://github.com/lxml/lxml) is used) capable for [MATSim](https://github.com/matsim-org) simualtions and csv file, which can be imported in GIS and joined with shp for mapping purposes.
-- prediction_routing
-- indicators
+- routing_model: a Dijkstra routing model, which defines the shortest, fastest and safest path per transport mode.
 
 You can run all the steps of the Perceived Safety Choices model from [Perceived_safety_choice_model.py](https://github.com/panosgjuras/Perceived_safety_choices/blob/main/Perceived_safety_choice_model.py). Analytical instructions are included there (with comments).
 
