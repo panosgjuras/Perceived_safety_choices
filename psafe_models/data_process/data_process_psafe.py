@@ -95,7 +95,7 @@ def socio_dats(df1,df2,df3):
     socio = pd.concat([socio, pd.DataFrame(sociodemo(df3), columns=['pid','gender','age','education','employment',
                    'income','car_own','moto_own','cycle_own','escoot_own','bike_frequency', 'escooter_frequency', 'PT_frequency',
                    'metro_frequency', 'young'])], axis=0, ignore_index=True)
-    socio
+    
     # socio = socio.set_index('pid')
     return socio
 
