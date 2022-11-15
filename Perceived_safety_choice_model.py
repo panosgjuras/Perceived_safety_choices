@@ -7,6 +7,9 @@ Research project: SIM4MTRAN
 """
 import pandas as pd
 import os
+
+root_dir = os.path.dirname(os.path.realpath(__file__))
+
 from psafe_models.data_process.data_process_psafe import socio_dats, rate_dats
 from choice_model.data_process.choice_data_process import choice_dats
 from choice_model.opp_cost_calculator import opp_cost_calc
@@ -14,8 +17,7 @@ from psafe_models.psafe_coeff_update import coeff_upd
 from network_analysis.traffic_params_upd import read_shapefile, upd_links
 from network_analysis.lin_psafe_calc import lin_psafe
 from network_analysis.shp_to_csv_xml_tool import netcsv_cr, netxml_cr
-
-root_dir = os.path.dirname(os.path.realpath(__file__))
+from routing_model.network_graph import dij_run, dij_dist_calc
 
 # In[00]: Inputs
 b1 = pd.read_csv(
@@ -83,3 +85,16 @@ opp_cost_calc(pd.read_csv(path_choice_model, sep=',').set_index(
     'Unnamed: 0'), 'escooter')
 opp_cost_calc(pd.read_csv(path_choice_model,
               sep=',').set_index('Unnamed: 0'), 'walk')
+# In[06]: Routing
+
+# Prior values for the city network of Athens
+# just to run the example
+origin = 9000
+dest = 4000
+mode = 'escooter'
+method = 'best' # 'shortest' or 'best' path
+minv = 3 # miniumum perceived safety level
+dmin = 1000 # in meters minimum distance so that psafe really matters
+coeff = pd.read_csv(os.path.join(root_dir, 'routing_model', 'coeff_route_model.csv') , sep=',').set_index('param')
+path = dij_run(lin, nod, mode, origin, dest, method, minv, dmin, coeff) 
+print(dij_dist_calc (path, lin))
