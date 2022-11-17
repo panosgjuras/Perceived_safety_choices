@@ -7,5 +7,5 @@ setup(name = 'psafechoices',
       author = 'Panagiotis G. Tzouras',
       author_email = 'ptzouras@mail.ntua.gr',
       description = "Tools to model micromobility trips based on perceived safety",
-      # py_modules=['Perceived_safety_choice_model']
+      py_modules=['Perceived_safety_choice_model']
       )
