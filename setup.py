@@ -1,6 +1,6 @@
 import codecs
 import os.path
-import setuptools
+from setuptools import setup, find_packages
 # from Perceived_safety_choice_model import _version_
 
 def read(rel_path):
@@ -15,18 +15,17 @@ def get_version(rel_path):
             return line.split(delim)[1]
     else:
         raise RuntimeError("Unable to find version string.")
-
+ 
 description = """
 The model that has been uploaded to this repository aspires to describe routing behavior 
 of micro-mobility modes, e.g., e-bikes and e-scoters, in relationship with traditional modes, 
 e.g., private car and walking.
 """
-setuptools.setup(name = 'psafechoices',
+setup(name = 'psafechoices',
       version = get_version("psafechoices/__init__.py"),
       url = 'https://github.com/panosgjuras/Perceived_safety_choices',
       author = 'Panagiotis G. Tzouras',
       author_email = 'ptzouras@mail.ntua.gr',
       description=" ".join(description.strip().splitlines()),
-      packages =setuptools.find_packages()
-      # py_modules=['Perceived_safety_choice_model']
+      packages = find_packages()
       )
