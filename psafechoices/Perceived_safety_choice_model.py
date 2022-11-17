@@ -1,10 +1,3 @@
-"""
-The PERCEIVED SAFETY CHOICE model
-
-@author: ptzouras
-National Technical University of Athens
-Research project: SIM4MTRAN
-"""
 import pandas as pd
 import os
 
@@ -18,8 +11,6 @@ from network_analysis.traffic_params_upd import read_shapefile, upd_links
 from network_analysis.lin_psafe_calc import lin_psafe
 from network_analysis.shp_to_csv_xml_tool import netcsv_cr, netxml_cr
 from routing_model.network_graph import dij_run, dij_dist_calc
-
-_version_ = '0.1' # first version of the Perceived Safety choices model
 # In[00]: Inputs
 b1 = pd.read_csv(
     os.path.join(root_dir, 'raw_data', 'raw_data_perceived_choices_block1.csv'), ',')  # data, as it were downloaded from QuestionPro
