@@ -22,10 +22,10 @@ of micro-mobility modes, e.g., e-bikes and e-scoters, in relationship with tradi
 e.g., private car and walking.
 """
 setup(name = "psafechoices",
-      version = get_version("__init__.py"),
+      version = get_version("psafechoices/__init__.py"),
       url = "https://github.com/panosgjuras/Perceived_safety_choices",
       author = "Panagiotis G. Tzouras",
       author_email = "ptzouras@mail.ntua.gr",
       description=" ".join(description.strip().splitlines()),
-      packages = find_packages()
+      packages = ["psafechoices"]
       )
