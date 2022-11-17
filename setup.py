@@ -21,11 +21,11 @@ The model that has been uploaded to this repository aspires to describe routing 
 of micro-mobility modes, e.g., e-bikes and e-scoters, in relationship with traditional modes, 
 e.g., private car and walking.
 """
-setup(name = 'psafechoices',
+setup(name = "psafechoices",
       version = get_version("main/__init__.py"),
-      url = 'https://github.com/panosgjuras/Perceived_safety_choices',
-      author = 'Panagiotis G. Tzouras',
-      author_email = 'ptzouras@mail.ntua.gr',
+      url = "https://github.com/panosgjuras/Perceived_safety_choices",
+      author = "Panagiotis G. Tzouras",
+      author_email = "ptzouras@mail.ntua.gr",
       description=" ".join(description.strip().splitlines()),
       packages = find_packages()
       )
