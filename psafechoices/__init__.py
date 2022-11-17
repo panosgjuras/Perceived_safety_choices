@@ -9,11 +9,14 @@ Research project: SIM4MTRAN
 # from choice_model.data_process.choice_data_process import choice_dats
 # from choice_model.opp_cost_calculator import opp_cost_calc
 # from psafe_models.psafe_coeff_update import coeff_upd
-#
-from .network_analysis.traffic_params_upd import read_shapefile, upd_links
-from .network_analysis.lin_psafe_calc import lin_psafe
-from .network_analysis.shp_to_csv_xml_tool import netcsv_cr, netxml_cr
-from .routing_model.network_graph import dij_run, dij_dist_calc
+
+import network_analysis
+import routing_model
+
+from network_analysis.traffic_params_upd import read_shapefile, upd_links
+from network_analysis.lin_psafe_calc import lin_psafe
+from network_analysis.shp_to_csv_xml_tool import netcsv_cr, netxml_cr
+from routing_model.network_graph import dij_run, dij_dist_calc
 
 __version__ = "0.1" # data processing functions are not included in this version
 __author__ = 'Panagiotis G. Tzouras'
