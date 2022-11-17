@@ -15,7 +15,16 @@ def get_version(rel_path):
             return line.split(delim)[1]
     else:
         raise RuntimeError("Unable to find version string.")
- 
+
+test_deps = [
+    'pytest',
+    'pytest-cov',
+    'pytest-pycodestyle',
+    'pytest-pep8',
+    'pytest-flake8',
+]
+extras = {'test': test_deps,}
+
 description = """
 The model that has been uploaded to this repository aspires to describe routing behavior 
 of micro-mobility modes, e.g., e-bikes and e-scoters, in relationship with traditional modes, 
@@ -27,5 +36,7 @@ setup(name = 'psafechoices',
       author = 'Panagiotis G. Tzouras',
       author_email = 'ptzouras@mail.ntua.gr',
       description=" ".join(description.strip().splitlines()),
-      packages = find_packages()
+      packages = find_packages(),
+      tests_require=test_deps,
+      extras_require=extras,
       )
