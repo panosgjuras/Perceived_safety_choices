@@ -28,5 +28,4 @@ setup(name = "psafechoices",
       author_email = "ptzouras@mail.ntua.gr",
       description=" ".join(description.strip().splitlines()),
       packages = find_packages()
-      # packages = ["psafechoices"]
       )
