@@ -18,7 +18,7 @@ from network_analysis.lin_psafe_calc import lin_psafe
 from network_analysis.shp_to_csv_xml_tool import netcsv_cr, netxml_cr
 from routing_model.network_graph import dij_run, dij_dist_calc
 
-__version__ = "0.1" # data processing functions are not included in this version
+__version__ = "0.2" # data processing functions are not included in this version
 __author__ = 'Panagiotis G. Tzouras'
 __all__ = [read_shapefile, upd_links, lin_psafe, 
            netcsv_cr, netxml_cr, dij_run, dij_dist_calc]
