@@ -27,5 +27,6 @@ setup(name = "psafechoices",
       author = "Panagiotis G. Tzouras",
       author_email = "ptzouras@mail.ntua.gr",
       description=" ".join(description.strip().splitlines()),
-      packages = ["psafechoices"]
+      packages = find_packages()
+      # packages = ["psafechoices"]
       )
