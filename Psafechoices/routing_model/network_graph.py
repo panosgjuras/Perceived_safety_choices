@@ -71,6 +71,7 @@ def dij_run(ln, nd, tmode, fr, to, mth, minv, dmin, coeff):
     
     if check != 999: # run Dijkstra shortest path
         dijkstra = dij.DijkstraSPF(graph, fr)
+        print(dijkstra)
         nod = list(nd.id)
         # print("%-5s %-5s" % ("label", "distance"))
         # for u in nod: 
