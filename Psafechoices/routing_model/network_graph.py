@@ -71,13 +71,17 @@ def dij_run(ln, nd, tmode, fr, to, mth, minv, dmin, coeff):
         if math.isinf(dijkstra.get_distance(to)): 
             x = 'no path'
             print(x)
-        else: x = dijkstra.get_path(to)
+        else: 
+            x = dijkstra.get_path(to)
+            print(x)
+            print(dijkstra.get_distance(to))
     return x 
 
-def dij_dist_calc (path, ln): # calculate the distance
-    suml = 0
-    for i in range (len(path) - 1):
-        matchid = ln.index[(ln.from1 == path[i]) & (ln.to1 == path[i + 1])].tolist()
-        add = ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'length']
-        suml = suml + add[matchid[0]]
+def dij_dist_calc(path, ln): # calculate the distance
+    if path!= 'no path':
+        suml = 0
+        for i in range (len(path) - 1):
+            matchid = ln.index[(ln.from1 == path[i]) & (ln.to1 == path[i + 1])].tolist()
+            add = ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'length']
+            suml = suml + add[matchid[0]]
     return suml
