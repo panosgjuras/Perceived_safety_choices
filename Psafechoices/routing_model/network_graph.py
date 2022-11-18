@@ -36,32 +36,26 @@ def dij_graph(ln, tmode, minv, mth):
     
     for i in range(0, len(ln)):
         x = 0
+        if tmode == 'car': psafe = ln.car_psafe_l.iloc[i]
+        elif tmode == 'ebike': psafe = ln.ebike_psafe_l.iloc[i]
+        elif tmode == 'escooter': psafe = ln.escoot_psafe_l.iloc[i]
+        elif tmode == 'walk': psafe = ln.walk_psafe_l.iloc[i]
+        else:
+           x = 999
+           print('no mode')
+           break 
         if mth == 'best':
-            if tmode == 'car':
-                psafe = ln.car_psafe_l.iloc[i]
-                weight = ln.car_utils.iloc[i]
-            elif tmode == 'ebike':
-                psafe = ln.ebike_psafe_l.iloc[i]
-                weight = ln.ebike_utils.iloc[i] # give the weight based on the utility function
-            elif tmode == 'escooter':
-               psafe = ln.escoot_psafe_l.iloc[i]
-               weight = ln.escoot_utils.iloc[i]          
-            elif tmode == 'walk':
-               psafe = ln.walk_psafe_l.iloc[i]
-               weight = ln.walk_utils.iloc[i]
-            else:
-               x = 999
-               print('no mode')
-               break
-    
+            # give the weight based on the utility function
+            if tmode == 'car': weight = ln.car_utils.iloc[i]
+            elif tmode == 'ebike': weight = ln.ebike_utils.iloc[i] 
+            elif tmode == 'escooter': weight = ln.escoot_utils.iloc[i]          
+            elif tmode == 'walk': weight = ln.walk_utils.iloc[i]
         elif mth == 'shortest': weight = ln.length.iloc[i] # if method shortest path, psafe is not necessary
-        
         else: 
             x = 999
             print('wrong method')
             break
         text = ln.modes.iloc[i]
-        
         if tmode in text: # creates a network with only the links in which tmode can be used
             if psafe>=minv: graph.add_edge(ln.from1.iloc[i], ln.to1.iloc[i], weight)
             # the previous formula decrease the number of available network links
