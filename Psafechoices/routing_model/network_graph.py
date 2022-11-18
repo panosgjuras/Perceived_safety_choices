@@ -1,15 +1,7 @@
-"""
-A network router based on perceived safety
-and Dijkstra algorithm
-
-@author: ptzouras
-National Technical University of Athens
-Research project: SIM4MTRAN
-"""
-
 import pandas as pd
 import dijkstra as dij
 import os
+import math
 
 def utils_cal(df, cf, dmin):
     # calclation of the utility based on an alternative utility function
@@ -72,12 +64,12 @@ def dij_run(ln, nd, tmode, fr, to, mth, minv, dmin, coeff):
     if check != 999: # run Dijkstra shortest path
         dijkstra = dij.DijkstraSPF(graph, fr)
         print(dijkstra)
-        nod = list(nd.id)
+        # nod = list(nd.id)
         # print("%-5s %-5s" % ("label", "distance"))
         # for u in nod: 
         #    print(u, dijkstra.get_distance(u))
-        print(dijkstra.get_distance(to))
-        x = dijkstra.get_path(to)
+        if math.isinf(dijkstra.get_distance(to)): x = dijkstra.get_path(to)
+        else: x = 'no path', print(x)
     return x 
 
 def dij_dist_calc (path, ln): # calculate the distance
