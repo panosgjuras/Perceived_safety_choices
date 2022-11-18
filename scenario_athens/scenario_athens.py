@@ -21,7 +21,7 @@ nod = trfp.read_shapefile(os.path.join(root_dir, 'shapefiles', 'experimental_fie
 lin = trfp.read_shapefile(os.path.join(root_dir, 'shapefiles', 'experimental_field_athens_links.shp'))
 # update traffic parameters and coordinates with nodes
 lin = trfp.upd_links(lin, nod)
-# estimate perceived safety model parameters using the output model from Rchoice
+# update perceived safety model parameters using the output model from Rchoice
 # in this case, default perceived safety models are used. User your own models
 cf = psmodel.psafe_coeff_upd(os.path.join(root_dir, 'default_models', 'psafe','simple_psafe_models.csv'))
 # estimate perceived safety per link and per transport mode
@@ -31,13 +31,16 @@ convert.netcsv_cr(lin, os.path.join(root_dir, 'output_csv', 'experimental_field_
 # create an XML for MATSim
 convert.netxml_cr(lin, nod, os.path.join(root_dir, 'output_xml', 'experimental_field_athens_upd_links.xml'))
 
+# import choice model to run routin
+# in this case, default choice model is utilized
+coeff = pd.read_csv(os.path.join(root_dir, 'default_models', 'choice', 'coeff_route_model.csv') , sep=',').set_index('param')
+
 # run routing algorithm in this network
-origin = 9000 # select origin point
-dest = 4000 # select destination point
-mode = 'escooter' # select transport mode
-method = 'best' # select method, it can be 'shortest' or 'best' path
+fr = 9000 # select origin point
+to = 4000 # select destination point
+tmode = 'escooter' # select transport mode
+mth = 'best' # select method, it can be 'shortest' or 'best' path
 minv = 2 # miniumum ACCEPTABLE perceived safety level
 dmin = 100 # in meters minimum distance so that psafe really matters
-coeff = pd.read_csv(os.path.join(root_dir, 'default_models', 'choice', 'coeff_route_model.csv') , sep=',').set_index('param')
-path = dij.dij_run(lin, nod, mode, origin, dest, method, minv, dmin, coeff) # estimate the path
+path = dij.dij_run(lin, nod, tmode, fr, to, meth, minv, dmin, coeff) # estimate the path
 print(dij.dij_dist_calc (path, lin)) # estimate the path distance
