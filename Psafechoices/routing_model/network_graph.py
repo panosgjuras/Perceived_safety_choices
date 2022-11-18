@@ -88,7 +88,7 @@ def dij_run(ln, nd, tmode, fr, to, mth, minv, dmin, coeff):
 # UPDATE HERE TO CREATE MATRICES FROM ONE PATH TO THE OTHER
 
 # UPDATE HERE TO ESTIMATE TIME FROM TO
-def dij_dist_calc(path, ln, tmode, coeff): # calculate the distance
+def dij_dist_calc(path, ln): # calculate the distance
     if path!= 'no path':
         suml = 0
         for i in range (len(path) - 1):
