@@ -31,7 +31,7 @@ setup(name = "psafechoices",
       install_requires = ['biogeme>=3.2.10', 
                           'dijkstra>=0.2.1',
                           'lxml>=4.9.1',
-                          'numpy>=1.23.3',
-                          'pandas>=1.5.0',
+                          # 'numpy>=1.23.3',
+                          # 'pandas>=1.5.0',
                           'pyshp>=2.3.1']
       )
