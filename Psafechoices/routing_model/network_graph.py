@@ -76,7 +76,7 @@ def dij_run(ln, nd, tmode, fr, to, mth, minv, dmin, coeff):
         # print("%-5s %-5s" % ("label", "distance"))
         # for u in nod: 
         #    print(u, dijkstra.get_distance(u))
-        print(dijkstra.get_path(to))
+        print(dijkstra.get_distance(to))
         x = dijkstra.get_path(to)
     return x 
 
