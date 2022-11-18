@@ -68,8 +68,10 @@ def dij_run(ln, nd, tmode, fr, to, mth, minv, dmin, coeff):
         # print("%-5s %-5s" % ("label", "distance"))
         # for u in nod: 
         #    print(u, dijkstra.get_distance(u))
-        if math.isinf(dijkstra.get_distance(to)): x = dijkstra.get_path(to)
-        else: x = 'no path', print(x)
+        if math.isinf(dijkstra.get_distance(to)): 
+            x = 'no path'
+            print(x)
+        else: x = dijkstra.get_path(to)
     return x 
 
 def dij_dist_calc (path, ln): # calculate the distance
