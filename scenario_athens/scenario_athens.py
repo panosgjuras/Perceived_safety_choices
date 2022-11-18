@@ -40,7 +40,7 @@ fr = 9000 # select origin point
 to = 4000 # select destination point
 tmode = 'escooter' # select transport mode
 mth = 'best' # select method, it can be 'shortest' or 'best' path
-minv = 3 # miniumum ACCEPTABLE perceived safety level
+minv = 1 # miniumum ACCEPTABLE perceived safety level
 dmin = 100 # in meters minimum distance so that psafe really matters
 path = dij.dij_run(lin, nod, tmode, fr, to, mth, minv, dmin, coeff) # estimate the path
 print(dij.dij_dist_calc (path, lin)) # estimate the path distance

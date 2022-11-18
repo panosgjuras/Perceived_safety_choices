@@ -23,6 +23,15 @@ def utils_cal(df, cf, dmin):
         + cf.loc['bpsafe', 'walk'] * (df.walk_psafe_l - 4) * (df.length/dmin))
     return df
 
+# def mode_psafe_checker(tmode, ln, i):
+#    if(tmode == 'car' or tmode == 'ebike' or tmode == 'escooter' or tmode == 'walk'): x = 'yes'
+#        if tmode == 'car': psafe = ln.car_psafe_l.iloc[i]
+#        elif tmode == 'ebike': psafe = ln.ebike_psafe_l.iloc[i]
+#        elif tmode == 'escooter': psafe = ln.escoot_psafe_l.iloc[i]
+#        elif tmode == 'walk': psafe = ln.walk_psafe_l.iloc[i]
+#    else: x = 'no'
+#    return x
+
 def dij_graph(ln, tmode, minv, mth):
     graph = dij.Graph()
     
@@ -63,25 +72,29 @@ def dij_run(ln, nd, tmode, fr, to, mth, minv, dmin, coeff):
     
     if check != 999: # run Dijkstra shortest path
         dijkstra = dij.DijkstraSPF(graph, fr)
-        print(dijkstra)
+        # print(dijkstra)
         # nod = list(nd.id)
         # print("%-5s %-5s" % ("label", "distance"))
         # for u in nod: 
         #    print(u, dijkstra.get_distance(u))
-        if math.isinf(dijkstra.get_distance(to)): 
+        if math.isinf(dijkstra.get_distance(to)): # it estimates distance based on weigths
             x = 'no path'
             print(x)
         else: 
             x = dijkstra.get_path(to)
             print(x)
-            print(dijkstra.get_distance(to))
     return x 
 
-def dij_dist_calc(path, ln): # calculate the distance
+# UPDATE HERE TO CREATE MATRICES FROM ONE PATH TO THE OTHER
+
+# UPDATE HERE TO ESTIMATE TIME FROM TO
+def dij_dist_calc(path, ln, tmode, coeff): # calculate the distance
     if path!= 'no path':
         suml = 0
         for i in range (len(path) - 1):
             matchid = ln.index[(ln.from1 == path[i]) & (ln.to1 == path[i + 1])].tolist()
             add = ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'length']
             suml = suml + add[matchid[0]]
+        print('the distance from ', path[0], ' to ', path[len(path)], ' is ', suml, ' m')
+    else: suml = 'no path'
     return suml
