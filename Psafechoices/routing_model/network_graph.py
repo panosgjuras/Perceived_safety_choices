@@ -15,7 +15,7 @@ def utils_cal(df, cf, dmin, mode):
         df["ebike_utils"] = cf.loc['btime', 'ebike'] * (df.length/(cf.loc['speed', 'ebike'] * 1000)\
                             + cf.loc['bcost', 'ebike'] * (cf.loc['dcost', 'ebike']/1000) * df.length \
                             + cf.loc['bpsafe', 'ebike'] * (df.ebike_psafe_l - 4) * (df.length/dmin))
-    elif mode == 'escoοter':
+    elif mode == 'escooter':
         df["escoot_utils"] = cf.loc['btime', 'escooter'] * (df.length/(cf.loc['speed', 'escooter'] * 1000)\
                              + cf.loc['bcost', 'escooter'] * (cf.loc['dcost', 'escooter']/1000) * df.length \
                              + cf.loc['bpsafe', 'escooter'] * (df.escoot_psafe_l - 4) * (df.length/dmin))
