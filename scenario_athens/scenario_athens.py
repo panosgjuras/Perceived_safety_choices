@@ -6,6 +6,8 @@
 
 import os
 import pandas as pd
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 from Psafechoices.network_analysis import traffic_params_upd as trfp
 from Psafechoices.network_analysis import lin_psafe_calc as linpsafe
@@ -43,8 +45,8 @@ convert.netxml_cr(lin, nod, os.path.join(root_dir, 'output_xml', 'experimental_f
 speed = 15 # define mean speed of the selected mode
 dcost = 7/speed
 coeff = pd.read_csv(os.path.join(root_dir, 'default_models', 'choice','coeff_choice_model.csv'),',')
-modex = 'escooter' # select transport mode: car, ebike, escooter, walk
-coeff = opp.opp_cost_calc(coeff, modex, speed, dcost)
+mode = 'escooter' # select transport mode: car, ebike, escooter, walk
+coeff = opp.opp_cost_calc(coeff, mode, speed, dcost)
 # coeff = pd.read_csv(os.path.join(root_dir, 'default_models', 'choice', 'coeff_route_model.csv') , sep=',').set_index('param')
 
 # run routing algorithm in this network
@@ -54,5 +56,5 @@ to = 4000 # select destination point
 mth = 'best' # select method, it can be 'shortest' or 'best' path
 minv = 1 # miniumum ACCEPTABLE perceived safety level
 dmin = 100 # in meters minimum distance so that psafe really matters
-path = dij.dij_run(lin, nod, modex, fr, to, mth, minv, dmin, coeff) # estimate the path
+path = dij.dij_run(lin, nod, mode, fr, to, mth, minv, dmin, coeff) # estimate the path
 print(dij.dij_dist_calc (path, lin)) # estimate the path distance
