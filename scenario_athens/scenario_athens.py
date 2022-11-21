@@ -29,7 +29,7 @@ lin = trfp.read_shapefile(os.path.join(root_dir, 'shapefiles', 'experimental_fie
 lin = trfp.upd_links(lin, nod)
 # update perceived safety model parameters using the output model from Rchoice
 # in this case, default perceived safety models are used. Use your own models...
-cf = psmodel.psafe_coeff_upd(pd.read_csv(os.path.join(root_dir, 'default_models', 'psafe','simple_psafe_models.csv')))
+cf = psmodel.psafe_coeff_upd(pd.read_csv(os.path.join(root_dir, 'default_models', 'psafe','simple_psafe_models.csv'), ','))
 # estimate perceived safety per link and per transport mode
 lin = linpsafe.lin_psafe(lin, cf)
 # create a csv file for mapping purposes

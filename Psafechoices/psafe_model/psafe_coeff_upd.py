@@ -3,6 +3,7 @@ import os
 # import numpy as np
 
 def psafe_coeff_upd(coeff):
+    coeff = coeff
     coeff = coeff.rename(columns = {'Unnamed: 0':'coeffs'})
     coeff = coeff.set_index('coeffs')
     coeff.loc['kappa.1'] = coeff.loc['kappa.1'] - coeff.loc['constant']
