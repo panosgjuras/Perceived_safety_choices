@@ -29,7 +29,8 @@ lin = trfp.read_shapefile(os.path.join(root_dir, 'shapefiles', 'experimental_fie
 lin = trfp.upd_links(lin, nod)
 # update perceived safety model parameters using the output model from Rchoice
 # in this case, default perceived safety models are used. Use your own models...
-cf = psmodel.psafe_coeff_upd(pd.read_csv(os.path.join(root_dir, 'default_models', 'psafe','simple_psafe_models.csv'), ','))
+cf = pd.read_csv(os.path.join(root_dir, 'default_models', 'psafe','simple_psafe_models.csv'), ',')
+cf = psmodel.psafe_coeff_upd(cf)
 # estimate perceived safety per link and per transport mode
 lin = linpsafe.lin_psafe(lin, cf)
 # create a csv file for mapping purposes
@@ -42,7 +43,8 @@ convert.netxml_cr(lin, nod, os.path.join(root_dir, 'output_xml', 'experimental_f
 tmode = 'escooter' # select transport mode: car, ebike, escooter, walk
 speed = 15 # define mean speed of the selected mode
 dcost = 7/(speed * 1000)
-coeff = opp.opp_cost_calc(pd.read_csv(os.path.join(root_dir, 'default_models', 'choice','coeff_choice_model.csv')), 
+coeff
+coeff = opp.opp_cost_calc(pd.read_csv(os.path.join(root_dir, 'default_models', 'choice','coeff_choice_model.csv'),','), 
                           tmode, speed, dcost)
 # coeff = pd.read_csv(os.path.join(root_dir, 'default_models', 'choice', 'coeff_route_model.csv') , sep=',').set_index('param')
 
