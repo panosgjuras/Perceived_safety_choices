@@ -30,7 +30,8 @@ def prin_res(vot, vos1, vos2, mode):
     
 def bin_model_coeff(vot, vos1, mode, speed, dcost):
     btime = -6.0
-    bcost = vot/btime
+    if mode!='walk': bcost = vot/btime
+    else: bcost = 0
     bpsafe = vos1 * btime
     d = {'param':['speed', 'dcost', 'btime', 'bcost', 'bpsafe'],
          mode : [speed, dcost, btime, bcost, bpsafe]}
