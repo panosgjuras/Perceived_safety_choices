@@ -3,25 +3,27 @@ import dijkstra as dij
 import os
 import math
 
-def utils_cal(df, cf, dmin):
+def utils_cal(df, cf, dmin, mode):
     # calclation of the utility based on an alternative utility function
     # Psafe impact is a function of dmin
     # It means that for links longer than dmin psafe has a significant weigth to utility function.....
-    df["car_utils"] = cf.loc['btime', 'car'] * (df.length/(cf.loc['speed', 'car'] * 1000) \
-        + cf.loc['bcost', 'car'] * cf.loc['dcost', 'car'] * df.length \
-        + cf.loc['bpsafe', 'car'] * (df.car_psafe_l - 4) * (df.length/dmin))
-    
-    df["ebike_utils"] = cf.loc['btime', 'ebike'] * (df.length/(cf.loc['speed', 'ebike'] * 1000)\
-        + cf.loc['bcost', 'ebike'] * cf.loc['dcost', 'ebike'] * df.length \
-        + cf.loc['bpsafe', 'ebike'] * (df.ebike_psafe_l - 4) * (df.length/dmin))   # ERROR ERROR ERROR
-    
-    df["escoot_utils"] = cf.loc['btime', 'escooter'] * (df.length/(cf.loc['speed', 'escooter'] * 1000)\
-        + cf.loc['bcost', 'escooter'] * cf.loc['dcost', 'escooter'] * df.length \
-        + cf.loc['bpsafe', 'escooter'] * (df.escoot_psafe_l - 4) * (df.length/dmin))
-    
-    df["walk_utils"] = cf.loc['btime', 'walk'] * (df.length/(cf.loc['speed', 'walk']  * 1000)\
-        + cf.loc['bcost', 'walk'] * cf.loc['dcost', 'walk'] * df.length \
-        + cf.loc['bpsafe', 'walk'] * (df.walk_psafe_l - 4) * (df.length/dmin))
+    if mode == 'car':
+        df["car_utils"] = cf.loc['btime', 'car'] * (df.length/(cf.loc['speed', 'car'] * 1000) \
+                          + cf.loc['bcost', 'car'] * (cf.loc['dcost', 'car']/1000) * df.length \
+                          + cf.loc['bpsafe', 'car'] * (df.car_psafe_l - 4) * (df.length/dmin))
+    elif mode =='ebike':
+        df["ebike_utils"] = cf.loc['btime', 'ebike'] * (df.length/(cf.loc['speed', 'ebike'] * 1000)\
+                            + cf.loc['bcost', 'ebike'] * (cf.loc['dcost', 'ebike']/1000) * df.length \
+                            + cf.loc['bpsafe', 'ebike'] * (df.ebike_psafe_l - 4) * (df.length/dmin))
+    elif mode == 'escoter':
+        df["escoot_utils"] = cf.loc['btime', 'escooter'] * (df.length/(cf.loc['speed', 'escooter'] * 1000)\
+                             + cf.loc['bcost', 'escooter'] * (cf.loc['dcost', 'escooter']/1000) * df.length \
+                             + cf.loc['bpsafe', 'escooter'] * (df.escoot_psafe_l - 4) * (df.length/dmin))
+    elif mode == 'walk':
+        df["walk_utils"] = cf.loc['btime', 'walk'] * (df.length/(cf.loc['speed', 'walk']  * 1000)\
+                           + cf.loc['bcost', 'walk'] * (cf.loc['dcost', 'walk']/1000) * df.length \
+                           + cf.loc['bpsafe', 'walk'] * (df.walk_psafe_l - 4) * (df.length/dmin))
+    else: df["utils"] = 99999
     return df
 
 # def mode_psafe_checker(tmode, ln, i):
@@ -66,8 +68,7 @@ def dij_graph(ln, tmode, minv, mth):
 
 def dij_run(ln, nd, tmode, fr, to, mth, minv, dmin, coeff):
     
-    ln = utils_cal(ln, coeff, dmin)
-    
+    ln = utils_cal(ln, coeff, dmin, tmode)
     graph = dij_graph(ln, tmode, minv, mth)[0]
     check = dij_graph(ln, tmode, minv, mth)[1]
     

@@ -42,10 +42,9 @@ convert.netxml_cr(lin, nod, os.path.join(root_dir, 'output_xml', 'experimental_f
 # in this case, default choice model is utilized
 tmode = 'escooter' # select transport mode: car, ebike, escooter, walk
 speed = 15 # define mean speed of the selected mode
-dcost = 7/(speed * 1000)
-coeff
-coeff = opp.opp_cost_calc(pd.read_csv(os.path.join(root_dir, 'default_models', 'choice','coeff_choice_model.csv'),','), 
-                          tmode, speed, dcost)
+dcost = 7/speed
+coeff = pd.read_csv(os.path.join(root_dir, 'default_models', 'choice','coeff_choice_model.csv'),',')
+coeff = opp.opp_cost_calc(coeff, tmode, speed, dcost)
 # coeff = pd.read_csv(os.path.join(root_dir, 'default_models', 'choice', 'coeff_route_model.csv') , sep=',').set_index('param')
 
 # run routing algorithm in this network
@@ -57,3 +56,5 @@ minv = 1 # miniumum ACCEPTABLE perceived safety level
 dmin = 100 # in meters minimum distance so that psafe really matters
 path = dij.dij_run(lin, nod, tmode, fr, to, mth, minv, dmin, coeff) # estimate the path
 print(dij.dij_dist_calc (path, lin)) # estimate the path distance
+
+psmodel.psafe_coeff_upd(cf)
