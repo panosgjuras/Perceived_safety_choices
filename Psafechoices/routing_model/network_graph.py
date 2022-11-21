@@ -97,5 +97,5 @@ def dij_dist_calc(path, ln): # calculate the distance
             matchid = ln.index[(ln.from1 == path[i]) & (ln.to1 == path[i + 1])].tolist()
             add = ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'length']
             suml = suml + add[matchid[0]]
-    else: suml = 'no path'
+    else: suml = 999999
     return suml
