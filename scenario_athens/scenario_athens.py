@@ -40,7 +40,7 @@ convert.netxml_cr(lin, nod, os.path.join(root_dir, 'output_xml', 'experimental_f
 
 # import choice model to run routin
 # in this case, default choice model is utilized
-tmode = 'escooter' # select transport mode: car, ebike, escooter, walk
+tmode = 'escoοter' # select transport mode: car, ebike, escooter, walk
 speed = 15 # define mean speed of the selected mode
 dcost = 7/speed
 coeff = pd.read_csv(os.path.join(root_dir, 'default_models', 'choice','coeff_choice_model.csv'),',')
