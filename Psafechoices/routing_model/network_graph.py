@@ -7,19 +7,20 @@ def utils_cal(df, cf, dmin):
     # calclation of the utility based on an alternative utility function
     # Psafe impact is a function of dmin
     # It means that for links longer than dmin psafe has a significant weigth to utility function.....
-    df["car_utils"] = - (cf.loc['btime', 'car'] * (df.length/(cf.loc['speed', 'car'] * 1000)) \
-        + cf.loc['bcost', 'car'] * (cf.loc['speed', 'car']/(cf.loc['speed', 'car'] * 1000)) * df.length \
+    df["car_utils"] = cf.loc['btime', 'car'] * (df.length/(cf.loc['speed', 'car'] * 1000) \
+        + cf.loc['bcost', 'car'] * cf.loc['dcost', 'car'] * df.length \
         + cf.loc['bpsafe', 'car'] * (df.car_psafe_l - 4) * (df.length/dmin))
     
-    df["ebike_utils"] = - (cf.loc['btime', 'ebike'] * (df.length/(cf.loc['speed', 'ebike'] * 1000)) \
-        + cf.loc['bcost', 'ebike'] * (cf.loc['speed', 'ebike']/(cf.loc['speed', 'ebike'] * 1000)) * df.length \
-        + cf.loc['bpsafe', 'ebike'] * (df.ebike_psafe_l - 4) * (df.length/dmin))
+    df["ebike_utils"] = cf.loc['btime', 'ebike'] * (df.length/(cf.loc['speed', 'ebike'] * 1000)\
+        + cf.loc['bcost', 'ebike'] * cf.loc['dcost', 'ebike'] * df.length \
+        + cf.loc['bpsafe', 'ebike'] * (df.ebike_psafe_l - 4) * (df.length/dmin))   # ERROR ERROR ERROR
     
-    df["escoot_utils"] = - (cf.loc['btime', 'escooter'] * (df.length/(cf.loc['speed', 'escooter'] * 1000)) \
-        + cf.loc['bcost', 'escooter'] * (cf.loc['speed', 'escooter']/(cf.loc['speed', 'escooter'] * 1000)) * df.length \
+    df["escoot_utils"] = cf.loc['btime', 'escooter'] * (df.length/(cf.loc['speed', 'escooter'] * 1000)\
+        + cf.loc['bcost', 'escooter'] * cf.loc['dcost', 'escooter'] * df.length \
         + cf.loc['bpsafe', 'escooter'] * (df.escoot_psafe_l - 4) * (df.length/dmin))
     
-    df["walk_utils"] = - (cf.loc['btime', 'walk'] * (df.length/(cf.loc['speed', 'walk']  * 1000)) \
+    df["walk_utils"] = cf.loc['btime', 'walk'] * (df.length/(cf.loc['speed', 'walk']  * 1000)\
+        + cf.loc['bcost', 'walk'] * cf.loc['dcost', 'walk'] * df.length \
         + cf.loc['bpsafe', 'walk'] * (df.walk_psafe_l - 4) * (df.length/dmin))
     return df
 

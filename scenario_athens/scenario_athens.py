@@ -14,6 +14,11 @@ from Psafechoices.network_analysis import shp_to_csv_xml_tool as convert
 from Psafechoices.routing_model import network_graph as dij
 
 root_dir = os.path.dirname(os.path.realpath(__file__))
+
+# To run the Psafechoices model, it requires two models as inputs
+# Psafe model: ordinal logistic regression model with infrastructure parameters
+# Choice model: BIOGEME discrete choice mode with time + cost + safety
+
 # read the nodes from a shapefile
 nod = trfp.read_shapefile(os.path.join(root_dir, 'shapefiles', 'experimental_field_athens_nodes.shp'))
 # read the links from a shapefile
@@ -22,7 +27,7 @@ lin = trfp.read_shapefile(os.path.join(root_dir, 'shapefiles', 'experimental_fie
 # update traffic parameters and coordinates with nodes
 lin = trfp.upd_links(lin, nod)
 # update perceived safety model parameters using the output model from Rchoice
-# in this case, default perceived safety models are used. User your own models
+# in this case, default perceived safety models are used. Use your own models...
 cf = psmodel.psafe_coeff_upd(os.path.join(root_dir, 'default_models', 'psafe','simple_psafe_models.csv'))
 # estimate perceived safety per link and per transport mode
 lin = linpsafe.lin_psafe(lin, cf)
@@ -38,7 +43,7 @@ coeff = pd.read_csv(os.path.join(root_dir, 'default_models', 'choice', 'coeff_ro
 # run routing algorithm in this network
 fr = 9000 # select origin point
 to = 4000 # select destination point
-tmode = 'escooter' # select transport mode
+tmode = 'escooter' # select transport mode: car, ebike, escooter, walk
 mth = 'best' # select method, it can be 'shortest' or 'best' path
 minv = 1 # miniumum ACCEPTABLE perceived safety level
 dmin = 100 # in meters minimum distance so that psafe really matters
