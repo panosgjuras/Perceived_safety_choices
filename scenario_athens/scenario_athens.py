@@ -26,7 +26,7 @@ root_dir = os.path.dirname(os.path.realpath(__file__))
 nod = trfp.read_shapefile(os.path.join(root_dir, 'shapefiles', 'experimental_field_athens_nodes.shp'))
 # read the links from a shapefile
 # TEST HERE NEW SCENARIOS WITH INFRASTUCTURE UPDATES
-lin = trfp.read_shapefile(os.path.join(root_dir, 'shapefiles', 'experimental_field_athens_links.shp'))
+lin = trfp.read_shapefile(os.path.join(root_dir, 'shapefiles', 'experimental_field_athens_links_scenario1.shp'))
 # update traffic parameters and coordinates with nodes
 lin = trfp.upd_links(lin, nod)
 # update perceived safety model parameters using the output model from Rchoice
@@ -36,17 +36,17 @@ cf = psmodel.psafe_coeff_upd(cf)
 # estimate perceived safety per link and per transport mode
 lin = linpsafe.lin_psafe(lin, cf)
 # create a csv file for mapping purposes
-convert.netcsv_cr(lin, os.path.join(root_dir, 'output_csv', 'experimental_field_athens_upd_links.csv'))
+convert.netcsv_cr(lin, os.path.join(root_dir, 'output_csv', 'experimental_field_athens_upd_links_scenario1.csv'))
 # create an XML for MATSim
-convert.netxml_cr(lin, nod, os.path.join(root_dir, 'output_xml', 'experimental_field_athens_upd_links.xml'))
+convert.netxml_cr(lin, nod, os.path.join(root_dir, 'output_xml', 'experimental_field_athens_upd_links_scenario1.xml'))
 
 # import choice model to run routin
 # in this case, default choice model is utilized
 speed = 15 # define mean speed of the selected mode
 dcost = 7/speed
 coeff = pd.read_csv(os.path.join(root_dir, 'default_models', 'choice','coeff_choice_model.csv'),',')
-mode = 'walk' # select transport mode: car, ebike, escooter, walk
-coeff = opp.opp_cost_calc(coeff, mode, speed, dcost)
+# mode = 'walk' # select transport mode: car, ebike, escooter, walk
+# coeff = opp.opp_cost_calc(coeff, mode, speed, dcost)
 # coeff = pd.read_csv(os.path.join(root_dir, 'default_models', 'choice', 'coeff_route_model.csv') , sep=',').set_index('param')
 
 # run routing algorithm in this network
@@ -55,6 +55,26 @@ to = 4000 # select destination point
 
 mth = 'best' # select method, it can be 'shortest' or 'best' path
 minv = 1 # miniumum ACCEPTABLE perceived safety level
-dmin = 100 # in meters minimum distance so that psafe really matters
-path = dij.dij_run(lin, nod, mode, fr, to, mth, minv, dmin, coeff) # estimate the path
-print(dij.dij_dist_calc (path, lin)) # estimate the path distance
+dmin = 5000 # in meters minimum distance so that psafe really matters
+# path = dij.dij_run(lin, nod, mode, fr, to, mth, minv, dmin, coeff) # estimate the path
+# print(dij.dij_dist_calc (path, lin)) # estimate the path distance
+
+def simulate_params(lin, nod, fr, to, minv, dmin, mode, coeff):
+    coeff = opp.opp_cost_calc(coeff, mode, speed, dcost)
+    mth = 'best'
+    df = pd.DataFrame(columns =['dmin', 'minv', 'dist'])
+    for m in minv:
+        for d in dmin: 
+            path = dij.dij_run(lin, nod, mode, fr, to, mth, m, d, coeff)
+            dist = dij.dij_dist_calc (path, lin)
+            d = {'dmin':[d], 'minv':[m], 'dist':[dist], 'mode':[mode]}
+            df = df.append(pd.DataFrame(d), ignore_index=True)
+    return df
+
+savdf = simulate_params(lin, nod, fr, to, range(0,8),range(0, 10001, 250), 'car', coeff)          
+savdf = savdf.append(simulate_params(lin, nod, fr, to, range(0,8),range(0, 10001, 250), 'escooter', coeff), ignore_index = True)
+savdf = savdf.append(simulate_params(lin, nod, fr, to, range(0,8),range(0, 10001, 250), 'walk', coeff), ignore_index = True)
+savdf.to_csv('G:/My Drive/research_papers/paper19_SIM4MTRAN_model/paper_SUSTAINABILITY/new_data_analysis/scenario1_routing_results.csv')
+
+
+
