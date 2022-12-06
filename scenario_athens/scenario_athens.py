@@ -76,19 +76,25 @@ def define_paths(sdf, mode):
         sdf = pd.merge(left=sdf, right=df, how="inner", left_on='dist', right_on='dist')
         return sdf
 
-cardf = simulate_params(lin, nod, fr, to, range(0,8),range(0, 10001, 250), 'car', coeff, 'scenario00')
-      
-escootdf = simulate_params(lin, nod, fr, to, range(0,8),range(0, 10001, 250), 'escooter', coeff, 'scenario00')
+def show_unique(df):
+    ndf = df[["path", "dist", "scenario"]]
+    ndf = ndf.sort_values(["path","dist", "scenario"]).drop_duplicates("path")
+    return ndf
 
-walkdf = simulate_params(lin, nod, fr, to, range(0,8),range(0, 10001, 250), 'walk', coeff, 'scenario00')
+step = 50
+cardf = simulate_params(lin, nod, fr, to, range(0,8),range(0, 10001, step), 'car', coeff, 'scenario00')
+      
+escootdf = simulate_params(lin, nod, fr, to, range(0,8),range(0, 10001, step), 'escooter', coeff, 'scenario00')
+
+walkdf = simulate_params(lin, nod, fr, to, range(0,8),range(0, 10001, step), 'walk', coeff, 'scenario00')
 
 lin = trfp.read_shapefile(os.path.join(root_dir, 'shapefiles', 'experimental_field_athens_links_scenario1.shp'))
 lin = trfp.upd_links(lin, nod)
 lin = linpsafe.lin_psafe(lin, cf)
 
-cardf = cardf.append(simulate_params(lin, nod, fr, to, range(0,8),range(0, 10001, 250), 'car', coeff, 'scenario01'))
-escootdf = escootdf.append(simulate_params(lin, nod, fr, to, range(0,8),range(0, 10001, 250), 'escooter', coeff, 'scenario01'))
-walkdf = walkdf.append(simulate_params(lin, nod, fr, to, range(0,8),range(0, 10001, 250), 'walk', coeff, 'scenario01'))
+cardf = cardf.append(simulate_params(lin, nod, fr, to, range(0,8),range(0, 10001, step), 'car', coeff, 'scenario01'))
+escootdf = escootdf.append(simulate_params(lin, nod, fr, to, range(0,8),range(0, 10001, step), 'escooter', coeff, 'scenario01'))
+walkdf = walkdf.append(simulate_params(lin, nod, fr, to, range(0,8),range(0, 10001, step), 'walk', coeff, 'scenario01'))
 
 cardf = define_paths(cardf, 'car') 
 escootdf = define_paths(escootdf, 'escooter')
@@ -96,7 +102,6 @@ walkdf = define_paths(walkdf, 'walk')
 savdf = cardf
 savdf = savdf.append(escootdf)
 savdf = savdf.append(walkdf)
-savdf.to_csv('G:/My Drive/research_papers/paper19_SIM4MTRAN_model/paper_SUSTAINABILITY/new_data_analysis/all_scenarios_routing_results.csv')
+savdf.to_csv('G:/My Drive/research_papers/paper19_SIM4MTRAN_model/paper_SUSTAINABILITY/new_data_analysis/all_scenarios_routing_results_step50.csv')
 
-
-
+path_table = show_unique(savdf)
