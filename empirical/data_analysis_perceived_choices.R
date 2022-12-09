@@ -7,27 +7,29 @@ library(ggplot2)
 library(RColorBrewer)
 library(ggpubr)
 library(psych)
+library(dplyr)
+library(olsrr)
+library(VGAM)
 
-#setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 data1<-read.csv2("datasets/rating_dataset_perceived_choices.csv", header=T,dec=".",sep=",") # this is the perceived safery dataset
-socio<-read.csv2("datasets/socio_dataset_perceived_choices.csv", header=T,dec=".",sep=",") # this socio-demographic dataset
 # data2<-read.csv2("datasets/choice_dataset_perceived_choices.csv", header=T,dec=".",sep=",")
 
 # 1. Descriptive statistics in sociodemo characteristics
-summary(as.factor(socio$gender)) # it is balanced, male and female approx 50 - 50
-summary(as.factor(socio$age)) # young young people...
+summary(as.factor(data1$gender)) # it is balanced, male and female approx 50 - 50
+summary(as.factor(data1$age)) # young young people...
 # we need here a new variable...
-summary(as.factor(socio$young)) # so 91 young people vs 38 over 30
+summary(as.factor(data1$young)) # so 91 young people vs 38 over 30
 # summary(as.factor(socio$income)) # income, employment and education are not factors of psafe
 # summary(as.factor(socio$employment)) # so skip this variable
 # summary(as.factor(socio$education))
-summary(as.factor(socio$car_own)) # only 5 are not car - owners ok!!!!
-summary(as.factor(socio$cycle_own)) # 72 out 129 do have a bicycle, interesting!
-summary(as.factor(socio$escoot_own)) # only 8 have an e-scooter at home
-summary(as.factor(socio$bike_frequency)) # very rare rare use of bicycle, even though they bicycle, 
+summary(as.factor(data1$car_own)) # only 5 are not car - owners ok!!!!
+summary(as.factor(data1$cycle_own)) # 72 out 129 do have a bicycle, interesting!
+summary(as.factor(data1$escoot_own)) # only 8 have an e-scooter at home
+summary(as.factor(data1$bike_frequency)) # very rare rare use of bicycle, even though they bicycle, 
 # it cannot be used as a variable..., surely.
-summary(as.factor(socio$metro_frequency)) # not useful
-summary(as.factor(socio$escooter_frequency)) # we do not have e-scooter riders ok!
+summary(as.factor(data1$metro_frequency)) # not useful
+summary(as.factor(data1$escooter_frequency)) # we do not have e-scooter riders ok!
 
 # 2. Descriptive statistics in psafe ratings
 describe(subset(data1, tmode == 'car')$psafe)
@@ -111,21 +113,12 @@ hist_psafe_100 <- function(df){
 # histograms: psafe vs mode vs gender (3 dimmensions of psafe) 
 ggarrange(hist_psafe(subset(data1, gender == 0)) + ggtitle('Females'),
           hist_psafe(subset(data1, gender == 1)) + ggtitle('Males'),
+          hist_psafe(subset(data1, young == 0)) + ggtitle('Not young (>= 30 years)'),
+          hist_psafe(subset(data1, young == 1)) + ggtitle('Young (< 30 years)'),
+          hist_psafe(subset(data1, car_own == 1)) + ggtitle('Driving license'),
+          hist_psafe(subset(data1, car_own == 0)) + ggtitle('No driving license'),
+          nrow = 3, ncol = 2, 
           common.legend = TRUE, legend = 'bottom') # so here, we can see different distribution, which is super interesting
-summary(aov(data1$psafe~factor(data1$gender))) # gender is definetely a factor of perceived safety in general, very high significance!!!
-
-# histograms: psafe vs mode vs age group
-ggarrange(hist_psafe_100(subset(data1, gender == 0)) + ggtitle('Females'),
-          hist_psafe_100(subset(data1, gender == 1)) + ggtitle('Males'),
-          common.legend = TRUE, legend = 'bottom', ncol = 2) # only noticeable differences is how not young perceive safety of esooters
-
-# histograms: psafe vs mode vs infrastructure type
-ggarrange(hist_psafe(subset(data1, type==1)) + ggtitle('Type 1: Sidewalk < 1.5 m wide'),
-          hist_psafe(subset(data1, type==2)) + ggtitle('Type 2: Sidewalk > 1.5 m wide'),
-          hist_psafe(subset(data1, type==3)) + ggtitle('Type 3: With cycle lane'),
-          hist_psafe(subset(data1, type==4)) + ggtitle('Type 4: Shared space'),
-          ncol=2, nrow=2, common.legend = TRUE, legend = 'bottom') # ok this is super super, and gives clear results...in the dillemma to share or not...
-# segregation is everything....they focus on the road environment, the road section...
 
 # 6. Impact of traffic flow conditions
 hist_veh_volume <- function(df){
@@ -136,7 +129,7 @@ hist_veh_volume <- function(df){
     # geom_text(aes(label = scales::percent(..count../tapply(..count.., ..x.. ,sum)[..x..], accuracy = 0.1)),
     #           position = position_fill(vjust = 0.5),
     #          stat = "count") + theme_bw() +
-    scale_x_discrete(name ="Vehicle density (veh/km)", labels = c('20', '60', '100')) +
+    scale_x_discrete(name ="veh/km", labels = c('20', '60', '100')) +
     scale_y_continuous(name ="Percentage of responces (%)", 
                        labels = function(x) paste0(x*100, "%")) + coord_flip() + theme_bw()
   return(p)}
@@ -149,7 +142,7 @@ hist_bike_volume <- function(df){
     #geom_text(aes(label = scales::percent(..count../tapply(..count.., ..x.. ,sum)[..x..], accuracy = 0.1)),
     #          position = position_fill(vjust = 0.5),
     #          stat = "count") 
-    scale_x_discrete(name ="Bike density (bikes/km)", labels = c('10', '50', '90')) +
+    scale_x_discrete(name ="micro-modes/km", labels = c('10', '50', '90')) +
     scale_y_continuous(name ="Percentage of responces (%)", 
                        labels = function(x) paste0(x*100, "%")) + coord_flip() + theme_bw()
   return(p)}
@@ -162,7 +155,7 @@ hist_ped_volume <- function(df){
     #geom_text(aes(label = scales::percent(..count../tapply(..count.., ..x.. ,sum)[..x..], accuracy = 0.1)),
     #          position = position_fill(vjust = 0.5),
     #            stat = "count") 
-    scale_x_discrete(name ="Number of pedestrians (peds)", labels = c('5', '15', '25')) +
+    scale_x_discrete(name ="peds", labels = c('5', '15', '25')) +
     scale_y_continuous(name ="Percentage of responces (%)", 
                        labels = function(x) paste0(x*100, "%")) + coord_flip() + theme_bw()
   return(p)}
@@ -181,11 +174,37 @@ ggarrange(hist_veh_volume(subset(data1, tmode=='car')),
           hist_ped_volume(subset(data1, tmode=='walk')), 
           nrow = 4, ncol = 3, common.legend = TRUE, legend = 'bottom') # general, general
 
+# 8. Model pre tests
+corr<-function(df, x, m){ # plot correlation table funntion
+  corel = df
+  M = cor(corel)
+  testRes=cor.mtest(corel, conf.level=x, method = m)
+  corrplot(M, method = 'number', p.mat = testRes$p, sig.level = 1-x, diag=FALSE)} 
+
+corr(select(data1, c('gender', 'young', 'car_own', 'type1',
+                     'type2','type4', 'cross1', 'cross2', 'pav', 'obst', 'veh', 'bike', 'ped')), 0.95, 'kendall') # there are some correlations.
+
+ols_vif_tol(lm(formula = psafe ~ gender + young + type1 + type2 + type4 + pav + cross1 + cross2 + obst + veh + bike + ped, 
+               data=data1)) # no very significant multicolinearities
+
+prop_test<-function(df){
+  vglmP  <- vglm(formula = psafe ~ gender + young + type1 + type2 + type4 + pav + cross1 + cross2 + obst + veh + bike + ped, family=cumulative(parallel=TRUE,  reverse=TRUE),
+                 data=df)
+  vglmNP <- vglm(formula = psafe ~ gender + young + type1 + type2 + type4 + pav + cross1 + cross2 + obst + veh + bike + ped, family=cumulative(parallel=FALSE, reverse=TRUE),
+                 data=df)
+  VGAM::lrtest(vglmP, vglmNP, no.warning = TRUE)}
+
+prop_test(subset(data1, tmode=='car')) # did not pass
+prop_test(subset(data1, tmode=='ebike')) # passed 
+prop_test(subset(data1, tmode=='escoot')) # passed
+prop_test(subset(data1, tmode=='walk')) # did not pass
+
+
 # 7. Simple ordered logit models
 data1$psafe<-as.ordered(data1$psafe)
-model_car<-Rchoice(formula =  psafe ~ type1 + type2 + type4 + cross1 + cross2 + pav + obst, 
+model_car<-Rchoice(formula =  psafe ~ cartype1 + type2 + type4 + cross1 + cross2 + pav + obst, 
                    data = subset(data1, tmode=='car'),
-                   family = ordinal("logit"), panel=FALSE, method="bfgs") # estimate ordinal logit model, select y and xs
+                   family = ordinal("probit"), panel=FALSE, method="bfgs") # estimate ordinal logit model, select y and xs
 summary(model_car) # print model results
 
 model_ebike<-Rchoice(formula = psafe ~ type1 + type2 + type4 + cross1 + cross2 + pav + obst, 
@@ -203,35 +222,35 @@ model_walk<-Rchoice(formula = psafe ~ type1 + type2 + type4 + cross1 + cross2 + 
                    family=ordinal("logit"), panel=FALSE, method="bfgs") 
 summary(model_walk) # print model results
 
-sp_models<-data.frame(car = model_car[["coefficients"]], ebike = model_ebike[["coefficients"]],
-                      escoot = model_escoot[["coefficients"]], walk = model_walk[["coefficients"]])
+# sp_models<-data.frame(car = model_car[["coefficients"]], ebike = model_ebike[["coefficients"]],
+#                      escoot = model_escoot[["coefficients"]], walk = model_walk[["coefficients"]])
 
-write.csv(sp_models,"psafe_models/outputs/simple_psafe_models.csv") # save coefficients, keep the insignificant too
+# write.csv(sp_models,"psafe_models/outputs/simple_psafe_models.csv") # save coefficients, keep the insignificant too
 
 # 8. TRB ordered logit models
 data1$psafe<-as.ordered(data1$psafe)
-model_car_TRB<-Rchoice(formula = psafe ~ gender + young + type1 + type2 + type4 + pav + cross1 + cross2 + obst + veh + bike + ped,
+model_car_TRB<-Rchoice(formula = psafe ~ car_own + gender + young + type1 + type2 + type4 + pav + cross1 + cross2 + obst + veh + bike + ped,
                       data = subset(data1, tmode=='car'),
                       ranp=c(type1="n", type2 = "n", type4 = "n", veh = "n", bike = "n", ped="n"), haltons=NA,
                       family=ordinal("logit"), index='pid',
                       panel=TRUE, R=2000, print.init = TRUE)
 summary(model_car_TRB)
 
-model_ebike_TRB<-Rchoice(formula = psafe ~ gender + young + type1 + type2 + type4 + pav + cross1 + cross2 + obst + veh + bike + ped,
+model_ebike_TRB<-Rchoice(formula = psafe ~ car_own + gender + young + type1 + type2 + type4 + pav + cross1 + cross2 + obst + veh + bike + ped,
                        data = subset(data1, tmode=='ebike'),
                        ranp=c(type1="n", type2 = "n", type4 = "n", veh = "n", bike = "n", ped="n"), haltons=NA,
                        family=ordinal("logit"), index='pid',
                        panel=TRUE, R=2000, print.init = TRUE)
 summary(model_ebike_TRB)
 
-model_escoot_TRB<-Rchoice(formula = psafe ~ gender + young + type1 + type2 + type4 + pav + cross1 + cross2 + obst + veh + bike + ped,
+model_escoot_TRB<-Rchoice(formula = psafe ~ car_own + gender + young + type1 + type2 + type4 + pav + cross1 + cross2 + obst + veh + bike + ped,
                        data = subset(data1, tmode=='escoot'),
                        ranp=c(type1="n", type2 = "n", type4 = "n", veh = "n", bike = "n", ped="n"), haltons=NA,
                        family=ordinal("logit"), index='pid',
                        panel=TRUE, R=2000, print.init = TRUE)
 summary(model_escoot_TRB)
 
-model_walk_TRB<-Rchoice(formula = psafe ~ gender + young + type1 + type2 + type4 + pav + cross1 + cross2 + obst + veh + bike + ped,
+model_walk_TRB<-Rchoice(formula = psafe ~ car_own + gender + young + type1 + type2 + type4 + pav + cross1 + cross2 + obst + veh + bike + ped,
                           data = subset(data1, tmode=='walk'),
                           ranp=c(type1="n", type2 = "n", type4 = "n", veh = "n", bike = "n", ped="n"), haltons=NA,
                           family=ordinal("logit"), index='pid',
@@ -241,7 +260,7 @@ summary(model_walk_TRB)
 trb_models<-data.frame(car = model_car_TRB[["coefficients"]], ebike = model_ebike_TRB[["coefficients"]],
                       escoot = model_escoot_TRB[["coefficients"]], walk = model_walk_TRB[["coefficients"]])
 
-write.csv(trb_models,"psafe_models/outputs/trb_psafe_models.csv") # save coefficients, keep the insignificant too
+# write.csv(trb_models,"psafe_models/outputs/trb_psafe_models.csv") # save coefficients, keep the insignificant too
 
 # 9. Distribution of random variables
 df <- data.frame(x=1:8, y=1, col=letters[1:8])
