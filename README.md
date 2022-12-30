@@ -1,8 +1,19 @@
 # The PERCEIVED SAFETY CHOICES model
 
-While safety seems to be a significant factor when choosing to use these new modes, this model utilizes the notion of perceived safety to model travel behavior in inner urban areas. Therefore, the developed model is built on the hypothesis that perceived safety affects travel behavior of e-scooter users and is related to road environment. It combines ordinal logistic regression model, which predict perceived safety in different road environments under different traffic flow conditions, with discrete choice models which give the mode choice. At the same time, it creates a path to combine agent-based transport modeling with spatial analysis and GIS tools. The input parameter is the road network which consists of links and nodes. 
+While safety seems to be a significant factor when choosing to use these new modes, this model utilizes the notion of perceived safety to model travel behavior in inner urban areas. Therefore, the developed model is built on the hypothesis that perceived safety affects travel behavior of micro-mobility services users and is related to road environment. It combines ordinal logistic regression model, which predict perceived safety in different road environments using a 7-point Likert Scale, with discrete choice or simulation models which simulate the mode/route choices. The input variable is the road network which consists of links and nodes. The conceptual model of the Perceived_safety_choices is presented below:
 
-![image](https://user-images.githubusercontent.com/121678451/210081262-8bda931f-2113-48c1-8e2c-246dc7266785.png)
+<img src="https://user-images.githubusercontent.com/121678451/210081262-8bda931f-2113-48c1-8e2c-246dc7266785.png" height="450">
+
+The different functions of the model are parametric to take into account diffences in "tastes" among individuals by proposing advance modeling techniques. All the paremetric can be calibrated by collecting data related to safety perceptions considering various road envrironments with mixed traffic conditions and first/last mile mode/route choices in each urban area that are used. The repository contains example datasets and default models that can be used.
+
+Based on this concept, the Perceived_safety_choices mocdel proposes some tools in order to investigate the overall impact of perceived safety on travel behavior, transport equity and transport system sustainability. There is a continuous development of these tools by the NTUA research team and external partners that commit.
+
+Lastly, Perceived_safety_choices mocdel creates a path to combine agent-based transport modeling (like MATSim: https://github.com/matsim-org) with spatial analysis and GIS tools. The new scoring function is estimated based on the Value-of-Safety (VoS) which refers to how many kilometers of less travelling a road users is willing to exchange in order to experience a better safety level. 
+
+**The Perceived Safety Choices repository contains:**
+
+
+The model requirements are contained in the [requirement.txt](https://github.com/panosgjuras/Perceived_safety_choices/blob/main/requirements.txt) file.
 
 
 **The Perceived Safety Choices repository contains:**
@@ -14,15 +25,10 @@ While safety seems to be a significant factor when choosing to use these new mod
 - [network_analysis](https://github.com/panosgjuras/Perceived_safety_choices/tree/main/network_analysis): using [pyshp](https://github.com/GeospatialPython/pyshp), shps of nodes and links, in a very specific data format (see network examples), are imported in the developed functions to estimate perceived safety per link; the output of this process are xml network file ([lxml toolkit](https://github.com/lxml/lxml) is used) capable for [MATSim](https://github.com/matsim-org) simualtions and csv file, which can be imported in GIS and joined with shp for mapping purposes.
 - [routing_model](https://github.com/panosgjuras/Perceived_safety_choices/tree/main/routing_model): a Dijkstra routing model, which defines the shortest, fastest and safest path per transport mode; to do so, the [Dijkstra](https://github.com/ahojukka5/dijkstra) package is utilized; yet the weights change.
 
-You can run all the steps of the Perceived Safety Choices model from [Perceived_safety_choice_model.py](https://github.com/panosgjuras/Perceived_safety_choices/blob/main/Perceived_safety_choice_model.py). Analytical instructions are included there (with comments). The model requirements are contained in the [requirement.txt](https://github.com/panosgjuras/Perceived_safety_choices/blob/main/requirements.txt) file.
+You can run all the steps of the Perceived Safety Choices model from [Perceived_safety_choice_model.py](https://github.com/panosgjuras/Perceived_safety_choices/blob/main/Perceived_safety_choice_model.py). Analytical instructions are included there (with comments). 
 
 +++ The contribution to MATSim is under development. In essense, it is an updated version of [Bicycle](https://github.com/matsim-org/matsim-libs/tree/master/contribs/bicycle) contribution following a more universal approach fully based on perceived safety parameter and covering all micro-mobility modes.
 
 Papers:
 1. Tzouras, P. G., L. Mitropoulos, E. Stavropoulou, E. Antoniou, K. Koliou, C. Karolemeas, A. Karaloulis, K. Mitropoulos, M. Tarousi, E. I. Vlahogianni, and K. Kepaptsoglou. Agent-Based Models for Simulating e-Scooter Sharing Services: A Review and a Qualitative Assessment. International Journal of Transportation Science and Technology, 2022. https://doi.org/10.1016/j.ijtst.2022.02.001.
 
-This model was developed for [SIM4MTRAN](http://sim4mtran.com/#/home) project that aims to develop an innovative integrated decision support tool for the design of micro-mobility systems and services. The results will be used to create a guide for the design of micro-mobility systems in urban areas in Greece supporting policy making process.
-
-<img src="https://user-images.githubusercontent.com/63541107/186953835-3046c2e6-f965-4abf-b758-5dad32528298.png" height="150">
-
-This research project has been co-financed by the European Regional Development Fund of the European Union and Greek national funds, National Strategic Reference Framework 2014- 2020 (NSRF), through the Operational Program Competitiveness, Entrepreneurship, and Innovation, under the call RESEARCH – CREATE – INNOVATE (project code: T2EDK-02494 and name: SIM4MTRAN).
