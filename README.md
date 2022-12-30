@@ -17,7 +17,7 @@ Lastly, [Perceived_safety_choices](https://github.com/lotentua/Perceived_safety_
 
 The model requirements are contained in the [requirement.txt](https://github.com/lotentua/Perceived_safety_choices/blob/main/requirements.txt) file.
 
-+++ The contribution to MATSim is under development. In essence, it is an updated version of [Bicycle](https://github.com/matsim-org/matsim-libs/tree/master/contribs/bicycle) contribution following a more universal approach fully based on perceived safety parameter and covering all micro-mobility modes.
++++ The contribution to [MATSim]( https://github.com/matsim-org) is under development. In essence, it is an updated version of [Bicycle](https://github.com/matsim-org/matsim-libs/tree/master/contribs/bicycle) contribution following a more universal approach fully based on perceived safety parameter and covering all micro-mobility modes.
 
 Preprints/published papers:
 1.  Tzouras, P. G., L. Mitropoulos, E. Stavropoulou, E. Antoniou, K. Koliou, C. Karolemeas, A. Karaloulis, K. Mitropoulos, M. Tarousi, E. I. Vlahogianni, and K. Kepaptsoglou. Agent-Based Models for Simulating e-Scooter Sharing Services: A Review and a Qualitative Assessment. International Journal of Transportation Science and Technology, 2022. https://doi.org/10.1016/j.ijtst.2022.02.001.
