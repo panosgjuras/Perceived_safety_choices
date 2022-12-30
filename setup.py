@@ -23,7 +23,7 @@ e.g., private car and walking.
 """
 setup(name = "psafechoices",
       version = get_version("Psafechoices/__init__.py"),
-      url = "https://github.com/panosgjuras/Perceived_safety_choices",
+      url = "https://github.com/lotentua/Perceived_safety_choices",
       author = "Panagiotis G. Tzouras",
       author_email = "ptzouras@mail.ntua.gr",
       description=" ".join(description.strip().splitlines()),
