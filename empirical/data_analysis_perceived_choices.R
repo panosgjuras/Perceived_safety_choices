@@ -10,6 +10,8 @@ library(psych)
 library(dplyr)
 library(olsrr)
 library(VGAM)
+library(bayesmeta)
+library(densratio)
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 data1<-read.csv2("datasets/rating_dataset_perceived_choices.csv", header=T,dec=".",sep=",") # this is the perceived safery dataset
@@ -93,7 +95,7 @@ hist_psafe <- function(df){ # function to plot bars, plot the responces.
               position = position_stack(vjust = 0.5)) +
     scale_y_continuous(name ="Number of responces") +
     scale_x_discrete(name ="Perceived Safety") +
-    scale_fill_brewer(palette = 'Set1', name = "Transport Mode", 
+    scale_fill_brewer(palette = 'Set2', name = "Transport Mode", 
                       labels = c("Car", "E-Bike", "E-Scooter", "Walk")) + theme_bw()
   return(p)}
 
@@ -129,7 +131,7 @@ hist_veh_volume <- function(df){
     # geom_text(aes(label = scales::percent(..count../tapply(..count.., ..x.. ,sum)[..x..], accuracy = 0.1)),
     #           position = position_fill(vjust = 0.5),
     #          stat = "count") + theme_bw() +
-    scale_x_discrete(name ="veh/km", labels = c('20', '60', '100')) +
+    scale_x_discrete(name ="veh/km/dir", labels = c('20', '60', '100')) +
     scale_y_continuous(name ="Percentage of responces (%)", 
                        labels = function(x) paste0(x*100, "%")) + coord_flip() + theme_bw()
   return(p)}
@@ -142,7 +144,7 @@ hist_bike_volume <- function(df){
     #geom_text(aes(label = scales::percent(..count../tapply(..count.., ..x.. ,sum)[..x..], accuracy = 0.1)),
     #          position = position_fill(vjust = 0.5),
     #          stat = "count") 
-    scale_x_discrete(name ="micro-modes/km", labels = c('10', '50', '90')) +
+    scale_x_discrete(name ="bikes/km/dir", labels = c('10', '50', '90')) +
     scale_y_continuous(name ="Percentage of responces (%)", 
                        labels = function(x) paste0(x*100, "%")) + coord_flip() + theme_bw()
   return(p)}
@@ -273,42 +275,153 @@ f <- function(x) (model_car_TRB[["coefficients"]][["mean.type1"]])
 
 ggplot(data = data.frame(x = c(-12.5, 5)), aes(x)) +
   stat_function(fun = dnorm, n = 1000, args = list(mean = model_car_TRB[["coefficients"]][["mean.type1"]], 
-                                                   sd = model_car_TRB[["coefficients"]][["sd.type1"]]), aes(colour = "Group 1", linetype = "Function 1"),
+                                                   sd = model_car_TRB[["coefficients"]][["sd.type1"]]), aes(linetype = "Group 1", colour = "Function 1"),
                 size = 1.05)  +
   geom_segment(aes(x = model_car_TRB[["coefficients"]][["mean.type2"]], y = 0, xend = model_car_TRB[["coefficients"]][["mean.type2"]], yend = 1, 
-                   colour = "Group 1", linetype = "Function 2"), size = 1.05) +
+                   linetype = "Group 1", colour = "Function 2"), size = 0.9) +
   geom_segment(aes(x = model_car_TRB[["coefficients"]][["mean.type4"]], y = 0, xend = model_car_TRB[["coefficients"]][["mean.type4"]], yend = 1, 
-                   colour = "Group 1", linetype = "Function 3"), size = 1.05) +
+                   linetype = "Group 1", colour = "Function 3"), size = 1.05) +
   stat_function(fun = dnorm, n = 1000, args = list(mean = model_ebike_TRB[["coefficients"]][["mean.type1"]], 
-                                                   sd = model_ebike_TRB[["coefficients"]][["sd.type1"]]), aes(colour = "Group 2", linetype = "Function 1"),
+                                                   sd = model_ebike_TRB[["coefficients"]][["sd.type1"]]), aes(linetype = "Group 2", colour = "Function 1"),
                 size = 1.05)  +
   stat_function(fun = dnorm, n = 1000, args = list(mean = model_ebike_TRB[["coefficients"]][["mean.type2"]],
-                                                   sd = model_ebike_TRB[["coefficients"]][["sd.type2"]]), aes(colour = "Group 2", linetype = "Function 2"),
+                                                   sd = model_ebike_TRB[["coefficients"]][["sd.type2"]]), aes(linetype = "Group 2", colour = "Function 2"),
                 size = 1.05)  +                 
   stat_function(fun = dnorm, n = 1000, args = list(mean = model_ebike_TRB[["coefficients"]][["mean.type4"]], 
-                                                   sd = model_ebike_TRB[["coefficients"]][["sd.type4"]]), aes(colour = "Group 2", linetype = "Function 3"),
+                                                   sd = model_ebike_TRB[["coefficients"]][["sd.type4"]]), aes(linetype = "Group 2", colour = "Function 3"),
                 size = 1.05)  +
   stat_function(fun = dnorm, n = 1000, args = list(mean = model_escoot_TRB[["coefficients"]][["mean.type1"]], 
-                                                   sd = model_escoot_TRB[["coefficients"]][["sd.type1"]]), aes(colour = "Group 3", linetype = "Function 1"),
+                                                   sd = model_escoot_TRB[["coefficients"]][["sd.type1"]]), aes(linetype = "Group 3", colour = "Function 1"),
                 size = 1.05)  +
   stat_function(fun = dnorm, n = 1000, args = list(mean = model_escoot_TRB[["coefficients"]][["mean.type2"]], 
-                                                   sd = model_escoot_TRB[["coefficients"]][["sd.type2"]]), aes(colour = "Group 3", linetype = "Function 2"),
+                                                   sd = model_escoot_TRB[["coefficients"]][["sd.type2"]]), aes(linetype = "Group 3", colour = "Function 2"),
                 size = 1.05)  +
   stat_function(fun = dnorm, n = 1000, args = list(mean = model_escoot_TRB[["coefficients"]][["mean.type4"]], 
-                                                   sd = model_escoot_TRB[["coefficients"]][["sd.type4"]]), aes(colour = "Group 3", linetype = "Function 3"),
+                                                   sd = model_escoot_TRB[["coefficients"]][["sd.type4"]]), aes(linetype = "Group 3", colour = "Function 3"),
                 size = 1.05)  +
   stat_function(fun = dnorm, n = 1000, args = list(mean = model_walk_TRB[["coefficients"]][["mean.type1"]], 
-                                                   sd = model_walk_TRB[["coefficients"]][["sd.type1"]]), aes(colour = "Group 4", linetype = "Function 1"),
+                                                   sd = model_walk_TRB[["coefficients"]][["sd.type1"]]), aes(linetype = "Group 4", colour = "Function 1"),
                 size = 1.05)  +
   stat_function(fun = dnorm, n = 1000, args = list(mean = model_walk_TRB[["coefficients"]][["mean.type2"]], 
-                                                   sd = model_walk_TRB[["coefficients"]][["sd.type2"]]), aes(colour = "Group 4", linetype = "Function 2"),
+                                                   sd = model_walk_TRB[["coefficients"]][["sd.type2"]]), aes(linetype = "Group 4", colour = "Function 2"),
                 size = 1.05)  +
   stat_function(fun = dnorm, n = 1000, args = list(mean = model_walk_TRB[["coefficients"]][["mean.type4"]], 
-                                                   sd = model_walk_TRB[["coefficients"]][["sd.type4"]]), aes(colour = "Group 4", linetype = "Function 3"),
+                                                   sd = model_walk_TRB[["coefficients"]][["sd.type4"]]), aes(linetype = "Group 4", colour = "Function 3"),
                 size = 1.05)  +
-  scale_y_continuous(limits = c(0, 1.00), name = 'Probability density') + theme_bw() + scale_color_manual(values = c(colors[1],colors[2], colors[3], colors[4]),
-                                                                        name = 'Transport Mode',
-                                                                        labels = c("Car", "E-Bike", "E-Scooter", "Walk")) + 
-  scale_linetype_manual(values = c("dashed", "dotted", "solid"), name = 'Infrastructure type',
+  scale_y_continuous(limits = c(0, 1.00), name = 'Probability density') + theme_bw() + 
+  scale_linetype_manual(values = c("dashed", "twodash", "solid", "dotted"), name = "Transport Mode", 
+                        labels = c("Car", "E-Bike", "E-Scooter", "Walk")) +
+  scale_color_manual(values = c("black",colors[1], colors[2]), name = 'Infrastructure type',
                         labels = c("1: urban road with sidewalk < 1.5 m", "2: urban road with sidewalk >= 1.5 m", "4: shared space") ) + scale_x_continuous(name = 'Beta variable value') 
+
+
+fixind<-function(df){
+  rownames(df)<-df$X
+  df$X <- NULL
+  return(df)}
+
+bincar<-fixind(read.csv2("models/car_binary_logit_model.csv", header=T,dec=".",sep=","))
+binebike <- fixind(read.csv2("models/ebike_binary_logit_model.csv", header=T,dec=".",sep=","))
+binescoot <- fixind(read.csv2("models/escoot_binary_logit_model.csv", header=T,dec=".",sep=","))
+binwalk <- fixind(read.csv2("models/walk_binary_logit_model.csv", header=T,dec=".",sep=","))
+
+vos <-function(v, cd, btime, bcost, bsaf, stime, scost, ssaf, simu){
+  time <- c(rnorm(simu, mean=btime, sd=abs(stime)))
+  cost<- c(rnorm(simu, mean = bcost, sd = abs(scost)))
+  
+  saf<- c(rnorm(simu, mean = bsaf, sd = abs(ssaf)))
+  df <- data.frame(time, cost, saf)
+  
+  df["dist"] <- (1/v) * 60 * df$time + cd * df$cost
+  df["vos"] <- df$saf / df$dist
+  return(df)}
+
+vosdf<-function(modex){
+  R = 20000
+  if(modex == 'car'){
+    df <- bincar
+    v <- 40
+    cd <- 0.15
+    res <- vos(v, cd, btime = df['BETA_CARTIME', 'Value'],
+                bcost = df['BETA_CARCOST', 'Value'], 
+                bsaf = df['BETA_CARPSAFE', 'Value'],
+                stime = df['SIGMA_CARTIME', 'Value'], 
+                scost = df['SIGMA_CARCOST', 'Value'], 
+                ssaf = df['SIGMA_CARPSAFE', 'Value'], R)
+    res["mode"]<-modex}
+  if (modex == 'ebike'){
+    df <- binebike
+    v <- 20
+    cd <- 15/20
+    res <- vos(v, cd, btime = df['BETA_EBIKETIME', 'Value'],
+               bcost = df['BETA_EBIKECOST', 'Value'], 
+               bsaf = df['BETA_EBIKEPSAFE', 'Value'],
+               stime = df['SIGMA_EBIKETIME', 'Value'], 
+               scost = df['SIGMA_EBIKECOST', 'Value'], 
+               ssaf = df['SIGMA_EBIKEPSAFE', 'Value'], R)
+    res["mode"]<-modex}
+  if (modex == 'escoot'){
+      df <- binescoot
+      v <- 15
+      cd <- 14/15
+      res <- vos(v, cd, btime = df['BETA_ESCOOTIME', 'Value'],
+                 bcost = df['BETA_ESCOOTCOST', 'Value'], 
+                 bsaf = df['BETA_ESCOOTPSAFE', 'Value'],
+                 stime = df['SIGMA_ESCOOTIME', 'Value'], 
+                 scost = df['SIGMA_ESCOOTCOST', 'Value'], 
+                 ssaf = df['SIGMA_ESCOOTPSAFE', 'Value'], R)
+      res["mode"]<-modex}
+  if (modex == 'walk'){
+     df <- binwalk
+      v <- 5
+      cd <- 0
+      res <- vos(v, cd, btime = df['BETA_WALKTIME', 'Value'],
+                 bcost = 0, 
+                 bsaf = df['BETA_WALKPSAFE', 'Value'],
+                 stime = df['SIGMA_WALKTIME', 'Value'], 
+                 scost = 0, 
+                 ssaf = df['SIGMA_WALKPSAFE', 'Value'], R)
+      res["mode"]<-modex}
+  return(res)}
+
+df<-vosdf("car")
+df<-rbind(df, vosdf("ebike"))
+df<-rbind(df, vosdf("escoot"))
+df<-rbind(df, vosdf("walk"))
+
+ggplot(df, aes(x=vos , fill=mode)) +
+  geom_histogram(aes(y=..density..), color='grey',alpha=0.5, position = 'identity', binwidth = 0.1) +
+  geom_density(aes(x = vos, fill = NA, linetype = mode), color='black', size=0.60, alpha=0.6)+
+  #geom_vline(data=mu, aes(xintercept=grp.mean, color=scenario),
+  #linetype="dashed")+
+  scale_fill_brewer(palette = 'Set2', name = "Transport Mode", 
+                    labels = c("Car", "E-Bike", "E-Scooter", "Walk")) +
+  scale_linetype_manual(values = c("dashed", "twodash", "solid", "dotted"), name = "Transport Mode", 
+                    labels = c("Car", "E-Bike", "E-Scooter", "Walk")) +
+  # ggtitle("Public Transport")+
+  #scale_color_manual(values=c("black", "black","black","black")) +
+  scale_y_continuous(name ="Probability density")+
+  scale_x_continuous(name ="Value-of-Safety in km/level", limits = c(-10, 5))+
+  theme_bw()
+
+modecho<-fixind(read.csv2("models/mode_choice_ML_model.csv", header=T,dec=".",sep=","))
+
+df <- data.frame(x=1:8, y=1, col=letters[1:8])
+g <- ggplot(df, aes(x=x, y=y, color=col)) + geom_point(size=5) +
+  scale_color_brewer(palette="Set2")
+colors <- ggplot_build(g)$data[[1]]$colour
+plot(df$x, df$y, col=colors, pch=20, cex=5)
+
+
+ggplot(data = data.frame(x = c(-8, 6)), aes(x)) +
+  stat_function(fun = dnorm, n = 2000, args = list(mean = modecho['ASC_EBIKE', 'Value'], 
+                                                   sd = abs(modecho['SIGMA_ASC_EBIKE', 'Value'])), aes(colour = "Group 1"), size = 0.90) +
+  stat_function(fun = dnorm, n = 2000, args = list(mean = modecho['ASC_ESCOOT', 'Value'], 
+                                                   sd = abs(modecho['SIGMA_ASC_ESCOOT', 'Value'])), aes(colour = "Group 2"), size = 0.90) +
+  stat_function(fun = dnorm, n = 2000, args = list(mean = modecho['ASC_WALK', 'Value'], 
+                                                   sd = abs(modecho['SIGMA_ASC_WALK', 'Value'])), aes(colour = "Group 3"), size = 0.90) + theme_bw() +
+                  scale_color_manual(values = c(colors[2], colors[3], colors[4]),
+                                     name = 'Transport Mode',
+                                     labels = c( "E-Bike", "E-Scooter", "Walk")) +
+  scale_x_continuous(name = "ASC value") + scale_y_continuous(name = "Probability density")
 
