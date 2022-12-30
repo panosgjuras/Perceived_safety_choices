@@ -1,4 +1,4 @@
-The [Psafechoices](https://github.com/lotentua/Perceived_safety_choices/edit/main/Psafechoices) was developed for [SIM4MTRAN](http://sim4mtran.com/#/home) project that aims to develop an innovative integrated decision support tool for the design of micro-mobility systems and services. The results will be used to create a guide for the design of micro-mobility systems in urban areas in Greece supporting policy making process.
+The [Psafechoices](https://github.com/lotentua/Perceived_safety_choices/edit/main/Psafechoices) tools contained in this folder were developed for [SIM4MTRAN](http://sim4mtran.com/#/home) project that aims to develop an innovative integrated decision support tool for the design of micro-mobility systems and services. The results will be used to create a guide for the design of micro-mobility systems in urban areas in Greece supporting policy making process.
 
 <img src="https://user-images.githubusercontent.com/63541107/186953835-3046c2e6-f965-4abf-b758-5dad32528298.png" height="150">
 
