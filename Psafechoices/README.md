@@ -5,6 +5,7 @@ The routing model is based on the following equation:
 <img src="https://user-images.githubusercontent.com/121678451/210090788-3fa9a89f-1ad3-4bdf-80f6-cf42dfd45576.png" width="600">
 
 **The [Psafechoices](https://github.com/lotentua/Psafechoices) contains:**
+
 -[psafe_coeff_upd.py](https://github.com/lotentua/Perceived_safety_choices/blob/main/Psafechoices/psafe_model/psafe_coeff_upd.py): updates the kappa threshold exported from [Rchoice](https://github.com/cran/Rchoice) package that introduces an intercept in the ordered logit model. The intercept do not influence the latent variable in practice; it is related to the kappa thresholds;           
 
 -[opp_cost_calculator.py](https://github.com/lotentua/Perceived_safety_choices/blob/main/Psafechoices/choice_model/opp_cost_calculator.py): estimates from a route/mode choice model the marginal utilities to be impoted in [MATSim]( https://github.com/matsim-org) scoring function and the Value-of-Safety expressed in meters/level; THESE FUNCTIONS ARE STILL UNDER DEVELOPMENT in order to integrate Monte-Carlo Simulation in the estimation of VoS;
