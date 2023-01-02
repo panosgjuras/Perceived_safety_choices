@@ -8,13 +8,6 @@ from biogeme.expressions import (DefineVariable,
                                  PanelLikelihoodTrajectory,
                                  MonteCarlo, log)
 
-def dat_defin(x, NAME, expr, database):
-    if x == 1:
-        var = DefineVariable(NAME, expr, database)
-    if x == 2:
-        var = database.DefineVariable(NAME, expr)
-    return var
-
 def MNLest(df, V, av, cho, name):
     logprob = models.loglogit(V, av, cho) # import utilities in loglogit
     logger = msg.bioMessage() 
