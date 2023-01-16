@@ -9,7 +9,7 @@ $psafe_{l,j,m}^{*} + ε_{l,j,m} = ∑_{i=1}^{4} β_{soc_{i,m}}*soc_{i,j} + ∑_{
 $β_{pav_{m}}*pav_{l} + β_{obs_{m}} * obs_{l} + β_{crs_{1,m}} * crs_{1,l} + β_{crs_{2,m}} * crs_{2,l}) +$
 $(β_{veh_{m}} * veh_{l} + β_{bike_{m}} * bike_{l} + β_{ped_{m}} *ped_{l})  + ε_{l,j,m}$
 
-$psafe_{j,l,m} = 1$, if $psafe_{l,j,m}^{*} ≤ k_{1,m}$
+$psafe_{j,l,m} = 1$, if $psafe_{l,j,m}^{*} ≤ k_{1,m}$, very unsafe
 
 $psafe_{j,l,m} = 2$, if $k_{1,m} ≤ psafe_{l,j,m}^{*} ≤ k_{2,m}$
 
@@ -21,7 +21,7 @@ $psafe_{j,l,m} = 5$, if $k_{4,m} ≤ psafe_{l,j,m}^{*} ≤ k_{5,m}$
 
 $psafe_{j,l,m} = 6$, if $k_{5,m} ≤ psafe_{l,j,m}^{*} ≤ k_{6,m}$
 
-$psafe_{j,l,m} = 7$, if $k_{6,m} < psafe_{l,j,m}^{*}$
+$psafe_{j,l,m} = 7$, if $k_{6,m} < psafe_{l,j,m}^{*}$, very safe
 
 where:
 $psafe_{l,j,m}^{*}$: latent variable of perceived safety of individual j using mode m in urban road link l (or observation l);
