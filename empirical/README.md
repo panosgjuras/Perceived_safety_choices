@@ -65,7 +65,3 @@ The data visualization is performed in R using ggplot package [data_analysis_per
 Multiple discrete choice models with the right settings are estimated in [BIOGEME_models_perceived_choices.py](https://github.com/lotentua/Perceived_safety_choices/blob/main/empirical/BIOGEME_models_perceived_choices.py).
 
 Also, [logit_est_functons.py](https://github.com/lotentua/Perceived_safety_choices/blob/main/empirical/logit_est_functons.py) contains functions to directly compute an MNL or ML model using [PandasBiogeme](https://github.com/michelbierlaire/biogeme).
-
-These tools have been developed for the PhD thesis research: "Methodologies for the integrated analysis and assessment of shared-space urban roads" conducted by [Panagiotis. G. Tzouras](https://linktr.ee/panosgtzouras) at National Technical University of Athens. The project is granted by Hellenic Foundation for Research and Innovation ([HFRI](https://www.elidek.gr/en/homepage/))
-
-<img src="https://user-images.githubusercontent.com/63541107/212676578-c457b860-5f6f-4430-a860-46e6cc0b35c8.png" height="100">
