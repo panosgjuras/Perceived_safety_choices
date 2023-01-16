@@ -4,7 +4,16 @@ The [Psafechoices](https://github.com/lotentua/Perceived_safety_choices/edit/mai
 
 The routing model is based on the following equation:
 
-<img src="https://user-images.githubusercontent.com/121678451/210090788-3fa9a89f-1ad3-4bdf-80f6-cf42dfd45576.png" width="600">
+$V_{m,i} = β_{time_m} * d_i/v_m + β_{cost_m} * cd_m * d_i + β_{psafe_m} * (psafe_{i,m} - 4) * (d_i/d_{max})$
+
+where: where:
+$V_{m,i}$: utility of using mode m (i.e., car, e-scooter, walk) to travel through the link i;
+$β_{time_m}, β_{cost_m}, ...,β_{psafe_m}$: beta parameters of utility function; they differ per mode;
+$d_i$: distance of link i in km;
+$v_m$: travel speed of mode m in km/h; it is assumed to be fixed per link; 
+$cd_m$: cost per kilometer of using mode m in euros; it is assumed to be fixed per link;
+$psafe_{i,m}$: perceived safety level of using mode m to travel through i;
+$d_{max}$: maximum acceptable unsafe distance in kilometers, after which perceived safety has a significant impact on the utility of using mode m to travel through the link i (negative impact if $psafe_{i,m} < 4$; positive impact if $psafe_{i,m} > 4$, no impact if $psafe_{i,m}=4$).
 
 **The [Psafechoices](https://github.com/lotentua/Psafechoices) contains:**
 
