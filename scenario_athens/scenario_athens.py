@@ -108,6 +108,10 @@ walkdf = define_paths(walkdf, 'walk')
 savdf = cardf
 savdf = savdf.append(escootdf)
 savdf = savdf.append(walkdf)
+<<<<<<< HEAD
 # savdf.to_csv('G:/My Drive/research_papers/paper19_SIM4MTRAN_model/paper_SUSTAINABILITY/new_data_analysis/all_scenarios_routing_results_step50.csv')
+=======
+#savdf.to_csv('')
+>>>>>>> 8339be31311f539f670a2f9a155dcde5e90985e1
 
 path_table = show_unique(savdf)
