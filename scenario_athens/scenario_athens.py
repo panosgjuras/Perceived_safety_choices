@@ -14,6 +14,9 @@ from Psafechoices.network_analysis import lin_psafe_calc as linpsafe
 from Psafechoices.psafe_model import psafe_coeff_upd as psmodel
 from Psafechoices.network_analysis import shp_to_csv_xml_tool as convert
 from Psafechoices.routing_model import network_graph as dij
+
+# from Psafechoices.routing_model import assess_analysis as ass
+
 from Psafechoices.choice_model import opp_cost_calculator as opp
 
 root_dir = os.path.dirname(os.path.realpath(__file__))
@@ -53,33 +56,36 @@ coeff = pd.read_csv(os.path.join(root_dir, 'default_models', 'choice','coeff_cho
 fr = 9000 # select origin point
 to = 4000 # select destination point
 
+
+
+
 ## MODEL RESULTS ANALYSIS TO BE INTEGRATED IN THE PSAFECHOICES MODEL
-def simulate_params(lin, nod, fr, to, minv, dmin, mode, coeff, scenario):
-    coeff = opp.opp_cost_calc(coeff, mode, speed, dcost)
-    mth = 'best'
-    df = pd.DataFrame(columns =['dmin', 'minv', 'dist', 'seq', 'scenario'])
-    for m in minv:
-        for d in dmin: 
-            path = dij.dij_run(lin, nod, mode, fr, to, mth, m, d, coeff)
-            dist = dij.dij_dist_calc (path, lin)
-            d = {'dmin':[d], 'minv':[m], 'dist':[dist], 'mode':[mode], 'seq': [path], 'scenario': [scenario]}
-            df = df.append(pd.DataFrame(d), ignore_index=True)
-    return df
+# def simulate_params(lin, nod, fr, to, minv, dmin, mode, coeff, scenario):
+#    coeff = opp.opp_cost_calc(coeff, mode, speed, dcost)
+#    mth = 'best'
+#    df = pd.DataFrame(columns =['dmin', 'minv', 'dist', 'seq', 'scenario'])
+#    for m in minv:
+#        for d in dmin: 
+#            path = dij.dij_run(lin, nod, mode, fr, to, mth, m, d, coeff)
+#            dist = dij.dij_dist_calc (path, lin)
+#            d = {'dmin':[d], 'minv':[m], 'dist':[dist], 'mode':[mode], 'seq': [path], 'scenario': [scenario]}
+#            df = df.append(pd.DataFrame(d), ignore_index=True)
+#    return df
 
-def define_paths(sdf, mode):
-    d = {'dist':sdf["dist"].unique(), 'path': range(1, 1 + len(sdf["dist"].unique()))}
-    df = pd.DataFrame(d)
-    df["path"] = df["path"] - 1
-    df["path"] = mode + ' path ' + df["path"].astype(str)
-    for i in range(0, len(df)):
-        if df.dist.iloc[i] == 999999: df.path.iloc[i] = 'no path'
-        sdf = pd.merge(left=sdf, right=df, how="inner", left_on='dist', right_on='dist')
-        return sdf
+# def define_paths(sdf, mode):
+#    d = {'dist':sdf["dist"].unique(), 'path': range(1, 1 + len(sdf["dist"].unique()))}
+#    df = pd.DataFrame(d)
+#    df["path"] = df["path"] - 1
+#    df["path"] = mode + ' path ' + df["path"].astype(str)
+#    for i in range(0, len(df)):
+#        if df.dist.iloc[i] == 999999: df.path.iloc[i] = 'no path'
+#        sdf = pd.merge(left=sdf, right=df, how="inner", left_on='dist', right_on='dist')
+#        return sdf
 
-def show_unique(df):
-    ndf = df[["path", "dist", "scenario"]]
-    ndf = ndf.sort_values(["path","dist", "scenario"]).drop_duplicates("path")
-    return ndf
+# def show_unique(df):
+#    ndf = df[["path", "dist", "scenario"]]
+#    ndf = ndf.sort_values(["path","dist", "scenario"]).drop_duplicates("path")
+#    return ndf
 
 step = 50
 cardf = simulate_params(lin, nod, fr, to, range(0,8),range(0, 10001, step), 'car', coeff, 'scenario00')
@@ -102,6 +108,10 @@ walkdf = define_paths(walkdf, 'walk')
 savdf = cardf
 savdf = savdf.append(escootdf)
 savdf = savdf.append(walkdf)
+<<<<<<< HEAD
+# savdf.to_csv('G:/My Drive/research_papers/paper19_SIM4MTRAN_model/paper_SUSTAINABILITY/new_data_analysis/all_scenarios_routing_results_step50.csv')
+=======
 #savdf.to_csv('')
+>>>>>>> 8339be31311f539f670a2f9a155dcde5e90985e1
 
 path_table = show_unique(savdf)

@@ -48,6 +48,7 @@ def dij_graph(ln, tmode, minv, mth):
            x = 999
            print('no mode')
            break 
+       
         if mth == 'best':
             # give the weight based on the utility function
             if tmode == 'car': weight = ln.car_utils.iloc[i]
@@ -60,13 +61,14 @@ def dij_graph(ln, tmode, minv, mth):
             print('wrong method')
             break
         text = ln.modes.iloc[i]
+        
         if tmode in text: # creates a network with only the links in which tmode can be used
             if psafe>=minv: graph.add_edge(ln.from1.iloc[i], ln.to1.iloc[i], weight)
             # the previous formula decrease the number of available network links
             # only these that are above the psafe level.
     return graph, x
 
-def dij_run(ln, nd, tmode, fr, to, mth, minv, dmin, coeff):
+def dij_run(ln, nd, tmode, fr, to, mth = "shortest" , minv = 0, dmin = 10000, coeff = 0):
     
     ln = utils_cal(ln, coeff, dmin, tmode)
     graph = dij_graph(ln, tmode, minv, mth)[0]
@@ -90,12 +92,25 @@ def dij_run(ln, nd, tmode, fr, to, mth, minv, dmin, coeff):
 # UPDATE HERE TO CREATE MATRICES FROM ONE PATH TO THE OTHER
 
 # UPDATE HERE TO ESTIMATE TIME FROM TO
-def dij_dist_calc(path, ln): # calculate the distance
+def dij_dist_calc(path, ln, var = 'sdist', tmode = 'walk'): # calculate the distance
+    
+    if tmode == 'car': psafe = 'car_psafe_l'
+    elif tmode == 'ebike': psafe = 'ebike_psafe_l'
+    elif tmode == 'escooter': psafe = 'escoot_psafe_l'
+    else: psafe = 'walk_psafe_l'
+
+
     if path!= 'no path':
         suml = 0
         for i in range (len(path) - 1):
-            matchid = ln.index[(ln.from1 == path[i]) & (ln.to1 == path[i + 1])].tolist()
-            add = ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'length']
+            matchid = ln.index[(ln.from1 == path[i]) & (ln.to1 == path[i + 1])].tolist()               
+            if var == 'avgslope':
+                add = ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'avgslope']
+            elif var == 'maxslope':
+                add = ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'maxslope']
+            elif var == 'sumpsafe':
+                add = ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), psafe]
+            else: add = ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'length']
             suml = suml + add[matchid[0]]
     else: suml = 999999
     return suml

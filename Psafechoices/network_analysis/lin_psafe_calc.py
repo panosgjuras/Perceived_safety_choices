@@ -6,6 +6,7 @@ National Technical University of Athens
 """
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 def inf_match(s_inf): # functions that codes infrastructure, 
     # it may need modification if dummy coding to describe non-linearities among categories
@@ -105,3 +106,37 @@ def lin_psafe(lin, cf):
     [lin['escoot_psafe'], lin['escoot_psafe_l']]=fun_psafe(lin,'escoot', cf)
     [lin['walk_psafe'], lin['walk_psafe_l']]=fun_psafe(lin,'walk', cf)
     return lin
+
+def psafehist(lin, mode = 'walk'):
+    bin_edges = np.arange(0.5, 7.5+1, 1)
+    if mode == 'car':
+        var = lin.car_psafe_l
+        color = 'grey'
+        title = 'Car'
+    elif mode =='ebike':
+        var = lin.ebike_psafe_l
+        color = 'green'
+        title = 'E-bike'
+    elif mode == 'escooter':
+        var = lin.escoot_psafe_l
+        color = 'red'
+        title = 'E-scooter'
+    else:
+        var = lin.walk_psafe_l
+        color = 'blue'
+        title = 'Walk'
+
+    fig, ax = plt.subplots(figsize = (7.5,6.5))
+    var.plot(kind = "hist", density = True, bins = bin_edges, rwidth = 0.7, alpha=0.5,facecolor=color)
+    var.plot(kind ='density', bw_method=1)
+    ax.set_xlabel('Perceived Safety Level')
+    ax.set_ylabel('Frequency')
+    ax.set_ylim(0, 0.7)
+    ax.set_yticks([])
+    ax.set_title(title)
+    ax.set_xticks(np.arange(1, 7+1, 1))
+    ax.grid(False)
+    plt.style.use("bmh")
+    ax.tick_params(left = False, bottom = False)
+    for ax, spine in ax.spines.items(): spine.set_visible(False)
+    plt.show()
