@@ -109,7 +109,7 @@ def dij_dist_calc(path, ln, var = 'sdist', tmode = 'walk'): # calculate the dist
             elif var == 'maxslope':
                 add = ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'maxslope']
             elif var == 'sumpsafe':
-                add = ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), psafe]
+                add = (ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), psafe] - 4) # + if psafe > 4, - if psafe < 4.
             else: add = ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'length']
             suml = suml + add[matchid[0]]
     else: suml = 999999
