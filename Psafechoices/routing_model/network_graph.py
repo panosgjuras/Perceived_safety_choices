@@ -68,9 +68,9 @@ def dij_graph(ln, tmode, minv, mth):
             # only these that are above the psafe level.
     return graph, x
 
-def dij_run(ln, nd, tmode, fr, to, mth = "shortest" , minv = 0, dmin = 10000, coeff = 0):
+def dij_run(ln, nd, tmode, fr, to, mth = "shortest" , minv = 1, dmin = 10000, coeff = 0):
+    if mth != 'shortest': ln = utils_cal(ln, coeff, dmin, tmode)
     
-    ln = utils_cal(ln, coeff, dmin, tmode)
     graph = dij_graph(ln, tmode, minv, mth)[0]
     check = dij_graph(ln, tmode, minv, mth)[1]
     
