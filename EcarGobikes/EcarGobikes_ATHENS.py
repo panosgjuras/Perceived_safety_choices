@@ -19,7 +19,7 @@ def read_points(path: str) -> pd.DataFrame:
     print(len(points))
     return points
 
-path_points = 'G:/My Drive/PAPERS_TZOURAS/paper29_the_pre_battle/paper_christie'
+path_points = ''
 points = read_points(os.path.join(path_points, 'depot_delpoints_ATHENS.csv'))
 
 def logistnet_cre(df):
@@ -39,7 +39,7 @@ def logistnet_cre(df):
 
 net = logistnet_cre(points)
 
-path_scenario = 'C:/Users/panos/Desktop/github_tzouras/Perceived_safety_choices/scenario_athens'
+path_scenario = ''
 nod = trfp.read_shapefile(os.path.join(path_scenario, 'shapefiles','experimental_field_athens_nodes.shp'))
 lin = trfp.read_shapefile(os.path.join(path_scenario, 'shapefiles', 'experimental_field_athens_links.shp'))
 lin = trfp.upd_links(lin, nod)
@@ -71,5 +71,5 @@ def logisticnet_sdist(df):
     return(df)
 
 net = logisticnet_sdist(net)
-net.to_csv('G:/My Drive/PAPERS_TZOURAS/paper29_the_pre_battle/paper_christie/net_file_ATHENS.csv')
+net.to_csv('/net_file_ATHENS.csv')
 
