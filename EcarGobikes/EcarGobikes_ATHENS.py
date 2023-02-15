@@ -1,3 +1,9 @@
+# install Psafechoices package version 0.2
+# pip install git+https://github.com/lotentua/Perceived_safety_choices
+
+# upgrade Psafechoices package # STILL UNDER DEVELOPMENT
+# pip install --upgrade --force-reinstall git+https://github.com/lotentua/Perceived_safety_choices
+
 import pandas as pd
 import numpy as np
 import os
@@ -5,8 +11,8 @@ import os
 from Psafechoices.network_analysis import traffic_params_upd as trfp
 from Psafechoices.network_analysis import lin_psafe_calc as linpsafe
 from Psafechoices.psafe_model import psafe_coeff_upd as psmodel
+# from Psafechoices.network_analysis import shp_to_csv_xml_tool as convert
 from Psafechoices.routing_model import network_graph as dij
-from Psafechoices.choice_model import opp_cost_calculator as opp
 
 def read_points(path: str) -> pd.DataFrame:
     points = pd.read_csv(path)
@@ -41,17 +47,29 @@ cf = pd.read_csv(os.path.join(path_scenario, 'default_models', 'psafe','simple_p
 cf = psmodel.psafe_coeff_upd(cf)
 lin = linpsafe.lin_psafe(lin, cf)
 
-coeff = pd.read_csv(os.path.join(path_scenario, 'default_models', 'choice','coeff_choice_model.csv'),',')
-speed = 20 # define mean speed of the selected mode
-dcost = 7/speed
-coeff = opp.opp_cost_calc(coeff, 'escooter', speed, dcost) # FIX FIX FIX here....
+lin['modes'] = 'ebike' # assumption ebike can travel in all lins 
+
+slopes = pd.read_csv(os.path.join(path_scenario, 'shapefiles','scenario_athens_slopes.csv'))
+lin = pd.merge(lin, slopes, left_on = 'id', right_on = 'id') # add slopes in the links dataframe
+lin = lin.rename(columns = {'Avg_Slope':'avgslope', 'Max_Slope':'maxslope'})
+
+# coeff = pd.read_csv(os.path.join(path_scenario, 'default_models', 'choice','coeff_choice_model.csv'),',')
+# speed = 20 # define mean speed of the selected mode
+# dcost = 7/speed
+# coeff = opp.opp_cost_calc(coeff, 'ebike', speed, dcost) # FIX FIX FIX here....
 
 def logisticnet_sdist(df):
+    df["path"] = 0
     for i in range(1, len(df) + 1):
-        path = dij.dij_run(lin, nod, 'escooter', df.loc[i, 'from1'], df.loc[i, 'to1'] , 'shortest', 0, 1000, coeff)
+        path = dij.dij_run(lin, nod, 'ebike', df.loc[i, 'from1'], df.loc[i, 'to1'])
         df['path'] = df['path'].astype('object')
         df.at[i, 'path'] = path
         df.loc[i, 'sdist'] = dij.dij_dist_calc(path, lin)
+        df.loc[i, 'sumpsafe'] = dij.dij_dist_calc(path, lin, 'sumpsafe', 'ebike')
+        df.loc[i, 'avgslope'] = dij.dij_dist_calc(path, lin, 'avgslope', 'ebike')
+        # df.loc[i, 'maxslope'] = dij.dij_dist_calc(path, lin, 'maxslope', 'ebike')
     return(df)
 
 net = logisticnet_sdist(net)
+net.to_csv('G:/My Drive/PAPERS_TZOURAS/paper29_the_pre_battle/paper_christie/net_file_ATHENS.csv')
+
