@@ -104,13 +104,20 @@ def dij_dist_calc(path, ln, var = 'sdist', tmode = 'walk'): # calculate the dist
         suml = 0
         for i in range (len(path) - 1):
             matchid = ln.index[(ln.from1 == path[i]) & (ln.to1 == path[i + 1])].tolist()               
-            if var == 'avgslope':
-                add = ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'avgslope']
-            elif var == 'maxslope':
+            if var == 'sumavgslope':
+                add = ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'avgslope'] 
+            elif var == 'summaxslope':
                 add = ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'maxslope']
             elif var == 'sumpsafe':
                 add = (ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), psafe] - 4) # + if psafe > 4, - if psafe < 4.
+            elif var == 'weight_sumavgslope':
+                add = ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'avgslope'] * ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'length']
+            elif var == 'weight_summaxslope':
+                add = ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'maxslope'] * ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'length']
+            elif var == 'weight_sumpsafe':
+                add = (ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), psafe] - 4) * ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'length']
             else: add = ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'length']
             suml = suml + add[matchid[0]]
     else: suml = 999999
+    
     return suml
