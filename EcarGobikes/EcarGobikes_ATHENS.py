@@ -108,6 +108,7 @@ plt.scatter(df.sdist, df.sum_psafe)
 plt.scatter(df.sdist, df.sum_avgslope)
 plt.scatter(df.sdist, df.sum_maxslope)
 
-plt.scatter(df.sdist, df.wavg_psafe)
+x = -2350
+plt.scatter(df.sdist, df.wavg_psafe * (x))
 plt.scatter(df.sdist, df.wavg_avgslope)
 plt.scatter(df.sdist, df.wavg_maxslope)
