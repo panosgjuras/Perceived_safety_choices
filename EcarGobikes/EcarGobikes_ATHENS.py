@@ -21,7 +21,7 @@ def read_points(path: str) -> pd.DataFrame:
     return points
 
 # G:\My Drive\PAPERS_TZOURAS\paper29_the_pre_battle\paper_christie 
-path_points = 'G:/My Drive/PAPERS_TZOURAS/paper29_the_pre_battle/paper_christie'
+path_points = ''
 points = read_points(os.path.join(path_points, 'depot_delpoints_ATHENS.csv'))
 
 def logistnet_cre(df):
@@ -34,7 +34,7 @@ def logistnet_cre(df):
            ndf.loc[i, 'to1'] = item2
            i = i + 1
        sdf = pd.concat([sdf, ndf])
-    sdf = pd.concat([df.rename(columns = {'depot':'from1', 'delpoint': 'to1'}), sdf])
+    # sdf = pd.concat([df.rename(columns = {'depot':'from1', 'delpoint': 'to1'}), sdf])
     sdf['pid'] = np.arange(1, len(sdf) + 1, 1)
     sdf = sdf.set_index('pid')
     return(sdf)
@@ -42,7 +42,7 @@ def logistnet_cre(df):
 net = logistnet_cre(points)
 
 
-path_scenario = 'C:/Users/panos_000/Desktop/github_tzouras/Perceived_safety_choices/scenario_athens'
+path_scenario = ''
 nod = trfp.read_shapefile(os.path.join(path_scenario, 'shapefiles','experimental_field_athens_nodes.shp'))
 lin = trfp.read_shapefile(os.path.join(path_scenario, 'shapefiles', 'experimental_field_athens_links.shp'))
 lin = trfp.upd_links(lin, nod)
