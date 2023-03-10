@@ -45,6 +45,8 @@ net = logistnet_cre(points)
 path_scenario = ''
 nod = trfp.read_shapefile(os.path.join(path_scenario, 'shapefiles','experimental_field_athens_nodes.shp'))
 lin = trfp.read_shapefile(os.path.join(path_scenario, 'shapefiles', 'experimental_field_athens_links.shp'))
+slopes = pd.read_csv(os.path.join(path_scenario, 'shapefiles','scenario_athens_slopes.csv'))
+lin = pd.merge(lin, slopes, left_on = 'id', right_on = 'id') # add slopes in the links dataframe
 lin = trfp.upd_links(lin, nod)
 cf = pd.read_csv(os.path.join(path_scenario, 'default_models', 'psafe','simple_psafe_models.csv'), ',')
 cf = psmodel.psafe_coeff_upd(cf)
@@ -52,8 +54,6 @@ lin = linpsafe.lin_psafe(lin, cf)
 
 lin['modes'] = 'ebike' # assumption ebike can travel in all links
 
-slopes = pd.read_csv(os.path.join(path_scenario, 'shapefiles','scenario_athens_slopes.csv'))
-lin = pd.merge(lin, slopes, left_on = 'id', right_on = 'id') # add slopes in the links dataframe
 lin = lin.rename(columns = {'Avg_Slope':'avgslope', 'Max_Slope':'maxslope'})
 
 def fixslope(lin, nod):
