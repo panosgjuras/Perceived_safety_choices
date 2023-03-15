@@ -7,6 +7,7 @@
 import pandas as pd
 import numpy as np
 import os
+import matplotlib.pyplot as plt
 
 from Psafechoices.network_analysis import traffic_params_upd as trfp
 from Psafechoices.network_analysis import lin_psafe_calc as linpsafe
@@ -19,6 +20,7 @@ def read_points(path: str) -> pd.DataFrame:
     print(len(points))
     return points
 
+# G:\My Drive\PAPERS_TZOURAS\paper29_the_pre_battle\paper_christie 
 path_points = ''
 points = read_points(os.path.join(path_points, 'depot_delpoints_ATHENS.csv'))
 
@@ -32,26 +34,38 @@ def logistnet_cre(df):
            ndf.loc[i, 'to1'] = item2
            i = i + 1
        sdf = pd.concat([sdf, ndf])
-    sdf = pd.concat([df.rename(columns = {'depot':'from1', 'delpoint': 'to1'}), sdf])
+    # sdf = pd.concat([df.rename(columns = {'depot':'from1', 'delpoint': 'to1'}), sdf])
     sdf['pid'] = np.arange(1, len(sdf) + 1, 1)
     sdf = sdf.set_index('pid')
     return(sdf)
 
 net = logistnet_cre(points)
 
+
 path_scenario = ''
 nod = trfp.read_shapefile(os.path.join(path_scenario, 'shapefiles','experimental_field_athens_nodes.shp'))
 lin = trfp.read_shapefile(os.path.join(path_scenario, 'shapefiles', 'experimental_field_athens_links.shp'))
+slopes = pd.read_csv(os.path.join(path_scenario, 'shapefiles','scenario_athens_slopes.csv'))
+lin = pd.merge(lin, slopes, left_on = 'id', right_on = 'id') # add slopes in the links dataframe
 lin = trfp.upd_links(lin, nod)
 cf = pd.read_csv(os.path.join(path_scenario, 'default_models', 'psafe','simple_psafe_models.csv'), ',')
 cf = psmodel.psafe_coeff_upd(cf)
 lin = linpsafe.lin_psafe(lin, cf)
 
-lin['modes'] = 'ebike' # assumption ebike can travel in all lins 
+lin['modes'] = 'ebike' # assumption ebike can travel in all links
 
-slopes = pd.read_csv(os.path.join(path_scenario, 'shapefiles','scenario_athens_slopes.csv'))
-lin = pd.merge(lin, slopes, left_on = 'id', right_on = 'id') # add slopes in the links dataframe
 lin = lin.rename(columns = {'Avg_Slope':'avgslope', 'Max_Slope':'maxslope'})
+
+def fixslope(lin, nod):
+    lin["zfrom"] = pd.merge(lin, nod, left_on = 'from1', right_on = 'id').z 
+    lin["zto"] = pd.merge(lin, nod, left_on = 'to1', right_on = 'id').z
+    #lin["slope"] = ((lin.zto - lin.zfrom)/lin.length)*100
+    lin.avgslope = np.where(lin.zfrom > lin.zto, 0 - lin.avgslope, lin.avgslope)
+    lin.maxslope = np.where(lin.zfrom > lin.zto, 0 - lin.maxslope, lin.maxslope)
+    lin = lin.drop(columns=["zfrom", "zto"])
+    return(lin)
+
+lin = fixslope(lin, nod)
 
 # coeff = pd.read_csv(os.path.join(path_scenario, 'default_models', 'choice','coeff_choice_model.csv'),',')
 # speed = 20 # define mean speed of the selected mode
@@ -62,14 +76,39 @@ def logisticnet_sdist(df):
     df["path"] = 0
     for i in range(1, len(df) + 1):
         path = dij.dij_run(lin, nod, 'ebike', df.loc[i, 'from1'], df.loc[i, 'to1'])
+        
         df['path'] = df['path'].astype('object')
         df.at[i, 'path'] = path
+        
         df.loc[i, 'sdist'] = dij.dij_dist_calc(path, lin)
-        df.loc[i, 'sumpsafe'] = dij.dij_dist_calc(path, lin, 'sumpsafe', 'ebike')
-        df.loc[i, 'avgslope'] = dij.dij_dist_calc(path, lin, 'avgslope', 'ebike')
-        # df.loc[i, 'maxslope'] = dij.dij_dist_calc(path, lin, 'maxslope', 'ebike')
+        
+        df.loc[i, 'sum_psafe'] = dij.dij_dist_calc(path, lin, 'sumpsafe', 'ebike')
+        df.loc[i, 'sum_avgslope'] = dij.dij_dist_calc(path, lin, 'sumavgslope', 'ebike')
+        df.loc[i, 'sum_maxslope'] = dij.dij_dist_calc(path, lin, 'summaxslope', 'ebike')
+        
+        df.loc[i, 'wavg_psafe'] = dij.dij_dist_calc(path, lin, 'weight_sumpsafe', 'ebike')
+        
+        df.loc[i, 'wavg_avgslope'] = dij.dij_dist_calc(path, lin, 'weight_sumavgslope', 'ebike')
+        
+        df.loc[i, 'wavg_maxslope'] = dij.dij_dist_calc(path, lin, 'weight_summaxslope', 'ebike')
+       
+    
+    
+    df.wavg_psafe = np.where((df.sdist!=0) & (df.sdist!=999999), df.wavg_psafe/df.sdist, 999999)
+    df.wavg_avgslope = np.where((df.sdist!=0) & (df.sdist!=999999), df.wavg_avgslope/df.sdist, 999999)
+    df.wavg_maxslope = np.where((df.sdist!=0) & (df.sdist!=999999), df.wavg_maxslope/df.sdist, 999999)
+    
     return(df)
 
 net = logisticnet_sdist(net)
-net.to_csv('/net_file_ATHENS.csv')
+net.to_csv(os.path.join(path_points, 'net_file_ATHENS.csv'))
 
+df = net[(net.sdist!=999999) & (net.sdist!=0)]
+plt.scatter(df.sdist, df.sum_psafe)
+plt.scatter(df.sdist, df.sum_avgslope)
+plt.scatter(df.sdist, df.sum_maxslope)
+
+x = -2350
+plt.scatter(df.sdist, df.wavg_psafe * (x))
+plt.scatter(df.sdist, df.wavg_avgslope)
+plt.scatter(df.sdist, df.wavg_maxslope)
