@@ -4,7 +4,16 @@ The [Psafechoices](https://github.com/lotentua/Perceived_safety_choices/edit/mai
 
 The routing model is based on the following equation:
 
-<img src="https://user-images.githubusercontent.com/121678451/210090788-3fa9a89f-1ad3-4bdf-80f6-cf42dfd45576.png" width="600">
+$V_{m,i} = β_{time_m} * d_i/v_m + β_{cost_m} * cd_m * d_i + β_{psafe_m} * (psafe_{i,m} - 4) * (d_i/d_{max})$
+
+where: where:
+$V_{m,i}$: utility of using mode m (i.e., car, e-scooter, walk) to travel through the link i;
+$β_{time_m}, β_{cost_m}, ...,β_{psafe_m}$: beta parameters of utility function; they differ per mode;
+$d_i$: distance of link i in km;
+$v_m$: travel speed of mode m in km/h; it is assumed to be fixed per link; 
+$cd_m$: cost per kilometer of using mode m in euros; it is assumed to be fixed per link;
+$psafe_{i,m}$: perceived safety level of using mode m to travel through i;
+$d_{max}$: maximum acceptable unsafe distance in kilometers, after which perceived safety has a significant impact on the utility of using mode m to travel through the link i (negative impact if $psafe_{i,m} < 4$; positive impact if $psafe_{i,m} > 4$, no impact if $psafe_{i,m}=4$).
 
 **The [Psafechoices](https://github.com/lotentua/Psafechoices) contains:**
 
@@ -15,7 +24,3 @@ The routing model is based on the following equation:
 -[network_analysis](https://github.com/lotentua/Perceived_safety_choices/tree/main/Psafechoices/network_analysis) functions: using [pyshp](https://github.com/GeospatialPython/pyshp), shps of nodes and links, in a very specific data format (see network examples), are imported in the developed functions to estimate perceived safety per link; the output of this process are xml network file ([lxml toolkit](https://github.com/lxml/lxml) is used) capable for [MATSim](https://github.com/matsim-org) simualtions and csv file, which can be imported in GIS and joined with shp for mapping purposes.
 
 -[routing_model](https://github.com/panosgjuras/Perceived_safety_choices/tree/main/routing_model): a Dijkstra routing model, which defines the shortest, fastest and safest path per transport mode; to do so, the [Dijkstra](https://github.com/ahojukka5/dijkstra) package is utilized; yet the weights change. Critical parameters are: a) the maximum acceptable unsafe distance (dmax) after which perceived safety significantly increases (or decreases) the utility of traveling from the link i and b) the minimum acceptable perceived safety level (minv) is related to the confidence of one road user to use the transport mode m in less safe links i. These parameters should be calibrated. STOCHASTIC MODEL WILL BE INTEGRATED TOO.
-
-<img src="https://user-images.githubusercontent.com/63541107/186953835-3046c2e6-f965-4abf-b758-5dad32528298.png" height="150">
-
-This research project has been co-financed by the European Regional Development Fund of the European Union and Greek national funds, National Strategic Reference Framework 2014- 2020 (NSRF), through the Operational Program Competitiveness, Entrepreneurship, and Innovation, under the call RESEARCH – CREATE – INNOVATE (project code: T2EDK-02494 and name: SIM4MTRAN).
