@@ -16,17 +16,32 @@ def get_version(rel_path):
     else:
         raise RuntimeError("Unable to find version string.")
 
-description = """
+description_psafechoices = """
 The model that has been uploaded to this repository aspires to describe routing behavior 
 of micro-mobility modes, e.g., e-bikes and e-scoters, in relationship with traditional modes, 
 e.g., private car and walking.
 """
+
 setup(name = "psafechoices",
       version = get_version("Psafechoices/__init__.py"),
       url = "https://github.com/lotentua/Perceived_safety_choices",
       author = "Panagiotis G. Tzouras",
       author_email = "ptzouras@mail.ntua.gr",
-      description=" ".join(description.strip().splitlines()),
+      description=" ".join(description_psafechoices.strip().splitlines()),
+      packages = find_packages(),
+      
+      # install_requires = ['biogeme>=3.2.10', 'dijkstra>=0.2.1', 'lxml>=4.9.1',
+      #                    'numpy>=1.23.3', 'pandas>=1.5.0', 'pyshp>=2.3.1']
+      )
+
+description_microindianalysis = """ESTIMATION AND ANALYSIS OF MICROMOBILITY INDICATORS"""
+
+setup(name = "microindianalysis",
+      version = get_version("MicroIndiAnalysis/__init__.py"),
+      url = "https://github.com/lotentua/Perceived_safety_choices",
+      author = "Parmenion Delialis",
+      author_email = "parmeniondelialis@gmail.com",
+      description=" ".join(description_microindianalysis.strip().splitlines()),
       packages = find_packages(),
       
       # install_requires = ['biogeme>=3.2.10', 'dijkstra>=0.2.1', 'lxml>=4.9.1',
