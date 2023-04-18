@@ -77,3 +77,60 @@ def boxplot(arrays, colNames, title, yLabel):
     # plt.show()
 
     return tempFile
+
+def descrstat(carCO2, carCOST, carSAFETY, 
+              escootCO2, escootCOST, escootSAFETY):
+    # print(carCO2)
+    tables = {"Car CO2": carCO2,
+              "E-Scooter CO2": escootCO2,
+              "Car cost": carCOST,
+              "E-scooter cost": escootCOST,
+              "Car safety": carSAFETY,
+              "E-scooter safety": escootSAFETY}
+    
+    # colNames = list(tables.keys())
+    dataStats = []
+    for key, val in tables.items():
+        dataStats.append(calc_stats(val, key))
+    
+    df = pd.DataFrame(dataStats)
+    
+    print(df)    
+    return df
+
+def perchange(carVKM, escootVKM,
+              carCO2, carCOST, carSAFETY, 
+              escootCO2, escootCOST, escootSAFETY):
+    
+    iterNum = carVKM.shape[0]
+    
+    car_co2_change = np.zeros(iterNum)
+    car_co2_change_per = np.zeros(iterNum-1)
+    escoot_co2_change = np.zeros(iterNum)
+    escoot_co2_change_per = np.zeros(iterNum-1)
+    
+    for i in range(iterNum):
+        car_co2_change[i] = carCO2[i] - carCO2[0]
+        escoot_co2_change[i] = escootCO2[i] - escootCO2[0]
+
+    # total_co2_change = carCO2 + escootCO2
+    for i in range(1, iterNum):
+        car_co2_change_per[i-1] = car_co2_change[i] / carCO2[0]
+        escoot_co2_change_per[i-1] = escoot_co2_change[i] / escootCO2[0]
+        
+    car_scoots = [
+        [carVKM, escootVKM],
+        [carCO2, escootCO2],
+        [carCOST, escootCOST],
+        [carSAFETY, escootSAFETY]]
+    
+    names = ['Vehicle/km', 'CO2 (kg)', 'Cost of use (€)', 'Safety (fatalities)']
+    dataBA = []
+    
+    for i, car_scoot in enumerate(car_scoots):
+        dataBA.append(calc_before_after(car_scoot=car_scoot, name=names[i]))
+
+    df = pd.DataFrame(dataBA)
+   
+    return df
+

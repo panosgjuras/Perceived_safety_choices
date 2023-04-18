@@ -15,7 +15,7 @@ from .microindianalysis import analysistools
 # from .MicroIndiAnalysis import indicators
 # from .MicroIndiAnalysis import analysistools
 
-__version__ = "0.4" # data processing functions are not included in this version
+__version__ = "0.5" # data processing functions are not included in this version
 __author__ = 'Panagiotis G. Tzouras'
 __all__ = [traffic_params_upd.read_shapefile, traffic_params_upd.upd_links, 
            lin_psafe_calc.lin_psafe, maphist.psafehist, maphist.psafemap, 
@@ -26,4 +26,5 @@ __all__ = [traffic_params_upd.read_shapefile, traffic_params_upd.upd_links,
            indicators.car_safety, indicators.escoot_co2,
            indicators.escoot_cost, indicators.escoot_safety,
            analysistools.boxplot, analysistools.calc_before_after,
-           analysistools.roundCond, analysistools.calc_stats]
+           analysistools.roundCond, analysistools.calc_stats,
+           analysistools.descrstat, analysistools.perchange]

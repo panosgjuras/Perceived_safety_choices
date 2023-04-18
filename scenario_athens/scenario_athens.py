@@ -16,7 +16,8 @@ from Psafechoices.network_analysis import maphist as mph
 from Psafechoices.psafe_model import psafe_coeff_upd as psmodel
 from Psafechoices.network_analysis import shp_to_csv_xml_tool as convert
 from Psafechoices.routing_model import network_graph as dij
-from Psafechoices.microindianalysis import indicators
+from Psafechoices.microindianalysis import indicators as indi
+from Psafechoices.microindianalysis import analysistools as ana
 
 
 # from Psafechoices.routing_model import assess_analysis as ass
@@ -134,7 +135,7 @@ to = 4000 # select destination point
 #savdf.to_csv('')
 # path_table = show_unique(savdf)
 
-simoutlink = os.path.join(root_dir, 'simulation_out', 'pkm_modestats.txt')
+simoutlink = os.path.join(root_dir, 'simulation_Out', 'pkm_modestats.txt')
 simout = pd.read_csv(simoutlink, sep="\t")
 
 carOccupancy = 1.4
