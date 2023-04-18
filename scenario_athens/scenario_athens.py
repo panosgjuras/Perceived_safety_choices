@@ -7,6 +7,7 @@
 import os
 import pandas as pd
 import warnings
+import numpy as np
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 from Psafechoices.network_analysis import traffic_params_upd as trfp
@@ -15,7 +16,8 @@ from Psafechoices.network_analysis import maphist as mph
 from Psafechoices.psafe_model import psafe_coeff_upd as psmodel
 from Psafechoices.network_analysis import shp_to_csv_xml_tool as convert
 from Psafechoices.routing_model import network_graph as dij
-import MicroIndiAnalysis.indicators
+from Psafechoices.microindianalysis import indicators
+
 
 # from Psafechoices.routing_model import assess_analysis as ass
 
@@ -78,9 +80,6 @@ coeff = pd.read_csv(os.path.join(root_dir, 'default_models', 'choice','coeff_cho
 fr = 9000 # select origin point
 to = 4000 # select destination point
 
-
-
-
 ## MODEL RESULTS ANALYSIS TO BE INTEGRATED IN THE PSAFECHOICES MODEL
 # def simulate_params(lin, nod, fr, to, minv, dmin, mode, coeff, scenario):
 #    coeff = opp.opp_cost_calc(coeff, mode, speed, dcost)
@@ -134,3 +133,23 @@ to = 4000 # select destination point
 # savdf.to_csv('G:/My Drive/research_papers/paper19_SIM4MTRAN_model/paper_SUSTAINABILITY/new_data_analysis/all_scenarios_routing_results_step50.csv')
 #savdf.to_csv('')
 # path_table = show_unique(savdf)
+
+simoutlink = os.path.join(root_dir, 'simulation_out', 'pkm_modestats.txt')
+simout = pd.read_csv(simoutlink, sep="\t")
+
+carOccupancy = 1.4
+carVKT = simout['car'].to_numpy() * carOccupancy
+escootVKT = simout['escoot'].to_numpy()
+
+iterNum = carVKT.shape[0]
+
+carCO2 = indi.car_co2(carVKT)
+carCOST = indi.car_cost(carVKT) 
+carSAFETY = indi.car_safety(carVKT)
+
+escootCO2 = indi.escoot_co2(escootVKT)
+escootCOST = indi.escoot_cost(escootVKT)
+escootSAFETY = indi.escoot_safety(escootVKT)
+
+
+
