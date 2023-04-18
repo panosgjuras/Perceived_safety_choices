@@ -9,8 +9,11 @@ from .network_analysis import traffic_params_upd, lin_psafe_calc, shp_to_csv_xml
 from .routing_model import network_graph, assess_analysis
 from .psafe_model import psafe_coeff_upd as psmod
 from .choice_model import opp_cost_calculator as oppco
-from .MicroIndiAnalysis import indicators
-from .MicroIndiAnalysis import analysistools
+from .microindianalysis import indicators
+from .microindianalysis import analysistools
+
+# from .MicroIndiAnalysis import indicators
+# from .MicroIndiAnalysis import analysistools
 
 __version__ = "0.2" # data processing functions are not included in this version
 __author__ = 'Panagiotis G. Tzouras'
