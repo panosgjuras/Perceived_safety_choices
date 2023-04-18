@@ -12,7 +12,7 @@ from .choice_model import opp_cost_calculator as oppco
 from .MicroIndiAnalysis import indicators
 from .MicroIndiAnalysis import analysistools
 
-__version__ = "0.2" # data processing functions are not included in this version
+__version__ = "0.3" # data processing functions are not included in this version
 __author__ = 'Panagiotis G. Tzouras'
 __all__ = [traffic_params_upd.read_shapefile, traffic_params_upd.upd_links, 
            lin_psafe_calc.lin_psafe, maphist.psafehist, maphist.psafemap, 
