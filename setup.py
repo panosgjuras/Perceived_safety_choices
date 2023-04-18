@@ -33,17 +33,3 @@ setup(name = "psafechoices",
       # install_requires = ['biogeme>=3.2.10', 'dijkstra>=0.2.1', 'lxml>=4.9.1',
       #                    'numpy>=1.23.3', 'pandas>=1.5.0', 'pyshp>=2.3.1']
       )
-
-description_microindianalysis = """ESTIMATION AND ANALYSIS OF MICROMOBILITY INDICATORS"""
-
-setup(name = "microindianalysis",
-      version = get_version("MicroIndiAnalysis/__init__.py"),
-      url = "https://github.com/lotentua/Perceived_safety_choices",
-      author = "Parmenion Delialis",
-      author_email = "parmeniondelialis@gmail.com",
-      description=" ".join(description_microindianalysis.strip().splitlines()),
-      packages = find_packages(),
-      
-      # install_requires = ['biogeme>=3.2.10', 'dijkstra>=0.2.1', 'lxml>=4.9.1',
-      #                    'numpy>=1.23.3', 'pandas>=1.5.0', 'pyshp>=2.3.1']
-      )

@@ -190,6 +190,9 @@ def perchange(carVKM, escootVKM,
    
     return df
 
+# in scenario Athens!!!
+# add add
+
 dfstat = descrstat()
 temp1 = tempfile.NamedTemporaryFile(suffix='.xlsx')
 dfstat.to_excel(temp1, index=False)
@@ -213,6 +216,7 @@ fig = ax.get_figure()
 temp7 = tempfile.NamedTemporaryFile(suffix='.xlsx')
 fig.savefig(temp7, dpi=300)
 
+## create a zip file...
 zipFile = zipfile.ZipFile("sim4mtran_indicators.zip", 'w')
 temps = [temp1, temp2, temp3, temp4, temp5, temp6, temp7]
 fileNames = ['1 - Indicators Stats.xlsx', '2 - Changes.xlsx', '3 - CO2 Emissions Cars.png', 
@@ -221,3 +225,6 @@ fileNames = ['1 - Indicators Stats.xlsx', '2 - Changes.xlsx', '3 - CO2 Emissions
 for z, temp in enumerate(temps):
     zipFile.write(temp.name, fileNames[z], zipfile.ZIP_DEFLATED)
 zipFile.close()
+
+
+

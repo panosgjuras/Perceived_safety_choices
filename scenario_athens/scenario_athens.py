@@ -15,6 +15,7 @@ from Psafechoices.network_analysis import maphist as mph
 from Psafechoices.psafe_model import psafe_coeff_upd as psmodel
 from Psafechoices.network_analysis import shp_to_csv_xml_tool as convert
 from Psafechoices.routing_model import network_graph as dij
+import MicroIndiAnalysis.indicators
 
 # from Psafechoices.routing_model import assess_analysis as ass
 
