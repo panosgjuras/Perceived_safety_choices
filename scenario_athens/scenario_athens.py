@@ -8,6 +8,8 @@ import os
 import pandas as pd
 import warnings
 import numpy as np
+import tempfile
+import zipfile
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 from Psafechoices.network_analysis import traffic_params_upd as trfp
@@ -16,13 +18,14 @@ from Psafechoices.network_analysis import maphist as mph
 from Psafechoices.psafe_model import psafe_coeff_upd as psmodel
 from Psafechoices.network_analysis import shp_to_csv_xml_tool as convert
 from Psafechoices.routing_model import network_graph as dij
+from Psafechoices.choice_model import opp_cost_calculator as opp
+
+# NEW NEW NEW ... MODULES TO ESTIMATE INDICATORS
+# they have been integrated in the setup file
 from Psafechoices.microindianalysis import indicators as indi
 from Psafechoices.microindianalysis import analysistools as ana
 
-
 # from Psafechoices.routing_model import assess_analysis as ass
-
-from Psafechoices.choice_model import opp_cost_calculator as opp
 
 root_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -135,22 +138,54 @@ to = 4000 # select destination point
 #savdf.to_csv('')
 # path_table = show_unique(savdf)
 
+
+# NEW NEW NEW
+# estimation of indicators based on the output txt files of MATSim
 simoutlink = os.path.join(root_dir, 'simulation_Out', 'pkm_modestats.txt')
 simout = pd.read_csv(simoutlink, sep="\t")
 
 carOccupancy = 1.4
-carVKT = simout['car'].to_numpy() * carOccupancy
-escootVKT = simout['escoot'].to_numpy()
+carVKM = simout['car'].to_numpy() * carOccupancy
+escootVKM = simout['escoot'].to_numpy()
+# iterNum = carVKM.shape[0] # not necessary...
 
-iterNum = carVKT.shape[0]
+carCO2 = indi.car_co2(carVKM)
+carCOST = indi.car_cost(carVKM) 
+carSAFETY = indi.car_safety(carVKM)
 
-carCO2 = indi.car_co2(carVKT)
-carCOST = indi.car_cost(carVKT) 
-carSAFETY = indi.car_safety(carVKT)
+escootCO2 = indi.escoot_co2(escootVKM)
+escootCOST = indi.escoot_cost(escootVKM)
+escootSAFETY = indi.escoot_safety(escootVKM)
 
-escootCO2 = indi.escoot_co2(escootVKT)
-escootCOST = indi.escoot_cost(escootVKT)
-escootSAFETY = indi.escoot_safety(escootVKT)
+dfstat = ana.descrstat(carCO2, carCOST, carSAFETY, escootCO2, escootCOST, escootSAFETY)
+temp1 = tempfile.NamedTemporaryFile(suffix='.xlsx')
+dfstat.to_excel(temp1, index=False)
 
+df_ba = ana.perchange(carVKM, escootVKM, carCO2, carCOST, carSAFETY, 
+                      escootCO2, escootCOST, escootSAFETY)
+temp2 = tempfile.NamedTemporaryFile(suffix='.xlsx')
+df_ba.to_excel(temp2, index=False)
 
+temp3 = ana.boxplot([carCO2], ['Car'], 'CO2 Emissions Cars', 'CO2 (kg)')
+temp4 = ana.boxplot([escootCO2], ['E-scooter'], 'CO2 Emissions E-scooters', 'CO2 (kg)')
 
+temp5 = ana.boxplot([carCOST, escootCOST], ['Car', 'E-scooter'], 'Cost of use per mode', 'Cost of use (€)')
+temp6 = ana.boxplot([carSAFETY, escootSAFETY], ['Car', 'E-scooter'], 'Safety per mode', 'Safety (fatalities)')
+
+ax = df_ba.plot.bar(x='Name', y='Diff %', rot=45, legend=False,
+                        figsize=(8, 8), title='Indicators', 
+                        xlabel='Name', ylabel = 'Diff %')
+fig = ax.get_figure() 
+temp7 = tempfile.NamedTemporaryFile(suffix='.xlsx')
+fig.savefig(temp7, dpi=300)
+
+## create a zip file... THIS THIS THE MAIN OUTPUT
+zipFile = zipfile.ZipFile('indicators_'+ scenario + '.zip', 'w')
+
+temps = [temp1, temp2, temp3, temp4, temp5, temp6, temp7]
+fileNames = ['1 - Indicators Stats.xlsx', '2 - Changes.xlsx', '3 - CO2 Emissions Cars.png', 
+             '4 - CO2 Emissions E-scooters.png', '5 - Cost of use per mode.png',
+             '6 - Safety per mode.png', '7 - Changes.png']
+for z, temp in enumerate(temps):
+    zipFile.write(temp.name, fileNames[z], zipfile.ZIP_DEFLATED)
+zipFile.close()
