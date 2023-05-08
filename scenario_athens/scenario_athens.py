@@ -11,6 +11,7 @@ import numpy as np
 import tempfile
 import zipfile
 warnings.simplefilter(action='ignore', category=FutureWarning)
+import geopandas as gpd
 
 from Psafechoices.network_analysis import traffic_params_upd as trfp
 from Psafechoices.network_analysis import lin_psafe_calc as linpsafe
@@ -58,6 +59,9 @@ convert.netcsv_cr(lin, os.path.join(outpath, csv))
 convert.netxml_cr(lin, nod, os.path.join(outpath, 'sim4mtran_psafest_'+ scenario + '.xml'))
 
 # shppath = 'C:/Users/panos_000/Desktop/github_tzouras/Perceived_safety_choices/scenario_athens/shapefiles'
+
+lin = gpd.GeoDataFrame(lin, geometry='geometry')
+
 
 mph.psafehist(lin, outpath, 'car', scenario)
 mph.psafehist(lin, outpath, 'ebike', scenario)
