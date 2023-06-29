@@ -15,7 +15,7 @@ from Psafechoices.network_analysis import maphist as mph
 from Psafechoices.psafe_model import psafe_coeff_upd as psmodel
 from Psafechoices.network_analysis import shp_to_csv_xml_tool as convert
 from Psafechoices.routing_model import network_graph as dij
-import MicroIndiAnalysis.indicators
+# import MicroIndiAnalysis.indicators
 
 # from Psafechoices.routing_model import assess_analysis as ass
 
@@ -26,9 +26,14 @@ root_dir = os.path.dirname(os.path.realpath(__file__))
 # To run the Psafechoices model, it requires two models as inputs
 # Psafe model: ordinal logistic regression model with infrastructure parameters
 # Choice model: BIOGEME discrete choice mode with time + cost + safety
-scenario = 'scenario_0_ATHENS'
-nod_link = os.path.join(root_dir, 'shapefiles', 'experimental_field_athens_nodes.shp')
-lin_link = os.path.join(root_dir, 'shapefiles', 'experimental_field_athens_links.shp')
+scenario = 'scenario_000_Athens'
+# nod_link = os.path.join(root_dir, 'shapefiles', 'experimental_field_athens_nodes.shp')
+# lin_link = os.path.join(root_dir, 'shapefiles', 'experimental_field_athens_links.shp')
+
+nod_link = '/Users/panosgtzouras/Desktop/WEBSCENATHENS/shapefiles/nodes/experimental_field_athens_nodes.shp'
+lin_link = '/Users/panosgtzouras/Desktop/WEBSCENATHENS/shapefiles/scenario0/experimental_field_athens_links.shp'
+# outpath = os.path.join(root_dir, 'outputs')
+outpath = '/Users/panosgtzouras/Desktop/WEBSCENATHENS/Psafechoices_outputs/scenario000'
 
 # read the nodes from a shapefile
 nod = trfp.read_shapefile(nod_link)
@@ -36,7 +41,7 @@ nod = trfp.read_shapefile(nod_link)
 # TEST HERE NEW SCENARIOS WITH INFRASTUCTURE UPDATES
 lin = trfp.read_shapefile(lin_link)
 # update traffic parameters and coordinates with nodes
-lin = trfp.upd_links(lin, nod)
+lin = trfp.upd_links(lin, nod).reset_index()
 # update perceived safety model parameters using the output model from Rchoice
 # in this case, default perceived safety models are used. Use your own models...
 cf = pd.read_csv(os.path.join(root_dir, 'default_models', 'psafe','simple_psafe_models.csv'), ',')
@@ -44,7 +49,6 @@ cf = psmodel.psafe_coeff_upd(cf)
 # estimate perceived safety per link and per transport mode
 lin = linpsafe.lin_psafe(lin, cf)
 # create a csv file for mapping purposes
-outpath = os.path.join(root_dir, 'outputs')
 
 csv = 'sim4mtran_psafest_'+ scenario + '.csv'
 convert.netcsv_cr(lin, os.path.join(outpath, csv))
@@ -67,16 +71,16 @@ mph.psafemap(lin_link, nod_link, os.path.join(outpath, csv), outpath, scenario)
 
 # import choice model to run routin
 # in this case, default choice model is utilized
-speed = 15 # define mean speed of the selected mode
-dcost = 7/speed
-coeff = pd.read_csv(os.path.join(root_dir, 'default_models', 'choice','coeff_choice_model.csv'),',')
+# speed = 15 # define mean speed of the selected mode
+# dcost = 7/speed
+# coeff = pd.read_csv(os.path.join(root_dir, 'default_models', 'choice','coeff_choice_model.csv'),',')
 # mode = 'walk' # select transport mode: car, ebike, escooter, walk
 # coeff = opp.opp_cost_calc(coeff, mode, speed, dcost)
 # coeff = pd.read_csv(os.path.join(root_dir, 'default_models', 'choice', 'coeff_route_model.csv') , sep=',').set_index('param')
 
 # run routing algorithm in this network
-fr = 9000 # select origin point
-to = 4000 # select destination point
+# fr = 9000 # select origin point
+# to = 4000 # select destination point
 
 
 

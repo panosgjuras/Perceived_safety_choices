@@ -65,7 +65,8 @@ def fun_psafe(links, mode, cf):
     psafe=pd.Series(999, index=np.arange(len(links))) # 999, if mode and x are unmatched
     psafe_l=pd.Series(999, index=np.arange(len(links))) # 999, if mode and x are unmatched 
     
-    for i in range(0,len(links)):
+    for i in range(0, len(links)+1):
+        
         # coding categorical variables based on the developed functions
         inf = inf_match(links.inf.iloc[i])
         inf1 = np.where(inf==1, 1, 0)
@@ -76,7 +77,10 @@ def fun_psafe(links, mode, cf):
         obst = obst_match(links.obst.iloc[i])
         cross =cross_match(links.cross.iloc[i])
         cross1 = np.where(cross==1, 1, 0)
-        cross2 = np.where(cross==2, 1, 0)       
+        cross2 = np.where(cross==2, 1, 0)   
+        
+        if i == len(links): 
+             break  
         
         if inf!=999 and pav!=999 and obst!=999 and cross!=999:
             psafe.iloc[i]=b_inf1 * inf1 + b_inf2 * inf2 + b_inf4 * inf4 + b_pav*pav + b_cross1 * cross1 + b_cross2*cross2 + b_obst*obst
@@ -97,7 +101,7 @@ def fun_psafe(links, mode, cf):
                  psafe_l.iloc[i]=6
               else:
                 psafe_l.iloc[i]=7
-           
+                      
     return psafe, psafe_l
 
 def lin_psafe(lin, cf):
