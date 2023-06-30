@@ -17,7 +17,7 @@ s = sigmas(0, -1000, 1000, 0)
 rnds = randoms(b, s, 'NORMAL_HALTON2')
 
 os.chdir(root_dir)
-link = os.path.join(root_dir, 'datasets', 'choice_dataset_perceived_choices.csv')
+link = os.path.join(root_dir, 'sample_datasets', 'choice_dataset_perceived_choices_crop.csv')
 t = 2
 
 def car_bin(link, R):

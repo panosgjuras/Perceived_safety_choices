@@ -14,7 +14,7 @@ library(bayesmeta)
 library(densratio)
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-data1<-read.csv2("datasets/rating_dataset_perceived_choices.csv", header=T,dec=".",sep=",") # this is the perceived safery dataset
+data1<-read.csv2("sample_datasets/rating_dataset_perceived_choices_crop.csv", header=T,dec=".",sep=",") # this is the perceived safery dataset
 # data2<-read.csv2("datasets/choice_dataset_perceived_choices.csv", header=T,dec=".",sep=",")
 
 # 1. Descriptive statistics in sociodemo characteristics
