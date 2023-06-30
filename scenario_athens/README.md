@@ -1,19 +1,44 @@
-# The "Scenario Athens"
-
+# The SCENARIO ATHENS
 It is an experimental scenario developed in the Athens, Greece downtown area. The scenario is useful for testing first/last mile transport systems, e.g., e-bikes, e-scooters, etc. Most of the trip distances do not exceed the 10 km. The study area includes Athens’ commercial triangle where shops, hotels, restaurants, etc. are concentrated. In addition, Ministries and Public Services can be found around Syntagma Square and Panepistimiou Avenue. The road network mostly consists of narrow (one way) streets and pedestrianized zones, which hinder the use of private cars. As an alternative, there are six metro sta-tions and two tram stations, which support the trips from/to the city center of Athens making public transport as the most efficient and therefore attractive option for accessing to the study area. 
 
-The online map of the Scenario_Athens can be found here: https://panosgjuras.github.io/scenario_Athens
+There is an online map of [The SCENARIO ATHENS](https://lotentua.github.io/The_Scenario_Athens). Please click on the links to see their attributes.
 
 The road network consist of 257 nodes and 400 links!
 
 It is an example scenario for potential users of [Psafechoices](https://github.com/lotentua/Perceived_safety_choices/tree/main/Psafechoices) package
 
-Pedestrianized streets have been excluded. Some exceptions to this are Aiolou Street and the route from Dion. Aeropagitou and Apost. Pavlou Streets, which comprise a wide, 1.38 km long pedestrianized route that connects the Acropolis of Athens with the Ancient Market. In the developed network, there are no cycle lanes with the exemption of Vas. Olgas and Panepistimiou Avenues where pop-up cycle lanes were established in May 2020.
+For simplicity, only nine external zones are specified, i.e., node 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000 and 9000. These zones are connected with the established road network via a single uni-directional link. In the scenario, a buffer zone of 1500 meters has been created. We have established some depots around it to perform some optimization experiments.
 
-For simplicity, only nine external zones are specified, i.e., node 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000 and 9000. These zones are connected with the established road network via a single uni-directional link. 
+The spatial data that describe road infrastructure have been collected in a standarized format. In the [shapefile](https://github.com/lotentua/Perceived_safety_choices/tree/main/scenario_athens/shapefiles) folder, there are .qml files  with the respective styles. In QGIS, spatial data are imported using a dropdown menu. Please respect it, otherwise the [Psafechoices](https://github.com/lotentua/Perceived_safety_choices/tree/main/Psafechoices) package cannot be used to process the spatial data. Attention, use the SNAPPING tool in QGIS, so that the start/end point of a link will have the same coordinates with the respective node.
 
-The spatial data that describe road infrastructure have been collected in a standarized format. In the [shapefile](https://github.com/lotentua/Perceived_safety_choices/tree/main/scenario_athens/shapefiles) folder, there are .qml files  with the respective styles. In QGIS, spatial data are imported using a dropdown menu. Please follow these styles, otherwise the [Psafechoices](https://github.com/lotentua/Perceived_safety_choices/tree/main/Psafechoices) package cannot be used to process the spatial data. Attention, use the SNAPPING tool in QGIS, so that the start/end point of a link will have the same coordinates with the respective node.
+We strongly recommend to download our shapefiles before starting to develope your own plans.
 
-This the first scenario in Athens Metropolitan Area developed for Agent-Based Simulations and First/Last Mile Routing. More updates are coming in the future.
+<img src="https://github.com/lotentua/Perceived_safety_choices/assets/121678451/2bd4a5aa-6483-4e37-aa35-5d66b6832f95" height="650">
 
-<img width="700" alt="image" src="https://user-images.githubusercontent.com/121678451/227531934-ae135d3b-f5d5-4614-8379-07be2ff51cc4.png">
+**Main assumptions behind this experimental network are:**
+1) Pedestrianized streets have been excluded. Some exceptions to this are Aiolou Street and the route from Dion. Aeropagitou and Apost. Pavlou Streets, which comprise a wide, 1.38 km long pedestrianized route that connects the Acropolis of Athens with the Ancient Market.
+
+2) E-bikes and e-scooters as flexible modes can enter in all links of the network.
+
+3) E-bikes and e-scooter fully respect the directions of the links - especially in the inner road network where many one-way liks can be found.
+
+4) In the developed network, there are no cycle lanes with the exemption of Vas. Olgas and Panepistimiou Avenues where pop-up cycle lanes were established in May 2020. Double links have been designed there, as cycle lane are unidirectional and Panepistimiou is one-way for cars.
+
+**Contents**
+- [Psafechoice_outputs](https://github.com/lotentua/Perceived_safety_choices/tree/main/scenario_athens/Psafechoices_outputs) contaitns all the outputs from the estimation and analysis of perceived safety per transport mode. They are automatically generated when using the [Psafechoices](https://github.com/lotentua/Perceived_safety_choices/tree/main/Psafechoices). The .xml file can be directly integrated into [MATSim]( https://github.com/matsim-org).
+
+- [default_models](https://github.com/lotentua/Perceived_safety_choices/tree/main/scenario_athens/default_models): contains the default models which are used to estimate perceived safety and model routing behavior.
+
+- [shapefiles](https://github.com/lotentua/Perceived_safety_choices/tree/main/scenario_athens/shapefiles): all the shapefiles per scenario are located there. Styles have been added too. Use them to map some of the major attributes of the network.
+
+- Run [scenario_athens.py](https://github.com/lotentua/Perceived_safety_choices/blob/main/scenario_athens/scenario_athens.py) to estimate perceived safety per link and per transport mode.
+
+- Run [scenario_athens.py](https://github.com/lotentua/Perceived_safety_choices/blob/main/scenario_athens/simulation_routing_athens.py) to explore the new routing patterns that are generated by importing perceived safety into Dijkstra algorithm.
+
+<img src="https://github.com/lotentua/Perceived_safety_choices/blob/main/scenario_athens/Psafechoices_outputs/scenario0/sim4mtran_psafehist_car_scenario0.png" height="350"><img src="https://github.com/lotentua/Perceived_safety_choices/blob/main/scenario_athens/Psafechoices_outputs/scenario0/sim4mtran_psafehist_ebike_scenario0.png" height="350">
+<img src="https://github.com/lotentua/Perceived_safety_choices/blob/main/scenario_athens/Psafechoices_outputs/scenario0/sim4mtran_psafehist_escooter_scenario0.png" height="350"><img src="https://github.com/lotentua/Perceived_safety_choices/blob/main/scenario_athens/Psafechoices_outputs/scenario0/sim4mtran_psafehist_walk_scenario0.png" height="350">
+  
+**Papers that used [The SCENARIO ATHENS](https://lotentua.github.io/The_Scenario_Athens):**
+1. Tzouras, L. Mitropoulos, K. Koliou, E. Stavropoulou, C. Karolemeas, E. Antoniou, A. Karaloulis, K. Mitropoulos, E. I. Vlahogianni, and K. Kepaptsoglou (2023) ‘Describing Micro-Mobility First / Last-Mile Routing Behavior in Urban Road Networks through a Novel Modeling Approach’, Sustainability (Switzerland), 15(4), p. 3095. doi: https://doi.org/10.3390/su15043095
+
+Explore the impacts of model parameters in our papers
