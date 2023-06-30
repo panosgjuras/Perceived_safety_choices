@@ -1,7 +1,7 @@
-# The "Scenario Athens"
+# The SCENARIO ATHENS
 It is an experimental scenario developed in the Athens, Greece downtown area. The scenario is useful for testing first/last mile transport systems, e.g., e-bikes, e-scooters, etc. Most of the trip distances do not exceed the 10 km. The study area includes Athens’ commercial triangle where shops, hotels, restaurants, etc. are concentrated. In addition, Ministries and Public Services can be found around Syntagma Square and Panepistimiou Avenue. The road network mostly consists of narrow (one way) streets and pedestrianized zones, which hinder the use of private cars. As an alternative, there are six metro sta-tions and two tram stations, which support the trips from/to the city center of Athens making public transport as the most efficient and therefore attractive option for accessing to the study area. 
 
-There is an online map of THE ["SCENARIO ATHENS"](https://lotentua.github.io/The_Scenario_Athens). Please click on the links to see their attributes.
+There is an online map of [The SCENARIO ATHENS](https://lotentua.github.io/The_Scenario_Athens). Please click on the links to see their attributes.
 
 The road network consist of 257 nodes and 400 links!
 
@@ -38,7 +38,7 @@ We strongly recommend to download our shapefiles before starting to develope you
 <img src="https://github.com/lotentua/Perceived_safety_choices/blob/main/scenario_athens/Psafechoices_outputs/scenario0/sim4mtran_psafehist_car_scenario0.png" height="350"><img src="https://github.com/lotentua/Perceived_safety_choices/blob/main/scenario_athens/Psafechoices_outputs/scenario0/sim4mtran_psafehist_ebike_scenario0.png" height="350">
 <img src="https://github.com/lotentua/Perceived_safety_choices/blob/main/scenario_athens/Psafechoices_outputs/scenario0/sim4mtran_psafehist_escooter_scenario0.png" height="350"><img src="https://github.com/lotentua/Perceived_safety_choices/blob/main/scenario_athens/Psafechoices_outputs/scenario0/sim4mtran_psafehist_walk_scenario0.png" height="350">
   
-**Papers that used THE "SCENARIO ATHENS":**
+**Papers that used [The SCENARIO ATHENS](https://lotentua.github.io/The_Scenario_Athens):**
 1. Tzouras, L. Mitropoulos, K. Koliou, E. Stavropoulou, C. Karolemeas, E. Antoniou, A. Karaloulis, K. Mitropoulos, E. I. Vlahogianni, and K. Kepaptsoglou (2023) ‘Describing Micro-Mobility First / Last-Mile Routing Behavior in Urban Road Networks through a Novel Modeling Approach’, Sustainability (Switzerland), 15(4), p. 3095. doi: https://doi.org/10.3390/su15043095
 
 Explore the impacts of model parameters in our papers
