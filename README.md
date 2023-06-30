@@ -24,8 +24,4 @@ pip install git+https://github.com/lotentua/Perceived_safety_choices
 ```
 Unfortunately, requirements list in the current version of the package had not fully defined! Some of them are contained in the: [requirement.txt](https://github.com/lotentua/Perceived_safety_choices/blob/main/requirements.txt)
 
-The tools contained in this repository were developed within various research project of [LoTE](http://lte.survey.ntua.gr/main/en/). Some of the reusults have been published.
-
-Papers to cite:
-1.  Mitropoulos L., P. G. Tzouras, E. Antoniou, C. Karolemeas and K. Kepaptsoglou. An agent-based model approach for simulating e-scooter routing. Transportation Research Arena, 2022. Lisbon, Portugal. https://www.researchgate.net/publication/365823267_An_agent-based_model_approach_for_simulating_e-scooter_routing.
-2. Tzouras, L. Mitropoulos, K. Koliou, E. Stavropoulou, C. Karolemeas, E. Antoniou, A. Karaloulis, K. Mitropoulos, E. I. Vlahogianni, and K. Kepaptsoglou (2023) ‘Describing Micro-Mobility First / Last-Mile Routing Behavior in Urban Road Networks through a Novel Modeling Approach’, Sustainability (Switzerland), 15(4), p. 3095. doi: https://doi.org/10.3390/su15043095.
+The tools contained in this repository were developed within various research project of [LoTE](http://lte.survey.ntua.gr/main/en/).
