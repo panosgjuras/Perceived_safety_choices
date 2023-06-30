@@ -20,9 +20,9 @@ def read_points(path: str) -> pd.DataFrame:
     print(len(points))
     return points
 
-# G:\My Drive\PAPERS_TZOURAS\paper29_the_pre_battle\paper_christie 
-path_points = '/Users/panosgtzouras/Library/CloudStorage/GoogleDrive-panosgjuras@gmail.com/My Drive/PAPERS_TZOURAS/paper29_the_pre_battle/paper_christie'
-points = read_points(os.path.join(path_points, 'delpoints_ATHENS.csv'))
+root_dir = os.path.dirname(os.path.realpath(__file__))
+path_points = os.path.join(root_dir, 'logistNet')
+points = read_points(os.path.join(path_points, 'delpoints_ATHENS.csv')) # Depots and delivery points
 
 # points.to_csv(os.path.join(path_points, 'delpoints_ATHENS.csv'))
 
@@ -43,13 +43,12 @@ def logistnet_cre(df):
 
 net = logistnet_cre(points)
 
-
-path_scenario = '/Users/panosgtzouras/Desktop/github_tzouras/Perceived_safety_choices/scenario_athens'
+path_scenario = '' # Add the path of the scenario Athens
 nod = trfp.read_shapefile(os.path.join(path_scenario, 'shapefiles','experimental_field_athens_nodes.shp'))
 lin = trfp.read_shapefile(os.path.join(path_scenario, 'shapefiles', 'experimental_field_athens_links.shp'))
-slopes = pd.read_csv(os.path.join(path_points,'new_slopes_Athens.csv'))
+slopes = pd.read_csv(os.path.join(path_points,'new_slopes_Athens.csv')) # ADD the DTM model
 slopes = slopes.drop(columns = ["modes_y"])
-lin = pd.merge(lin, slopes, left_on = 'id', right_on = 'id') # add slopes in the links dataframe
+lin = pd.merge(lin, slopes, left_on = 'id', right_on = 'id') # add slopes in the links dataframe, CHECK IF ALL CAN BE MATCHED
 cf = pd.read_csv(os.path.join(path_scenario, 'default_models', 'psafe','simple_psafe_models.csv'), ',')
 cf = psmodel.psafe_coeff_upd(cf)
 lin = linpsafe.lin_psafe(lin, cf)
@@ -105,14 +104,4 @@ def logisticnet_sdist(df, lin, nod):
     return(df)
 
 net = logisticnet_sdist(net, lin, nod)
-net.to_csv(os.path.join(path_points, 'net_file_ATHENS.csv'))
-
-# df = net[(net.sdist!=999999) & (net.sdist!=0)]
-# plt.scatter(df.sdist, df.sum_psafe)
-# plt.scatter(df.sdist, df.sum_avgslope)
-# plt.scatter(df.sdist, df.sum_maxslope)
-
-# x = -2350
-# plt.scatter(df.sdist, df.wavg_psafe * (x))
-# plt.scatter(df.sdist, df.wavg_avgslope)
-# plt.scatter(df.sdist, df.wavg_maxslope)
+net.to_csv(os.path.join(root_dir, 'NETfile', 'net_file_ATHENS.csv'))
