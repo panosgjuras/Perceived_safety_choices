@@ -1,0 +1,28 @@
+2023-04-04T13:19:35,660  WARN PrepareForSimImpl:229 'usePersonIdForMissingVehicleId' is deprecated. It will be removed soon.
+2023-04-04T13:19:35,698  WARN RandomizingTimeDistanceTravelDisutilityFactory:113 There will be no routing randomness. The randomization of the travel disutility requires the monetary distance rate to be different than zero. Continuing anyway.
+2023-04-04T13:19:35,711  WARN PreProcessEuclidean:60 There are links with stored length smaller than their Euclidean distance in this network. Thus, A* cannot guarantee to calculate the least-cost paths between two nodes.
+2023-04-04T13:19:35,716  WARN CoordUtils$EucledianDistanceCalculator:405 Mixed use of elevation in coordinates: [x=475561.4425 | y=4202730.352]; [x=474683.953 | y=4203036.963 | z=0.0]
+2023-04-04T13:19:35,716  WARN CoordUtils$EucledianDistanceCalculator:407 Returning projected coordinate distance (using x and y components only)
+2023-04-04T13:19:35,717  WARN CoordUtils$EucledianDistanceCalculator:405 Mixed use of elevation in coordinates: [x=475561.4425 | y=4202730.352]; [x=474160.918 | y=4202630.638 | z=0.0]
+2023-04-04T13:19:35,717  WARN CoordUtils$EucledianDistanceCalculator:407 Returning projected coordinate distance (using x and y components only)
+2023-04-04T13:19:35,738  WARN PreProcessEuclidean:60 There are links with stored length smaller than their Euclidean distance in this network. Thus, A* cannot guarantee to calculate the least-cost paths between two nodes.
+2023-04-04T13:19:35,740  WARN CoordUtils$EucledianDistanceCalculator:405 Mixed use of elevation in coordinates: [x=475561.4425 | y=4202730.352]; [x=474683.953 | y=4203036.963 | z=0.0]
+2023-04-04T13:19:35,740  WARN CoordUtils$EucledianDistanceCalculator:407 Returning projected coordinate distance (using x and y components only)
+2023-04-04T13:19:35,740  WARN CoordUtils$EucledianDistanceCalculator:405 Mixed use of elevation in coordinates: [x=475561.4425 | y=4202730.352]; [x=474160.918 | y=4202630.638 | z=0.0]
+2023-04-04T13:19:35,740  WARN CoordUtils$EucledianDistanceCalculator:407 Returning projected coordinate distance (using x and y components only)
+2023-04-04T13:19:35,740  WARN CoordUtils$EucledianDistanceCalculator:405 Mixed use of elevation in coordinates: [x=475561.4425 | y=4202730.352]; [x=476630.164 | y=4203038.708 | z=0.0]
+2023-04-04T13:19:35,740  WARN CoordUtils$EucledianDistanceCalculator:407 Returning projected coordinate distance (using x and y components only)
+2023-04-04T13:19:35,740  WARN CoordUtils$EucledianDistanceCalculator:405 Mixed use of elevation in coordinates: [x=475561.4425 | y=4202730.352]; [x=476566.406 | y=4203130.564 | z=0.0]
+2023-04-04T13:19:35,740  WARN CoordUtils$EucledianDistanceCalculator:407 Returning projected coordinate distance (using x and y components only)
+2023-04-04T13:19:35,755  WARN PreProcessEuclidean:60 There are links with stored length smaller than their Euclidean distance in this network. Thus, A* cannot guarantee to calculate the least-cost paths between two nodes.
+2023-04-04T13:19:35,755  WARN CoordUtils$EucledianDistanceCalculator:405 Mixed use of elevation in coordinates: [x=475561.4425 | y=4202730.352]; [x=474683.953 | y=4203036.963 | z=0.0]
+2023-04-04T13:19:35,756  WARN CoordUtils$EucledianDistanceCalculator:407 Returning projected coordinate distance (using x and y components only)
+2023-04-04T13:19:35,756  WARN CoordUtils$EucledianDistanceCalculator:405 Mixed use of elevation in coordinates: [x=475561.4425 | y=4202730.352]; [x=474160.918 | y=4202630.638 | z=0.0]
+2023-04-04T13:19:35,756  WARN CoordUtils$EucledianDistanceCalculator:407 Returning projected coordinate distance (using x and y components only)
+2023-04-04T13:19:35,756  WARN CoordUtils$EucledianDistanceCalculator:405 Mixed use of elevation in coordinates: [x=475561.4425 | y=4202730.352]; [x=475961.819 | y=4203758.518 | z=0.0]
+2023-04-04T13:19:35,756  WARN CoordUtils$EucledianDistanceCalculator:407 Returning projected coordinate distance (using x and y components only)
+2023-04-04T13:19:35,756  WARN CoordUtils$EucledianDistanceCalculator:405 Mixed use of elevation in coordinates: [x=475561.4425 | y=4202730.352]; [x=475912.071 | y=4203760.719 | z=0.0]
+2023-04-04T13:19:35,756  WARN CoordUtils$EucledianDistanceCalculator:407 Returning projected coordinate distance (using x and y components only)
+2023-04-04T13:19:35,756  WARN CoordUtils$EucledianDistanceCalculator:410 Future occurences of this logging statement are suppressed.
+2023-04-04T13:19:35,772  WARN PreProcessEuclidean:60 There are links with stored length smaller than their Euclidean distance in this network. Thus, A* cannot guarantee to calculate the least-cost paths between two nodes.
+2023-04-04T13:19:39,002  WARN ExpBetaPlanChanger:102 Would make sense to revise this once more.  See comments in code.  kai, nov08
