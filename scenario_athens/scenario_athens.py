@@ -37,7 +37,23 @@ nod = trfp.read_shapefile(nod_link)
 # TEST HERE NEW SCENARIOS WITH INFRASTUCTURE UPDATES
 lin = trfp.read_shapefile(lin_link)
 # update traffic parameters and coordinates with nodes
-lin = trfp.upd_links(lin, nod).reset_index()
+
+[lin.from1,lin.to1]=trfp.nod_match(lin, nod) # match xstart, ystart, xend, yend coordinates with the nodes = from, to
+
+lin = trfp.twoway(lin, 'walk').reset_index() # it creates new links for twoways - two links
+# yet walk does not respect directions, so exclusive links are created.
+
+lin = trfp.speed(lin, cr = 0.9, delr = 0.7) # estimates the freeflow speed
+# it is based on the speed limit which is reported in the .shp
+# the mean compliance rate (cr) of the drivers, where 1 free flow speed = speed limit
+# and the delay ratio due to conflicts in the urban area.
+
+lin = trfp.capacity(lin, dwn = 1, simp = 'kinematic_waves')
+# it updates the capacity based on the kinematic waves function, with w = 13 km/h and kjam = 125 veh/km
+# the dwn = 1, is used to downscale the capacity of the network based on the demand
+
+# lin = trfp.upd_links(lin, nod).reset_index()
+
 # update perceived safety model parameters using the output model from Rchoice
 # in this case, default perceived safety models are used. Use your own models...
 cf = pd.read_csv(os.path.join(root_dir, 'default_models', 'psafe','simple_psafe_models.csv'), ',')
