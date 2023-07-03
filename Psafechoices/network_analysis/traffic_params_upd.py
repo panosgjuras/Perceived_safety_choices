@@ -37,7 +37,8 @@ def read_shapefile(shp_path): # function which translates shapefiles to datafram
 # nod.loc[14,'x']=0 # if we have more than on nodes in the same location - same coordinates
 # nod.loc[14,'x']=0
 
-def nod_match(links,nodes):
+def nod_match(links,nodes, mar = 0):
+    
     for i in range(0,len(links)): 
         fr1 = nodes.loc[(nodes.x==links.loc[i,'x_start']) & (nodes.y==links.loc[i,'y_start']),'id']
         fr2 = nodes.loc[(nodes.x==links.loc[i,'x_end']) & (nodes.y==links.loc[i,'y_end']),'id']
