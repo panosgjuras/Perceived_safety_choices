@@ -27,7 +27,7 @@ where:
 $psafe_{l,j,m}^{*}$: latent variable of perceived safety of individual j using mode m in urban road link l (or observation l);
 $psafe_{j,l,m}$: perceived safety level of individual j using mode m in urban road link l (or observation l);
 $β_{infr_{1,m}}, β_{infr_{2,m}}, ...,β_{ped,m}$: beta parameters of latent perceived safety function of mode m;
-$k_{1,m}, k_{1,m}, ..., $k_{6,m}$: perceived safety kappa thresholds of mode m;
+$k_{1,m}, k_{2,m}, ...,k_{6,m}$: perceived safety kappa thresholds of mode m;
 $ε_{l,j,m}$: error term
 $soc_{i,j}$: sociodemographic characteristics of individual j;
 $beh_{i,j}$: travel behavior attributes of individual j;
