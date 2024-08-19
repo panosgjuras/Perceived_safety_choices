@@ -22,7 +22,7 @@ root_dir = os.path.dirname(os.path.realpath(__file__))
 # To run the Psafechoices model, it requires two models as inputs
 # Psafe model: ordinal logistic regression model with infrastructure parameters
 # Choice model: BIOGEME discrete choice mode with time + cost + safety
-scenario = 'scenario0'
+scenario = 'scenario1'
 nod_link = os.path.join(root_dir, 'shapefiles', 'nodes' ,'experimental_field_athens_nodes.shp')
 lin_link = os.path.join(root_dir, 'shapefiles', scenario, 'experimental_field_athens_links.shp')
 

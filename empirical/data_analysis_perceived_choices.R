@@ -13,8 +13,9 @@ library(VGAM)
 library(bayesmeta)
 library(densratio)
 
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-data1<-read.csv2("sample_datasets/rating_dataset_perceived_choices_crop.csv", header=T,dec=".",sep=",") # this is the perceived safery dataset
+# setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+path_new <- "/Users/panosgtzouras/Library/CloudStorage/GoogleDrive-panosgjuras@gmail.com/My Drive/PAPERS_TZOURAS/paper15_perceived_choices/datasets/rating_dataset_perceived_choices.csv"
+data1<-read.csv2(path_new, header=T,dec=".",sep=",") # this is the perceived safery dataset
 # data2<-read.csv2("datasets/choice_dataset_perceived_choices.csv", header=T,dec=".",sep=",")
 
 # 1. Descriptive statistics in sociodemo characteristics
@@ -81,6 +82,10 @@ describe(subset(data1, (tmode =='escoot') & (type == 4))$psafe)
 describe(subset(data1, (tmode =='ebike') & (type == 4))$psafe)
 # add shared infrastucture dummy variables to compare them with the fully segregate approach
 
+
+describe(subset(data1, (tmode == 'walk') & (type == 4))$psafe)
+
+
 # 4. Analysis of variance
 summary(aov(data1$psafe ~ data1$gender + data1$education + data1$employment + data1$income + data1$car_own +
               data1$cycle_own + data1$bike_frequency + data1$escooter_frequency + data1$young)) # car_ownership is factor, but I have only five
@@ -89,15 +94,51 @@ summary(aov(data1$psafe ~ factor(data1$gender) + factor(data1$young) + factor(da
 
 # 5. Plot of main trends: sociodemo and infr. variables
 hist_psafe <- function(df){ # function to plot bars, plot the responces.
+  df <- na.omit(df)
   p<-ggplot(df, aes(x=as.factor(psafe), fill = tmode)) +
     geom_bar() +
     geom_text(aes(label = ..count..), stat = "count", size = 3, 
               position = position_stack(vjust = 0.5)) +
-    scale_y_continuous(name ="Number of responces") +
+    scale_y_continuous(name ="Number of responces", limits = c(0,225)) +
     scale_x_discrete(name ="Perceived Safety") +
-    scale_fill_brewer(palette = 'Set2', name = "Transport Mode", 
+    scale_fill_brewer(palette = 'RdYlBu', name = "Transport Mode", 
                       labels = c("Car", "E-Bike", "E-Scooter", "Walk")) + theme_bw()
   return(p)}
+
+p11<-hist_psafe(subset(data1, gender == 0 & type == 3)) + ggtitle('type 0, female') # female
+p12<-hist_psafe(subset(data1, gender == 0 & type == 1)) + ggtitle('type 1, female')
+p13<-hist_psafe(subset(data1, gender == 0 & type == 2)) + ggtitle('type 2, female')
+p14<-hist_psafe(subset(data1, gender == 0 & type == 4)) + ggtitle('type 3, female')
+
+p21<-hist_psafe(subset(data1, gender == 1 & type == 3)) + ggtitle('type 0, male')
+p22<-hist_psafe(subset(data1, gender == 1 & type == 1)) + ggtitle('type 1, male')
+p23<-hist_psafe(subset(data1, gender == 1 & type == 2)) + ggtitle('type 2, male')
+p24<-hist_psafe(subset(data1, gender == 1 & type == 4)) + ggtitle('type 3, male')
+
+p31<-hist_psafe(subset(data1, young == 0 & type == 3)) + ggtitle('type 0, not young')
+p32<-hist_psafe(subset(data1, young == 0 & type == 1)) + ggtitle('type 1, not young')
+p33<-hist_psafe(subset(data1, young == 0 & type == 2)) + ggtitle('type 2, not young')
+p34<-hist_psafe(subset(data1, young == 0 & type == 4)) + ggtitle('type 3, not young')
+
+p41<-hist_psafe(subset(data1, young == 1 & type == 3)) + ggtitle('type 0, young')
+p42<-hist_psafe(subset(data1, young == 1 & type == 1)) + ggtitle('type 1, young')
+p43<-hist_psafe(subset(data1, young == 1 & type == 2)) + ggtitle('type 2, young')
+p44<-hist_psafe(subset(data1, young == 1 & type == 4)) + ggtitle('type 3, young')
+
+# p51<-hist_psafe(subset(data1, car_own == 0 & type == 3)) # Driving license
+# p52<-hist_psafe(subset(data1, car_own == 0 & type == 1))
+# p53<-hist_psafe(subset(data1, car_own == 0 & type == 2))
+# p54<-hist_psafe(subset(data1, car_own == 0 & type == 4))
+# p61<-hist_psafe(subset(data1, car_own == 1 & type == 3)) # No driving license
+# p62<-hist_psafe(subset(data1, car_own == 1 & type == 1))
+# p63<-hist_psafe(subset(data1, car_own == 1 & type == 2))
+# p64<-hist_psafe(subset(data1, car_own == 1 & type == 4))
+
+ggarrange(p11,p12, p13, p14, 
+          p21, p22, p23, p24,
+          p31, p32, p33, p34,
+          p41, p42, p43, p44,
+          ncol = 4, nrow = 4, common.legend = TRUE, legend = 'bottom')
 
 hist_psafe_100 <- function(df){
   p<-ggplot(df, aes(fill = factor(tmode), x = factor(psafe))) + 
@@ -162,9 +203,28 @@ hist_ped_volume <- function(df){
                        labels = function(x) paste0(x*100, "%")) + coord_flip() + theme_bw()
   return(p)}
 
-ggarrange(hist_veh_volume(subset(data1, tmode=='car')),
-          hist_bike_volume(subset(data1, tmode=='car')),
-          hist_ped_volume(subset(data1, tmode=='car')),
+m <- 'car'
+ggarrange(hist_veh_volume(subset(data1, tmode== m & type == 3)),
+          hist_bike_volume(subset(data1, tmode==m & type == 3)),
+          hist_ped_volume(subset(data1, tmode==m & type == 3)),
+          
+          hist_veh_volume(subset(data1, tmode==m & type == 1)),
+          hist_bike_volume(subset(data1, tmode==m & type == 1)),
+          hist_ped_volume(subset(data1, tmode==m & type == 1)),
+
+          hist_veh_volume(subset(data1, tmode==m & type == 2)),
+          hist_bike_volume(subset(data1, tmode==m & type == 2)),
+          hist_ped_volume(subset(data1, tmode==m & type == 2)),
+          
+          hist_veh_volume(subset(data1, tmode==m & type == 4)),
+          hist_bike_volume(subset(data1, tmode==m & type == 4)),
+          hist_ped_volume(subset(data1, tmode==m & type == 4)),
+          
+          nrow = 4, ncol = 3, common.legend = TRUE, legend = 'bottom') # general, general
+          
+          
+          
+          
           hist_veh_volume(subset(data1, tmode=='ebike')),
           hist_bike_volume(subset(data1, tmode=='ebike')),
           hist_ped_volume(subset(data1, tmode=='ebike')),

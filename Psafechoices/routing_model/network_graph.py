@@ -116,8 +116,30 @@ def dij_dist_calc(path, ln, var = 'sdist', tmode = 'walk'): # calculate the dist
                 add = ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'maxslope'] * ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'length']
             elif var == 'weight_sumpsafe':
                 add = (ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), psafe] - 4) * ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'length']
+            
+            
+            ##### EXTRA 2024
+#            elif var == 'sumlentype1':
+#                if ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'inf'] == '1: Urban road with sidewalk less than 1.5 m wide':
+#                    print('hello')
+#                    add = ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'length']
+#                else: add = 0
+#            elif var == 'sumlentype2':
+#                if ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'inf'] == '2: Urban road with sidewalk more than 1.5 m wide':
+#                      add = ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'length']
+#                else: add = 0
+#            elif var == 'sumlentype3':
+#                if ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'inf'] == '3: Urban road with cycle lane':
+#                   add = ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'length']
+#                else: add = 0
+#           elif var == 'sumlentype4':
+#                if ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'inf'] == '4: Shared space':
+#                   add = ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'length']
+#                else: add = 0
+#               
             else: add = ln.loc[(ln.from1 == path[i]) & (ln.to1 == path[i + 1]), 'length']
             suml = suml + add[matchid[0]]
+    
     else: suml = 999999
     
     return suml

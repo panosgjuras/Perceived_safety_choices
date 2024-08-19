@@ -138,6 +138,8 @@ def checkPlotDist(df, typ, vos = 750, fun = "linear", upd = 'no'):
     plt.scatter(x, y, 5, c=colors)
     plt.xlabel('Slope distance in m')
     plt.ylabel('Penalty in m with VOS =' + str(vos))
+    
+    plt.ylim(-5000, 9000)
     plt.title(label)
     
     for i, j, k, l in zip(ids, x, y, c):
@@ -162,7 +164,7 @@ def checkPlotDist(df, typ, vos = 750, fun = "linear", upd = 'no'):
 
 # RUN THIS THIS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 root_dir = os.path.dirname(os.path.realpath(__file__))
-ttt = pd.read_csv(os.path.join(root_dir, 'NETfile ', "net_file_ATHENS.csv"))
+ttt = pd.read_csv(os.path.join(root_dir, 'NETfile', "net_file_ATHENS.csv"))
 ttt = ttt[ttt['from1'] != ttt['to1']]
 ttt.reset_index(drop = True, inplace = True)
 
@@ -170,25 +172,25 @@ distance = setdist(ttt, 'avgslo') # creates a new column = avgslodist
 # distance = setdist(ttt, 'maxslo') # creates a new column = maxslodist
 
 distance = setdist(ttt, 'combo', vos = 600, fun = 'linear', upd = 'min')
-checkPlotDist(distance, 'combo', vos = 600, fun = 'linear', upd = 'min')
+checkPlotDist(distance, 'combo', vos = 600, fun = 'linear')
 
 distance = setdist(ttt, 'combo', vos = 1200, fun = 'linear', upd = 'min')
-checkPlotDist(distance, 'combo', vos = 1200, fun = 'linear', upd = 'min')
+checkPlotDist(distance, 'combo', vos = 1200, fun = 'linear')
 
 distance = setdist(ttt, 'combo', vos = 1800, fun = 'linear', upd = 'min')
-checkPlotDist(distance, 'combo', vos = 1800, fun = 'linear', upd = 'min')
+checkPlotDist(distance, 'combo', vos = 1800, fun = 'linear')
 
 distance = setdist(ttt, 'combo', vos = 2400, fun = 'linear', upd = 'min')
-checkPlotDist(distance, 'combo', vos = 2400, fun = 'linear', upd = 'min')
+checkPlotDist(distance, 'combo', vos = 2400, fun = 'linear')
 
 distance = setdist(ttt, 'combo', vos = 3000, fun = 'linear', upd = 'min')
-checkPlotDist(distance, 'combo', vos = 3000, fun = 'linear', upd = 'min')
+checkPlotDist(distance, 'combo', vos = 3000, fun = 'linear')
 
 distance = setdist(ttt, 'combo', vos = 3600, fun = 'linear', upd = 'min')
-checkPlotDist(distance, 'combo', vos = 3600, fun = 'linear', upd = 'min')
+checkPlotDist(distance, 'combo', vos = 3600, fun = 'linear')
 
 distance = setdist(ttt, 'combo', vos = 4200, fun = 'linear', upd = 'min')
-checkPlotDist(distance, 'combo', vos = 4200, fun = 'linear', upd = 'min')
+checkPlotDist(distance, 'combo', vos = 4200, fun = 'linear')
 
 # you will have a new set of columns...
 # distance.columns
