@@ -67,5 +67,3 @@ Multiple discrete choice models with the right settings are estimated in [BIOGEM
 Also, [logit_est_functons.py](https://github.com/lotentua/Perceived_safety_choices/blob/main/empirical/logit_est_functons.py) contains functions to directly compute an MNL or ML model using [PandasBiogeme](https://github.com/michelbierlaire/biogeme).
 
 The advantage of this approach is that it models the heterogeneity of safety perceptions among individuals. Additionaly, it also considers that the impact of safety perceptions in choices can also be randomized. It differs per individual. Therefore, it connects road environment with safety perceptions, and safety perceptions with mobility choices through stochasticity.
-
-<img src="https://github.com/lotentua/Perceived_safety_choices/blob/main/empirical/figures/distribution_of_rnd_psfe_vars.png" height="500">
