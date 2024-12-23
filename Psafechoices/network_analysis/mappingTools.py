@@ -7,6 +7,74 @@ import seaborn as sns
 import geopandas as gpd
 from shapely.geometry import LineString, Point
 
+def infMapping(links, scen):
+    
+    """
+    Useful function to understand the spatial variations of infrassture types
+
+    Parameters
+    ----------
+    links : dataFrame
+        The gpd dataFrame with all the links. The links must have 'inf' and 'pav'
+    scen : str
+        The scenario, this is used for the title of the figure
+
+    Returns
+    -------
+    A map plot with the infrastructure types
+    """
+    
+    
+    # Color mappings for 'inf' and 'pav'
+    inf_color_mapping = {
+        '1: Urban road with sidewalk less than 1.5 m wide': '#BF1A23',  # Dark Red
+        '2: Urban road with sidewalk more than 1.5 m wide': '#E3801A',  # Orange
+        '3: Urban road with cycle lane': '#2A14BE',  # Blue
+        '4: Shared space': '#55C896',  # Green
+    }
+
+    pav_color_mapping = {
+        '0: bad condition': '#FF1493',  # Pink for bad condition
+        '1: good condition': '#FFD700',  # Yellow for good condition
+    }
+
+    # Map the 'inf' and 'pav' columns to the corresponding colors
+    links['inf_color'] = links['inf'].map(inf_color_mapping)
+    links['pav_color'] = links['pav'].map(pav_color_mapping)
+
+    # Create the plot
+    fig, ax = plt.subplots(figsize=(10, 10), dpi=500)
+        
+    # Plot 'pav' layer first for transparency effect
+    links.dropna(subset=['pav_color']).plot(ax=ax, facecolor="none",
+                                            edgecolor=links['pav_color'], 
+                                            linewidth=1.5,  # Thicker line for pav condition
+        alpha=0.1,
+        label = 'Infrastructure'# More transparent for background effect
+    )
+
+    links.dropna(subset=['inf_color']).plot(
+        ax=ax,
+        facecolor="none",
+        edgecolor=links['inf_color'],
+        linewidth=0.25,
+        alpha = 1, # Thinner line for inf condition
+        label = 'Pavement'
+    )
+    
+    # cross.plot(ax=ax, edgecolor="blue", facecolor="lightblue", alpha=0.5, linewidth=10)
+
+    # Add grid and labels
+    ax.grid(color='black', linestyle='--', linewidth=0.5, alpha=0.7)
+    plt.title(scen, fontsize=15)
+    ax.set_xlabel('X-coordinate (m)')
+    ax.set_ylabel('Y-coordinate (m)')
+    
+    ax.legend(title="Legend", loc='upper right')
+
+    # Display plot
+    plt.show()
+
 def plotPsafeLev(gdf, mod, xy=2, city = 'Athens', font = 20):
     """
     This function create the maps with the perceived safety scores
