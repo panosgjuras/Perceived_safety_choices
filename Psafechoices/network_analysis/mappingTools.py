@@ -1,3 +1,10 @@
+"""
+Tools to create maps or perceived safety and perform spatial analysis with the rates
+
+@author: ptzouras
+National Technical University of Athens
+"""
+
 import copy
 import matplotlib.pyplot as plt
 

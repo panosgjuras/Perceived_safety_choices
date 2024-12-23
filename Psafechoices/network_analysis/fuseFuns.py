@@ -1,10 +1,11 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
-Created on Mon Dec 23 18:13:02 2024
-@author: panosgtzouras
-"""
+Tools to fuse spatial data in order to define road infrastructure types
 
+Road infrastructure types are later utilized to estimate perceived safety rates
+
+@author: ptzouras
+National Technical University of Athens
+"""
 import geopandas as gpd
 import matplotlib.pyplot as plt
 
