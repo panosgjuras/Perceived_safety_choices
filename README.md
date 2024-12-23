@@ -24,4 +24,4 @@ pip install git+https://github.com/lotentua/Perceived_safety_choices
 ```
 Unfortunately, requirements list in the current version of the package had not fully defined! Some of them are contained in the: [requirement.txt](https://github.com/lotentua/Perceived_safety_choices/blob/main/requirements.txt)
 
-The tools contained in this repository were developed within various research project of [LoTE](http://lte.survey.ntua.gr/main/en/).
+The tools contained in this repository were developed within various research projects of [LoTE](http://lte.survey.ntua.gr/main/en/).
