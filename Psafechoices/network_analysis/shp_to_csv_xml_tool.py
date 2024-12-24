@@ -1,5 +1,5 @@
 """
-Tools to build an an xml or update an existing one
+Tools to update the links and build an xml for MATSim
 
 @author: ptzouras
 National Technical University of Athens
