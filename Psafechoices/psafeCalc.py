@@ -105,7 +105,33 @@ def cross_match(s_cross):
     elif s_cross=='2: with pedestrian crossing controlled by traffic lights': cross = 2
     return cross
 
-def PsafeLatent(row, mode, cf):
+def coeffUpd(df):
+    """
+    Kappa thresholds update, if the ordinal model contains a constant
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        A dataframe with the the default model coefficients.
+
+    Returns
+    -------
+    df : pd.DataFrame
+         The updated model parameters
+    """
+    
+    df = df.rename(columns = {'Unnamed: 0':'coeffs'})
+    df = df.set_index('coeffs')
+    df.loc['kappa.1'] = df.loc['kappa.1'] - df.loc['constant']
+    df.loc['kappa.2'] = df.loc['kappa.2'] - df.loc['constant']
+    df.loc['kappa.3'] = df.loc['kappa.3'] - df.loc['constant']
+    df.loc['kappa.4'] = df.loc['kappa.4'] - df.loc['constant']
+    df.loc['kappa.5'] = df.loc['kappa.5'] - df.loc['constant']
+    df.loc['constant'] = - df.loc['constant']
+    df = df.rename(index = {'constant': 'kappa.0'})
+    return df
+
+def latentEst(row, mode, cf):
     """
     It gives the perceived safety llatent variable value (float) for one specific transport mode,
     for one specific link.
@@ -146,7 +172,7 @@ def PsafeLatent(row, mode, cf):
     
     return y
 
-def psafeLevel(x, cf, mode):
+def levelEst(x, cf, mode):
     """
     It gives the perceived safety level (int) for one specific transport mode,
     for one specific link.
@@ -173,7 +199,7 @@ def psafeLevel(x, cf, mode):
         return np.searchsorted(k, x) + 1
     return 7
 
-def processRowPsafe(index, row, modes, cf):
+def processRowEst(index, row, modes, cf):
     """
     Parameters
     ----------
@@ -197,8 +223,8 @@ def processRowPsafe(index, row, modes, cf):
         print(f"Processed row {index}: Perceived safety not estimated due to 999 value in one of the key columns.")
     else:
         for m in modes:
-            latent_var = PsafeLatent(row, m, cf)
-            safety_level = psafeLevel(latent_var, cf, m)
+            latent_var = latentEst(row, m, cf)
+            safety_level = levelEst(latent_var, cf, m)
             results[f'LatPsafe{m}'] = latent_var
             results[f'LevPsafe{m}'] = safety_level
         
