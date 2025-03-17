@@ -1,23 +1,22 @@
 import pandas as pd
 import biogeme.database as db
-from biogeme.expressions import DefineVariable
+from biogeme.expressions.elementary_expressions import DefineVariable
 
 def dat_defin(NAME, expr, database):
     """
     Defines a variable in the Biogeme database.
 
     Args:
-    NAME (str): The name of the variable.
-    expr (biogeme.expressions.Expression): The mathematical expression defining the variable.
-    database (biogeme.database.Database): The Biogeme database where the variable is defined.
+        NAME (str): The name of the variable.
+        expr (biogeme.expressions.Expression): The mathematical expression defining the variable.
+        database (biogeme.database.Database): The Biogeme database where the variable is defined.
     
-    Returns:
-    biogeme.expressions.Expression: The defined variable.
+    Returns: The defined variable.
     
     IMPORTANT NOTE! Check if DefineVariable expression is still valid.
 
     """
-    var = DefineVariable(NAME, expr, database)
+    var = database.DefineVariable(NAME, expr)
     return var
 
 class database:
@@ -25,22 +24,19 @@ class database:
     A class to prepare the Perceived Safety Choices database to estimate discrete choice models.
 
     Attributes:
-    link (str): The file path or URL of the dataset.
-    typ (int): An indicator for defining variables in the database.
-    __dbase (biogeme.database.Database): The Biogeme database instance.
+        link (str): The file path or URL of the dataset.
+        __dbase (biogeme.database.Database): The Biogeme database instance.
     
     Args:
-    link (str): The file path of the dataset.
-    typ (int): An indicator used for defining variables.
-    sele (list): The variable that will be excluded from the database
+        link (str): The file path of the dataset.
+        sele (list): The variable that will be excluded from the database
 
     """
-    def __init__(self, link, typ, sele = ['scenario', 'choice']):
+    def __init__(self, link, sele = ['scenario', 'choice']):
         self.link = link
-        self.typ = typ
-        self.set_dbase(link, typ)
+        self.set_dbase(link)
     
-    def set_dbase(self, link, typ, sele = ['scenario', 'choice']):
+    def set_dbase(self, link, sele = ['scenario', 'choice']):
         """
         Reads the dataset, processes relevant variables, and initializes the Biogeme database.
         """
@@ -51,20 +47,20 @@ class database:
         dbs.panel('pid')
         
         globals().update(dbs.variables)
-        CARTIME = dat_defin(typ,'CARTIME', cartime, dbs)
-        CARCOST = dat_defin(typ,'CARCOST', carcost, dbs)
-        CARPSAFE = dat_defin(typ,'CARPSAFE',carpsafe - 4, dbs)
+        CARTIME = dat_defin('CARTIME', cartime, dbs)
+        CARCOST = dat_defin('CARCOST', carcost, dbs)
+        CARPSAFE = dat_defin('CARPSAFE',carpsafe - 4, dbs)
 
-        EBIKETIME = dat_defin(typ,'EBIKETIME',acttime, dbs) # new time variables based on the difference among modes
-        EBIKECOST = dat_defin(typ,'EBIKECOST',ebikecost, dbs)
-        EBIKEPSAFE = dat_defin(typ,'EBIKEPSAFE',ebikepsafe - 4, dbs)
+        EBIKETIME = dat_defin('EBIKETIME',acttime, dbs) # new time variables based on the difference among modes
+        EBIKECOST = dat_defin('EBIKECOST',ebikecost, dbs)
+        EBIKEPSAFE = dat_defin('EBIKEPSAFE',ebikepsafe - 4, dbs)
                  
-        ESCOOTIME = dat_defin(typ,'ESCOOTIME', (20/15) * acttime, dbs) # new time variables based on the difference among modes
-        ESCOOTCOST = dat_defin(typ,'ESCOOTCOST', escootcost, dbs) # new time variables based on the difference among modes
-        ESCOOTPSAFE = dat_defin(typ,'ESCOOTPSAFE', escootpsafe - 4, dbs)
+        ESCOOTIME = dat_defin('ESCOOTIME', (20/15) * acttime, dbs) # new time variables based on the difference among modes
+        ESCOOTCOST = dat_defin('ESCOOTCOST', escootcost, dbs) # new time variables based on the difference among modes
+        ESCOOTPSAFE = dat_defin('ESCOOTPSAFE', escootpsafe - 4, dbs)
         
-        WALKTIME = dat_defin(typ,'WALKTIME',  (20/5) * acttime, dbs) # new time variables based on the difference among modes
-        WALKPSAFE = dat_defin(typ,'WALKPSAFE',walkpsafe - 4, dbs)
+        WALKTIME = dat_defin('WALKTIME',  (20/5) * acttime, dbs) # new time variables based on the difference among modes
+        WALKPSAFE = dat_defin('WALKPSAFE',walkpsafe - 4, dbs)
         
         self.__dbase = dbs
      
@@ -81,29 +77,28 @@ class utils:
     A class to prepare the utility functions
 
     Attributes:
-    __MNLVs (dict): A dictionary containing the utility functions for the MNL mode choice.
-    __MLVs (dict): A dictionary containing the utility functions for the ML mode choice.
-    __Bincar_RND (dict): A dictionary containing the utility functions for the Binary Choice Model of CAR.
-    __Binebike_RND (dict): A dictionary containing the random utility for the Binary Choice Model of E-BIKE.
-    __Binescoot_RND (dict): A dictionary containing the random utility for the Binary Choice Model of E-SCOOTER.
-    __Binwalk_RND (dict): A dictionary containing the random utility for the Binary Choice Model of WALK.
-    __cho (biogeme.expressions.Expression): The choice variable used in the model.
-    __modecho_av (dict): A dictionary indicating the availability of each alternative for the mode choice model.
+        __MNLVs (dict): A dictionary containing the utility functions for the MNL mode choice.
+        __MLVs (dict): A dictionary containing the utility functions for the ML mode choice.
+        __Bincar_RND (dict): A dictionary containing the utility functions for the Binary Choice Model of CAR.
+        __Binebike_RND (dict): A dictionary containing the random utility for the Binary Choice Model of E-BIKE.
+        __Binescoot_RND (dict): A dictionary containing the random utility for the Binary Choice Model of E-SCOOTER.
+        __Binwalk_RND (dict): A dictionary containing the random utility for the Binary Choice Model of WALK.
+        __cho (biogeme.expressions.Expression): The choice variable used in the model.
+        __modecho_av (dict): A dictionary indicating the availability of each alternative for the mode choice model.
 
     Args:
-    dbs (biogeme.database.Database): The Biogeme database.
-    b (object): The coefficient object that contains the parameters for the utility functions.
-    rnds (object): The object containing random draws for the Mixed Logit model (default is 0).
-    exp (str): The type of experiment ('mode_choice', 'car_binary', 'ebike_binary', etc.).
-    typ (int): The type of variable definition (default is 1).
+        dbs (biogeme.database.Database): The Biogeme database.
+        b (object): The coefficient object that contains the parameters for the utility functions.
+        rnds (object): The object containing random draws for the Mixed Logit model (default is 0).
+        exp (str): The type of experiment ('mode_choice', 'car_binary', 'ebike_binary', etc.).
 
     Example:
-    >>> utils_instance = utils(dbs, b, rnds, 'mode_choice')
-    >>> mnl_utility = utils_instance.get_MNLVs()
-    >>> mode_choice_availability = utils_instance.get_modecho_av()
+        >>> utils_instance = utils(dbs, b, rnds, 'mode_choice')
+        >>> mnl_utility = utils_instance.get_MNLVs()
+        >>> mode_choice_availability = utils_instance.get_modecho_av()
     """
      
-    def __init__(self, dbs, b, rnds = 0, exp = 'mode_choice', typ = 1):        
+    def __init__(self, dbs, b, rnds = 0, exp = 'mode_choice'):        
         self.set_MNLVs(dbs, b)
         self.set_MLVs(dbs, b, rnds)
         self.set_Bincar_RND(dbs, b, rnds)
@@ -111,7 +106,7 @@ class utils:
         self.set_Binesoot_RND(dbs, b, rnds)
         self.set_Binwalk_RND(dbs, b, rnds)
         self.set_modecho_av(exp)
-        self.set_cho(dbs, exp, typ)
+        self.set_cho(dbs, exp)
 
     def set_MNLVs(self, dbs, b):
         """
@@ -213,16 +208,16 @@ class utils:
         """
         return self.__Binwalk_RND   
     
-    def set_cho(self, dbs, exp, typ):
+    def set_cho(self, dbs, exp):
         """
         Defines the choice variable for the model based on the specified type of model.
         """
         globals().update(dbs.variables)
-        if exp == 'mode_choice': self.__cho = dat_defin(typ, 'CHOICE',  intchoice, dbs)
-        elif exp == 'car_binary': self.__cho = dat_defin(typ, 'CHOICE',  binchoice1, dbs)
-        elif exp == 'ebike_binary': self.__cho = dat_defin(typ, 'CHOICE',  binchoice2, dbs)
-        elif exp == 'escoot_binary': self.__cho = dat_defin(typ, 'CHOICE',  binchoice3, dbs)
-        elif exp == 'walk_binary': self.__cho = dat_defin(typ, 'CHOICE',  binchoice4, dbs)
+        if exp == 'mode_choice': self.__cho = dat_defin('CHOICE',  intchoice, dbs)
+        elif exp == 'car_binary': self.__cho = dat_defin('CHOICE',  binchoice1, dbs)
+        elif exp == 'ebike_binary': self.__cho = dat_defin('CHOICE',  binchoice2, dbs)
+        elif exp == 'escoot_binary': self.__cho = dat_defin('CHOICE',  binchoice3, dbs)
+        elif exp == 'walk_binary': self.__cho = dat_defin('CHOICE',  binchoice4, dbs)
         else: self.__cho = 0
         
     def get_cho(self):
