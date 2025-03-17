@@ -8,3 +8,4 @@
 
 -[vosEst.py](https://github.com/panosgjuras/Perceived_safety_choices/blob/main/Psafechoices/vosEst.py): contains functions to estimate the value of safety and integrate it in transport modeling.
 
+- [MATSimAnaTools][Psafechoices/MATSimAnaTools.py](https://github.com/panosgjuras/Perceived_safety_choices/blob/main/Psafechoices/MATSimAnaTools.py): contains functions to process the outputs of MATSim and compare the simulated travel behavior with safety perceptions.
