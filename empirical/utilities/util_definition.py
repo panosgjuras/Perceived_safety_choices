@@ -1,25 +1,51 @@
 import pandas as pd
 import biogeme.database as db
+from biogeme.expressions import DefineVariable
 
-def dat_defin(x, NAME, expr, database):
-    if x == 1:
-        var = DefineVariable(NAME, expr, database)
-    if x == 2:
-        var = database.DefineVariable(NAME, expr)
+def dat_defin(NAME, expr, database):
+    """
+    Defines a variable in the Biogeme database.
+
+    Args:
+    NAME (str): The name of the variable.
+    expr (biogeme.expressions.Expression): The mathematical expression defining the variable.
+    database (biogeme.database.Database): The Biogeme database where the variable is defined.
+    
+    Returns:
+    biogeme.expressions.Expression: The defined variable.
+    
+    IMPORTANT NOTE! Check if DefineVariable expression is still valid.
+
+    """
+    var = DefineVariable(NAME, expr, database)
     return var
 
 class database:
-    def __init__(self, link, typ):
+    """
+    A class to prepare the Perceived Safety Choices database to estimate discrete choice models.
+
+    Attributes:
+    link (str): The file path or URL of the dataset.
+    typ (int): An indicator for defining variables in the database.
+    __dbase (biogeme.database.Database): The Biogeme database instance.
+    
+    Args:
+    link (str): The file path of the dataset.
+    typ (int): An indicator used for defining variables.
+    sele (list): The variable that will be excluded from the database
+
+    """
+    def __init__(self, link, typ, sele = ['scenario', 'choice']):
         self.link = link
         self.typ = typ
         self.set_dbase(link, typ)
     
-    def set_dbase(self, link, typ):
+    def set_dbase(self, link, typ, sele = ['scenario', 'choice']):
+        """
+        Reads the dataset, processes relevant variables, and initializes the Biogeme database.
+        """
         df = pd.read_csv(link,',')
-        df = df.drop(columns = ['scenario','choice', 'gender', 'age', 'education', 'employment',
-                    'income', 'car_own', 'moto_own', 'cycle_own', 'escoot_own',
-                    'bike_frequency', 'escooter_frequency', 'PT_frequency',
-                    'metro_frequency', 'young'])
+        df = df.drop(columns = sele)
         
         dbs = db.Database('Perceived&choices', df.dropna())
         dbs.panel('pid')
@@ -43,11 +69,40 @@ class database:
         self.__dbase = dbs
      
     def get_dbase(self):
+        """
+        Returns the Biogeme database instance.
+        """
         return self.__dbase
 
 
 class utils:
     
+    """
+    A class to prepare the utility functions
+
+    Attributes:
+    __MNLVs (dict): A dictionary containing the utility functions for the MNL mode choice.
+    __MLVs (dict): A dictionary containing the utility functions for the ML mode choice.
+    __Bincar_RND (dict): A dictionary containing the utility functions for the Binary Choice Model of CAR.
+    __Binebike_RND (dict): A dictionary containing the random utility for the Binary Choice Model of E-BIKE.
+    __Binescoot_RND (dict): A dictionary containing the random utility for the Binary Choice Model of E-SCOOTER.
+    __Binwalk_RND (dict): A dictionary containing the random utility for the Binary Choice Model of WALK.
+    __cho (biogeme.expressions.Expression): The choice variable used in the model.
+    __modecho_av (dict): A dictionary indicating the availability of each alternative for the mode choice model.
+
+    Args:
+    dbs (biogeme.database.Database): The Biogeme database.
+    b (object): The coefficient object that contains the parameters for the utility functions.
+    rnds (object): The object containing random draws for the Mixed Logit model (default is 0).
+    exp (str): The type of experiment ('mode_choice', 'car_binary', 'ebike_binary', etc.).
+    typ (int): The type of variable definition (default is 1).
+
+    Example:
+    >>> utils_instance = utils(dbs, b, rnds, 'mode_choice')
+    >>> mnl_utility = utils_instance.get_MNLVs()
+    >>> mode_choice_availability = utils_instance.get_modecho_av()
+    """
+     
     def __init__(self, dbs, b, rnds = 0, exp = 'mode_choice', typ = 1):        
         self.set_MNLVs(dbs, b)
         self.set_MLVs(dbs, b, rnds)
@@ -59,6 +114,9 @@ class utils:
         self.set_cho(dbs, exp, typ)
 
     def set_MNLVs(self, dbs, b):
+        """
+        Defines the utility functions for the MNL mode choice.
+        """
         globals().update(dbs.variables)
         V1 = b.CARTIME * CARTIME + b.CARCOST * CARCOST + b.CARPSAFE * CARPSAFE
         V2 = b.ASC_EBIKE + b.EBIKETIME * EBIKETIME + b.EBIKECOST * EBIKECOST + b.EBIKEPSAFE * EBIKEPSAFE
@@ -68,9 +126,15 @@ class utils:
         self.__MNLVs = V
     
     def get_MNLVs(self):
+        """
+        Returns the MNL mode choice utility functions.
+        """
         return self.__MNLVs
 
     def set_MLVs(self, dbs, b, rnds):
+        """
+        Defines the utility functions for the ML mode choice.
+        """  
         globals().update(dbs.variables)
         V1 = b.CARTIME * CARTIME + b.CARCOST * CARCOST + rnds.CARPSAFE * CARPSAFE
         V2 = rnds.ASC_EBIKE + b.EBIKETIME * EBIKETIME + b.EBIKECOST * EBIKECOST + rnds.EBIKEPSAFE * EBIKEPSAFE
@@ -80,9 +144,15 @@ class utils:
         self.__MLVs = V
 
     def get_MLVs(self):
+        """
+        Returns the ML mode choice utility functions.
+        """
         return self.__MLVs
     
     def set_Bincar_RND(self, dbs, b, rnds):
+        """
+        Defines the utility functions for the CAR Binary Choice Model.
+        """
         globals().update(dbs.variables)
         V0 = 0
         V1 = b.ASC_CAR + rnds.CARTIME * CARTIME + rnds.CARCOST * CARCOST + rnds.CARPSAFE * CARPSAFE
@@ -90,9 +160,15 @@ class utils:
         self.__Bincar_RND = V
 
     def get_Bincar_RND(self):
+        """
+        Returns the CAR Binary Choice Model utility functions.
+        """
         return self.__Bincar_RND
     
     def set_Binebike_RND(self, dbs, b, rnds):
+        """
+        Defines the utility functions for the E-BIKE Binary Choice Model.
+        """
         globals().update(dbs.variables)
         V0 = 0
         V1 = b.ASC_EBIKE + rnds.EBIKETIME * EBIKETIME + rnds.EBIKECOST * EBIKECOST + rnds.EBIKEPSAFE * EBIKEPSAFE
@@ -100,9 +176,15 @@ class utils:
         self.__Binebike_RND = V
 
     def get_Binebike_RND(self):
+        """
+        Returns the E-BIKE Binary Choice Model utility functions.
+        """
         return self.__Binebike_RND
 
     def set_Binesoot_RND(self, dbs, b, rnds):
+        """
+        Defines the utility functions for the E-SCOOTER Binary Choice Model.
+        """
         globals().update(dbs.variables)
         V0 = 0
         V1 = b.ASC_ESCOOT + rnds.ESCOOTIME * ESCOOTIME + rnds.ESCOOTCOST * ESCOOTCOST + rnds.ESCOOTPSAFE * ESCOOTPSAFE
@@ -110,9 +192,15 @@ class utils:
         self.__Binescoot_RND = V
 
     def get_Binescoot_RND(self):
+        """
+        Returns the E-SCOOTER Binary Choice Model utility functions.
+        """
         return self.__Binescoot_RND
     
     def set_Binwalk_RND(self, dbs, b, rnds):
+        """
+        Defines the utility functions for the WALK Binary Choice Model.
+        """
         globals().update(dbs.variables)
         V0 = 0
         V1 = b.ASC_WALK + rnds.WALKTIME * WALKTIME + rnds.WALKPSAFE * WALKPSAFE
@@ -120,9 +208,15 @@ class utils:
         self.__Binwalk_RND = V
 
     def get_Binwalk_RND(self):
+        """
+        Returns the WALK Binary Choice Model utility functions.
+        """
         return self.__Binwalk_RND   
     
     def set_cho(self, dbs, exp, typ):
+        """
+        Defines the choice variable for the model based on the specified type of model.
+        """
         globals().update(dbs.variables)
         if exp == 'mode_choice': self.__cho = dat_defin(typ, 'CHOICE',  intchoice, dbs)
         elif exp == 'car_binary': self.__cho = dat_defin(typ, 'CHOICE',  binchoice1, dbs)
@@ -132,9 +226,15 @@ class utils:
         else: self.__cho = 0
         
     def get_cho(self):
+        """
+        Returns the choice variable.
+        """
         return self.__cho
     
     def set_modecho_av(self, exp):
+        """
+        Defines the availability of each alternative for the mode choice model.
+        """
         if exp == 'mode_choice': av = {4:1, 3:1, 2:1, 1:1}
         elif exp == 'car_binary' or exp == 'ebike_binary' or exp == 'escoot_binary' or exp == 'walk_binary':
             av = {0:1, 1:1}
@@ -142,4 +242,7 @@ class utils:
         self.__modecho_av = av
      
     def get_modecho_av(self):
+        """
+        Returns the availability of each alternative for the mode choice model.
+        """
         return self.__modecho_av

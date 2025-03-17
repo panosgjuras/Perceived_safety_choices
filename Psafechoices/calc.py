@@ -1,5 +1,5 @@
 """
-Tools to estimate perceived safety rates based on a default model
+Tools to calculate perceived safety rates based on a default model
 
 @author: ptzouras
 National Technical University of Athens

@@ -1,5 +1,5 @@
 """
-Tools to play with vos based on a default choice model
+Tools to play with the Value of Safety based on a default choice model
 
 @author: ptzouras
 National Technical University of Athens
