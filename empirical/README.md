@@ -56,14 +56,15 @@ $time_{m,\ r}$: travel time of using mode m in first/last mile route r;
 $cost_{m,r}$: travel cost of using mode m in first/last mile route r;
 $psafe_{j,l,\ \ m}$: perceived safety level of mode m in first/last mile route r, as it is experienced by individual r.
 
-The data are collected based on a survey form developed by [Tzouras et al. (2020](https://doi.org/10.1016/j.trip.2020.100205), [2022)](https://doi.org/10.1080/15568318.2022.2037793). The form comprises a methodological tool to take into account subjective variables related to users' perceptions in discrete choice modeling. In essence, two experiments have been combined in a single one: a) a rating experiment to measure a subjective variable (e.g., perceived safety) using 5-point of 7-point Likert Scale and a stated preferences experiment to collect route/mode choices per traffic situation. The survey design is based on a double fractional factorial design (orthogonal table); scenarios are matched in such a way that correlations among independent variables of both experiments are minimized. The survey form is given below:
-
-<img src="https://user-images.githubusercontent.com/63541107/210239908-647afa5a-cbd2-4717-9e3f-d3696ae47619.png" height="750">
-
 The data visualization is performed in R using ggplot package [data_analysis_perceived_choices.R](https://github.com/lotentua/Perceived_safety_choices/blob/main/empirical/data_analysis_perceived_choices.R).
 
 Multiple discrete choice models with the right settings are estimated in [BIOGEME_models_perceived_choices.py](https://github.com/lotentua/Perceived_safety_choices/blob/main/empirical/BIOGEME_models_perceived_choices.py).
 
 Also, [logit_est_functons.py](https://github.com/lotentua/Perceived_safety_choices/blob/main/empirical/logit_est_functons.py) contains functions to directly compute an MNL or ML model using [PandasBiogeme](https://github.com/michelbierlaire/biogeme).
 
-The advantage of this approach is that it models the heterogeneity of safety perceptions among individuals. Additionaly, it also considers that the impact of safety perceptions in choices can also be randomized. It differs per individual. Therefore, it connects road environment with safety perceptions, and safety perceptions with mobility choices through stochasticity.
+The data were collected based on double state preferences experiment. The survey form is given below:
+<img src="https://user-images.githubusercontent.com/63541107/210239908-647afa5a-cbd2-4717-9e3f-d3696ae47619.png" height="750">
+
+The dataset is open and can be found here:
+> Tzouras, P. G. 2025. Perceived safety and first/last mile mode choices. A dataset from image-based double stated preferences experiments (1.0) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.14967130
+Please cite the dataset, if you use it in your analyses.
