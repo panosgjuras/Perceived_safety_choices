@@ -26,8 +26,8 @@ Requirements are contained in the: [requirement.txt](https://github.com/lotentua
 The research findings obtained using the tools in this package are documented in the following published papers:
 > Tzouras, P.G., Mitropoulos, L., Karolemeas, C., Stravropoulou, E., Vlahogianni, E.I., Kepaptsoglou, K., 2024. Agent-based simulation model of micro-mobility trips in heterogeneous and perceived unsafe road environments. Journal of Cycling and Micromobility Research 2, 100042. [https://doi.org/10.1016/j.jcmr.2024.100042]
 
-> Tzouras, P.G., Pastia, V., Kaparias, I., Kepaptsoglou, K., 2024. Exploring the effect of perceived safety in first/last mile mode choices. Transportation. https://doi.org/10.1007/s11116-024-10487-4
+> Tzouras, P.G., Pastia, V., Kaparias, I., Kepaptsoglou, K., 2024. Exploring the effect of perceived safety in first/last mile mode choices. Transportation. [https://doi.org/10.1007/s11116-024-10487-4]
 
-> Tzouras, P.G., Mitropoulos, L., Koliou, K., Stavropoulou, E., Karolemeas, C., Antoniou, E., Karaloulis, A., Mitropoulos, K., Vlahogianni, E.I., Kepaptsoglou, K., 2023. Describing Micro-Mobility First/Last-Mile Routing Behavior in Urban Road Networks through a Novel Modeling Approach. Sustainability 15, 3095. https://doi.org/10.3390/su15043095
+> Tzouras, P.G., Mitropoulos, L., Koliou, K., Stavropoulou, E., Karolemeas, C., Antoniou, E., Karaloulis, A., Mitropoulos, K., Vlahogianni, E.I., Kepaptsoglou, K., 2023. Describing Micro-Mobility First/Last-Mile Routing Behavior in Urban Road Networks through a Novel Modeling Approach. Sustainability 15, 3095. [https://doi.org/10.3390/su15043095]
 
 
