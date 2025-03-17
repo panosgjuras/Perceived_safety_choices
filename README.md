@@ -19,7 +19,7 @@ Lastly, [Perceived_safety_choices](https://github.com/lotentua/Perceived_safety_
 
 To install the PsafeChoices package (ONLY) please type:
 ```bash
-pip install git+https://github.com/lotentua/Perceived_safety_choices
+pip install git+https://github.com/panosgjuras/Perceived_safety_choices
 ```
 Requirements are contained in the: [requirement.txt](https://github.com/lotentua/Perceived_safety_choices/blob/main/requirements.txt)
 
