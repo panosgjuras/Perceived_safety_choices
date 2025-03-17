@@ -1,5 +1,4 @@
-# author: ptzouras
-# collaborator: valpastia
+# author: valpastia
 
 library(Rchoice)
 library(corrplot)
@@ -13,8 +12,8 @@ library(VGAM)
 library(bayesmeta)
 library(densratio)
 
-# setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-path_new <- "/Users/panosgtzouras/Library/CloudStorage/GoogleDrive-panosgjuras@gmail.com/My Drive/PAPERS_TZOURAS/paper15_perceived_choices/datasets/rating_dataset_perceived_choices.csv"
+url = "https://zenodo.org/record/14967130/files/rating_dataset_perceivedSafetyChoices.csv?download=1"
+path_new <- url
 data1<-read.csv2(path_new, header=T,dec=".",sep=",") # this is the perceived safery dataset
 # data2<-read.csv2("datasets/choice_dataset_perceived_choices.csv", header=T,dec=".",sep=",")
 
@@ -225,16 +224,16 @@ ggarrange(hist_veh_volume(subset(data1, tmode== m & type == 3)),
           
           
           
-          hist_veh_volume(subset(data1, tmode=='ebike')),
-          hist_bike_volume(subset(data1, tmode=='ebike')),
-          hist_ped_volume(subset(data1, tmode=='ebike')),
-          hist_veh_volume(subset(data1, tmode=='escoot')),
-          hist_bike_volume(subset(data1, tmode=='escoot')),
-          hist_ped_volume(subset(data1, tmode=='escoot')),
-          hist_veh_volume(subset(data1, tmode=='walk')),
-          hist_bike_volume(subset(data1, tmode=='walk')),
-          hist_ped_volume(subset(data1, tmode=='walk')), 
-          nrow = 4, ncol = 3, common.legend = TRUE, legend = 'bottom') # general, general
+#          hist_veh_volume(subset(data1, tmode=='ebike')),
+#          hist_bike_volume(subset(data1, tmode=='ebike')),
+#          hist_ped_volume(subset(data1, tmode=='ebike')),
+#          hist_veh_volume(subset(data1, tmode=='escoot')),
+#          hist_bike_volume(subset(data1, tmode=='escoot')),
+#          hist_ped_volume(subset(data1, tmode=='escoot')),
+#          hist_veh_volume(subset(data1, tmode=='walk')),
+#          hist_bike_volume(subset(data1, tmode=='walk')),
+#          hist_ped_volume(subset(data1, tmode=='walk')), 
+#          nrow = 4, ncol = 3, common.legend = TRUE, legend = 'bottom') # general, general
 
 # 8. Model pre tests
 corr<-function(df, x, m){ # plot correlation table funntion
@@ -373,115 +372,4 @@ ggplot(data = data.frame(x = c(-12.5, 5)), aes(x)) +
                         labels = c("Car", "E-Bike", "E-Scooter", "Walk")) +
   scale_color_manual(values = c("black",colors[1], colors[2]), name = 'Infrastructure type',
                         labels = c("1: urban road with sidewalk < 1.5 m", "2: urban road with sidewalk >= 1.5 m", "4: shared space") ) + scale_x_continuous(name = 'Beta variable value') 
-
-
-fixind<-function(df){
-  rownames(df)<-df$X
-  df$X <- NULL
-  return(df)}
-
-bincar<-fixind(read.csv2("models/car_binary_logit_model.csv", header=T,dec=".",sep=","))
-binebike <- fixind(read.csv2("models/ebike_binary_logit_model.csv", header=T,dec=".",sep=","))
-binescoot <- fixind(read.csv2("models/escoot_binary_logit_model.csv", header=T,dec=".",sep=","))
-binwalk <- fixind(read.csv2("models/walk_binary_logit_model.csv", header=T,dec=".",sep=","))
-
-vos <-function(v, cd, btime, bcost, bsaf, stime, scost, ssaf, simu){
-  time <- c(rnorm(simu, mean=btime, sd=abs(stime)))
-  cost<- c(rnorm(simu, mean = bcost, sd = abs(scost)))
-  
-  saf<- c(rnorm(simu, mean = bsaf, sd = abs(ssaf)))
-  df <- data.frame(time, cost, saf)
-  
-  df["dist"] <- (1/v) * 60 * df$time + cd * df$cost
-  df["vos"] <- df$saf / df$dist
-  return(df)}
-
-vosdf<-function(modex){
-  R = 20000
-  if(modex == 'car'){
-    df <- bincar
-    v <- 40
-    cd <- 0.15
-    res <- vos(v, cd, btime = df['BETA_CARTIME', 'Value'],
-                bcost = df['BETA_CARCOST', 'Value'], 
-                bsaf = df['BETA_CARPSAFE', 'Value'],
-                stime = df['SIGMA_CARTIME', 'Value'], 
-                scost = df['SIGMA_CARCOST', 'Value'], 
-                ssaf = df['SIGMA_CARPSAFE', 'Value'], R)
-    res["mode"]<-modex}
-  if (modex == 'ebike'){
-    df <- binebike
-    v <- 20
-    cd <- 15/20
-    res <- vos(v, cd, btime = df['BETA_EBIKETIME', 'Value'],
-               bcost = df['BETA_EBIKECOST', 'Value'], 
-               bsaf = df['BETA_EBIKEPSAFE', 'Value'],
-               stime = df['SIGMA_EBIKETIME', 'Value'], 
-               scost = df['SIGMA_EBIKECOST', 'Value'], 
-               ssaf = df['SIGMA_EBIKEPSAFE', 'Value'], R)
-    res["mode"]<-modex}
-  if (modex == 'escoot'){
-      df <- binescoot
-      v <- 15
-      cd <- 14/15
-      res <- vos(v, cd, btime = df['BETA_ESCOOTIME', 'Value'],
-                 bcost = df['BETA_ESCOOTCOST', 'Value'], 
-                 bsaf = df['BETA_ESCOOTPSAFE', 'Value'],
-                 stime = df['SIGMA_ESCOOTIME', 'Value'], 
-                 scost = df['SIGMA_ESCOOTCOST', 'Value'], 
-                 ssaf = df['SIGMA_ESCOOTPSAFE', 'Value'], R)
-      res["mode"]<-modex}
-  if (modex == 'walk'){
-     df <- binwalk
-      v <- 5
-      cd <- 0
-      res <- vos(v, cd, btime = df['BETA_WALKTIME', 'Value'],
-                 bcost = 0, 
-                 bsaf = df['BETA_WALKPSAFE', 'Value'],
-                 stime = df['SIGMA_WALKTIME', 'Value'], 
-                 scost = 0, 
-                 ssaf = df['SIGMA_WALKPSAFE', 'Value'], R)
-      res["mode"]<-modex}
-  return(res)}
-
-df<-vosdf("car")
-df<-rbind(df, vosdf("ebike"))
-df<-rbind(df, vosdf("escoot"))
-df<-rbind(df, vosdf("walk"))
-
-ggplot(df, aes(x=vos , fill=mode)) +
-  geom_histogram(aes(y=..density..), color='grey',alpha=0.5, position = 'identity', binwidth = 0.1) +
-  geom_density(aes(x = vos, fill = NA, linetype = mode), color='black', size=0.60, alpha=0.6)+
-  #geom_vline(data=mu, aes(xintercept=grp.mean, color=scenario),
-  #linetype="dashed")+
-  scale_fill_brewer(palette = 'Set2', name = "Transport Mode", 
-                    labels = c("Car", "E-Bike", "E-Scooter", "Walk")) +
-  scale_linetype_manual(values = c("dashed", "twodash", "solid", "dotted"), name = "Transport Mode", 
-                    labels = c("Car", "E-Bike", "E-Scooter", "Walk")) +
-  # ggtitle("Public Transport")+
-  #scale_color_manual(values=c("black", "black","black","black")) +
-  scale_y_continuous(name ="Probability density")+
-  scale_x_continuous(name ="Value-of-Safety in km/level", limits = c(-10, 5))+
-  theme_bw()
-
-modecho<-fixind(read.csv2("models/mode_choice_ML_model.csv", header=T,dec=".",sep=","))
-
-df <- data.frame(x=1:8, y=1, col=letters[1:8])
-g <- ggplot(df, aes(x=x, y=y, color=col)) + geom_point(size=5) +
-  scale_color_brewer(palette="Set2")
-colors <- ggplot_build(g)$data[[1]]$colour
-plot(df$x, df$y, col=colors, pch=20, cex=5)
-
-
-ggplot(data = data.frame(x = c(-8, 6)), aes(x)) +
-  stat_function(fun = dnorm, n = 2000, args = list(mean = modecho['ASC_EBIKE', 'Value'], 
-                                                   sd = abs(modecho['SIGMA_ASC_EBIKE', 'Value'])), aes(colour = "Group 1"), size = 0.90) +
-  stat_function(fun = dnorm, n = 2000, args = list(mean = modecho['ASC_ESCOOT', 'Value'], 
-                                                   sd = abs(modecho['SIGMA_ASC_ESCOOT', 'Value'])), aes(colour = "Group 2"), size = 0.90) +
-  stat_function(fun = dnorm, n = 2000, args = list(mean = modecho['ASC_WALK', 'Value'], 
-                                                   sd = abs(modecho['SIGMA_ASC_WALK', 'Value'])), aes(colour = "Group 3"), size = 0.90) + theme_bw() +
-                  scale_color_manual(values = c(colors[2], colors[3], colors[4]),
-                                     name = 'Transport Mode',
-                                     labels = c( "E-Bike", "E-Scooter", "Walk")) +
-  scale_x_continuous(name = "ASC value") + scale_y_continuous(name = "Probability density")
 

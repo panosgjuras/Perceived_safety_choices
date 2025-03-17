@@ -1,3 +1,10 @@
+"""
+Tools to define the unknown parameters of the model
+
+@author: ptzouras
+National Technical University of Athens
+"""
+
 from biogeme.expressions import Beta, bioDraws
 
 class betas:    

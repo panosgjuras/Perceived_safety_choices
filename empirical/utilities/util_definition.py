@@ -1,3 +1,10 @@
+"""
+Tools to prepare the database and determine the utility functions
+
+@author: ptzouras
+National Technical University of Athens
+"""
+
 import pandas as pd
 import biogeme.database as db
 from biogeme.expressions.elementary_expressions import DefineVariable

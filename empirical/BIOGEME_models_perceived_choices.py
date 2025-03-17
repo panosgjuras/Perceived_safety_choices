@@ -1,7 +1,8 @@
 """
+Tools to estimate the models and export the parameters
+
 @author: ptzouras
 National Technical University of Athens
-Research project: PhD thesis Tzouras
 """
 
 import os
