@@ -7,7 +7,7 @@ National Technical University of Athens
 
 import copy
 import matplotlib.pyplot as plt
-
+import pandas as pd
 from matplotlib.colors import ListedColormap
 
 import seaborn as sns
@@ -93,23 +93,23 @@ def fusionWalkableCity(gdf, wlink, var, text = "variable1", tolerance = 10):
     #        gdf.loc[gdf["linkId"] == uid, text] = ff # we add this new input
     return gdf
 
+import matplotlib.pyplot as plt
+
 def infMapping(links, scen):
-    
     """
-    Useful function to understand the spatial variations of infrassture types
+    Useful function to understand the spatial variations of infrastructure types.
 
     Parameters
     ----------
-    links : dataFrame
-        The gpd dataFrame with all the links. The links must have 'inf' and 'pav'
+    links : GeoDataFrame
+        The GeoDataFrame containing all the links with 'inf' and 'pav' columns.
     scen : str
-        The scenario, this is used for the title of the figure
+        The scenario, used for the title of the figure.
 
     Returns
     -------
-    A map plot with the infrastructure types
+    A map plot with infrastructure types.
     """
-    
     
     # Color mappings for 'inf' and 'pav'
     inf_color_mapping = {
@@ -119,36 +119,37 @@ def infMapping(links, scen):
         '4: Shared space': '#55C896',  # Green
     }
 
-    pav_color_mapping = {
-        '0: bad condition': '#FF1493',  # Pink for bad condition
-        '1: good condition': '#FFD700',  # Yellow for good condition
-    }
+    # pav_color_mapping = {
+    #    '0: bad condition': '#FF1493',  # Pink for bad condition
+    #    '1: good condition': '#FFD700',  # Yellow for good condition
+    #}
 
-    # Map the 'inf' and 'pav' columns to the corresponding colors
-    links['inf_color'] = links['inf'].map(inf_color_mapping)
-    links['pav_color'] = links['pav'].map(pav_color_mapping)
+    # Ensure no NaN values exist in 'inf' and 'pav' columns before mapping colors
+    links['inf_color'] = links['inf'].map(inf_color_mapping).fillna("#D3D3D3")  # Default to light gray
+    # links['pav_color'] = links['pav'].map(pav_color_mapping).fillna("#D3D3D3")  # Default to light gray
 
     # Create the plot
     fig, ax = plt.subplots(figsize=(10, 10), dpi=500)
-        
+    
     # Plot 'pav' layer first for transparency effect
-    links.dropna(subset=['pav_color']).plot(ax=ax, facecolor="none",
-                                            edgecolor=links['pav_color'], 
-                                            linewidth=1.5,  # Thicker line for pav condition
-        alpha=0.1,
-        label = 'Infrastructure'# More transparent for background effect
-    )
+    # links.dropna(subset=['pav_color']).plot(
+    #    ax=ax, 
+    #    facecolor="none",
+    #    edgecolor=links['pav_color'], 
+    #    linewidth=1.5,  # Thicker line for pav condition
+    #    alpha=0.1,  # More transparent for background effect
+    #    label='Pavement'
+    #)
 
+    # Plot 'inf' layer on top
     links.dropna(subset=['inf_color']).plot(
         ax=ax,
         facecolor="none",
         edgecolor=links['inf_color'],
         linewidth=0.25,
-        alpha = 1, # Thinner line for inf condition
-        label = 'Pavement'
+        alpha=1,  # Thinner line for inf condition
+        label='Infrastructure'
     )
-    
-    # cross.plot(ax=ax, edgecolor="blue", facecolor="lightblue", alpha=0.5, linewidth=10)
 
     # Add grid and labels
     ax.grid(color='black', linestyle='--', linewidth=0.5, alpha=0.7)
@@ -209,6 +210,12 @@ def plotPsafeLev(gdf, mod, xy=2, city = 'Athens', font = 20):
     
     plt.show()
 
+def calculate_midpoint_coords(geometry):
+    if isinstance(geometry, LineString): 
+        midpoint = geometry.interpolate(0.5, normalized=True)
+        return midpoint.x, midpoint.y
+    return None, None
+
 def PsafeHeatmaps(gdf, mod, city = 'Athens', pmin = 4, xy = 2, font = 20):
     """
     It creates a planar heatmap with the concetration of high perceived safety scores
@@ -228,12 +235,6 @@ def PsafeHeatmaps(gdf, mod, city = 'Athens', pmin = 4, xy = 2, font = 20):
 
     """
     
-    def calculate_midpoint_coords(geometry):
-        if isinstance(geometry, LineString):
-            midpoint = geometry.interpolate(0.5, normalized=True)
-            return midpoint.x, midpoint.y
-        return None, None
-    
     links = copy.deepcopy(gdf)
     
     gdf['xmid'], gdf['ymid'] = zip(*gdf['geometry'].apply(calculate_midpoint_coords))
@@ -241,6 +242,8 @@ def PsafeHeatmaps(gdf, mod, city = 'Athens', pmin = 4, xy = 2, font = 20):
     points = gpd.GeoDataFrame(gdf, geometry=geometry)
     points.crs = gdf.crs # this is the CRS I used in the points tooo
     
+    points['LevPsafe' + mod] = pd.to_numeric(points['LevPsafe' + mod], errors='coerce')
+
     df = points.loc[points['LevPsafe' + mod] >= pmin] # this keeps only the points higher than the threshold
     # df = df.loc[df['modes'].str.contains(mod)] # this keep only the points associated with links that you can travel used the trasnport mode mod
     plt.figure(figsize=(20, 20), dpi = 500)
@@ -258,4 +261,42 @@ def PsafeHeatmaps(gdf, mod, city = 'Athens', pmin = 4, xy = 2, font = 20):
     plt.text(0.01, 0.01, f'CRS: {crs_info}', transform=plt.gca().transAxes,
          fontsize=20, ha='left', va='bottom', bbox=dict(facecolor='white', alpha=0.7))
     
+    plt.show()
+    
+    
+    
+def PsafeHeatmaps2(sgdf, mod, city='Athens', pmin=4, xy=2, font=20):
+
+    gdf = copy.deepcopy(sgdf)
+    links = copy.deepcopy(gdf)
+    
+    gdf['xmid'], gdf['ymid'] = zip(*gdf['geometry'].apply(calculate_midpoint_coords))
+    geometry = [Point(xy) for xy in zip(gdf['xmid'], gdf['ymid'])]  # x-mid, y-mid refer to the mid-point of each link
+    points = gpd.GeoDataFrame(gdf, geometry=geometry)
+    points.crs = gdf.crs
+    
+    # ✅ Ensure 'LevPsafe{mod}' is numeric
+    if 'LevPsafe' + mod not in points.columns:
+        raise KeyError(f"Column 'LevPsafe{mod}' not found in DataFrame!")
+    
+    points['LevPsafe' + mod] = pd.to_numeric(points['LevPsafe' + mod], errors='coerce')
+
+    df = points.loc[points['LevPsafe' + mod] >= pmin]  # Filter only safe points
+
+    # ✅ Plot heatmap
+    plt.figure(figsize=(20, 20), dpi=500)
+    axis = sns.kdeplot(x=df.xmid, y=df.ymid,
+                        fill=True, bw_adjust=0.3, weights=df['LevPsafe' + mod],
+                        cmap="plasma")
+
+    links.plot(ax=axis, facecolor="none", edgecolor="grey", linewidth=0.75)
+    
+    plt.title(f'Psafe Heatmap for {city} - {mod}, level {pmin} or greater', fontsize=font)
+    plt.xlabel('X-coordinate (m)', fontsize=font)
+    plt.ylabel('Y-coordinate (m)', fontsize=font)
+
+    crs_info = gdf.crs.to_string() if gdf.crs else 'CRS information not available'
+    plt.text(0.01, 0.01, f'CRS: {crs_info}', transform=plt.gca().transAxes,
+             fontsize=20, ha='left', va='bottom', bbox=dict(facecolor='white', alpha=0.7))
+
     plt.show()
