@@ -137,8 +137,8 @@ def coeffUpd(df):
          The updated model parameters
     """
 
-    df = df.rename(columns={'Unnamed: 0': 'coeffs'})
-    df = df.set_index('coeffs')
+    # df = df.rename(columns={'Unnamed: 0': 'coeffs'})
+    # df = df.set_index('coeffs')
     df.loc['kappa.1'] = df.loc['kappa.1'] - df.loc['constant']
     df.loc['kappa.2'] = df.loc['kappa.2'] - df.loc['constant']
     df.loc['kappa.3'] = df.loc['kappa.3'] - df.loc['constant']
