@@ -11,14 +11,14 @@ National Technical University of Athens
 # from .microindianalysis import indicators
 # from .microindianalysis import analysistools
 
-from calc import latentEst, levelEst, processRowEst, coeffUpd
-from vosEst import opp_cost_calc
-from mapAnalysis import (InfTypeCheck, fusionWalkableCity, infMapping, 
+from .calc import latentEst, levelEst, processRowEst, coeffUpd
+from .vosEst import opp_cost_calc
+from .mapAnalysis import (InfTypeCheck, fusionWalkableCity, infMapping, 
                           plotPsafeLev, PsafeHeatmaps)
 # from .MATSimAnaTools import readtrips, readevents, re
-from prepMATSim import nod_match, twoway, speed, capacity, netxml_cr, buildNetXML, updNetXML
-from mainFuns import linksPsafe_import, modelPsafe_import, odds_mc, plotOdds, score_diff
-from vosDijkstra import (OSMnetwork, osm_shp_match, upd_OSM_edge, VOSweight, 
+from .prepMATSim import nod_match, twoway, speed, capacity, netxml_cr, buildNetXML, updNetXML
+from .mainFuns import linksPsafe_import, modelPsafe_import, odds_mc, plotOdds, score_diff
+from .vosDijkstra import (OSMnetwork, osm_shp_match, upd_OSM_edge, VOSweight, 
                          shortPath, nearestNodes, simulateVOS, descrStats_stations, 
                          genHist, VOS_mean_max_double_plot, top5pairs, stackInfrastructureMulti2,
                          bShareMapDiff)
