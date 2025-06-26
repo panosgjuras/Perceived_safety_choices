@@ -22,7 +22,7 @@ from shapely.geometry import Point, LineString
 import osmnx as ox
 import networkx as nx
 
-from mapAnalysis import plotPsafeLev
+from Psafechoices.mapAnalysis import plotPsafeLev
  
 # root_dir = "/Users/panosgtzouras/Desktop/datasets"
 # os.chdir(root_dir)
