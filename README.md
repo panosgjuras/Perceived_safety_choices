@@ -22,7 +22,7 @@ To install the PsafeChoices package (ONLY) please type:
 ```bash
 pip install git+https://github.com/panosgjuras/Perceived_safety_choices
 ```
-Requirements are contained in the: [requirement.txt](https://github.com/lotentua/Perceived_safety_choices/blob/main/requirements.txt)
+Requirements are contained in the: [requirement.txt](https://github.com/lotentua/Perceived_safety_choices/blob/main/requirements.txt). It may require the creation of a new virtual environment as the tools can be used using python 3.10.
 
 The research findings obtained using the tools in this package are documented in the following published papers:
 > Tzouras, P.G., Mitropoulos, L., Karolemeas, C., Stravropoulou, E., Vlahogianni, E.I., Kepaptsoglou, K., 2024. Agent-based simulation model of micro-mobility trips in heterogeneous and perceived unsafe road environments. Journal of Cycling and Micromobility Research 2, 100042. [https://doi.org/10.1016/j.jcmr.2024.100042]
