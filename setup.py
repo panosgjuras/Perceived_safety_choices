@@ -16,6 +16,10 @@ def get_version(rel_path):
     else:
         raise RuntimeError("Unable to find version string.")
 
+def load_requirements(filename):
+    with open(filename, 'r') as f:
+        return [line.strip() for line in f if line.strip() and not line.startswith('#')]
+
 description_psafechoices = """
 The model that has been uploaded to this repository aspires to describe routing behavior 
 of micro-mobility modes, e.g., e-bikes and e-scoters, in relationship with traditional modes, 
@@ -29,7 +33,5 @@ setup(name = "psafechoices",
       author_email = "ptzouras@mail.ntua.gr",
       description=" ".join(description_psafechoices.strip().splitlines()),
       packages = find_packages(),
-      
-      # install_requires = ['biogeme>=3.2.10', 'dijkstra>=0.2.1', 'lxml>=4.9.1',
-      #                    'numpy>=1.23.3', 'pandas>=1.5.0', 'pyshp>=2.3.1']
+      install_requires=load_requirements("requirements.txt"),
       )
