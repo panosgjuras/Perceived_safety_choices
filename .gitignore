@@ -1,9 +1,36 @@
-# Ignore Jupyter notebook checkpoints
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter Notebook checkpoints
 .ipynb_checkpoints/
 
-# Ignore Python cache files
-__pycache__/
+# Environment files
+.env
+.venv/
+venv/
+ENV/
+env/
+*.env
 
+# VSCode / IDE settings
+.vscode/
+.idea/
+
+# Mac/Linux/Windows system files
 .DS_Store
-.Rhistory
-.ipynb_checkpoints/scenario_Athens-checkpoint.ipynb
+Thumbs.db
+
+# Logs and caches
+*.log
+*.out
+*.tmp
+.cache/
+*.pickle
+*.pkl
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
