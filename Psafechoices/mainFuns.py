@@ -1,5 +1,9 @@
 """
-@author: panosgtzouras
+Tools to perform Monte-Carlo analysis and explore the variability of safety perceptions
+in different cities with different groups of people
+
+@author: ptzouras
+National Technical University of Athens
 """
 import pandas as pd
 import numpy as np
