@@ -26,7 +26,7 @@ from .vosDijkstra import (OSMnetwork, osm_shp_match, upd_OSM_edge, VOSweight,
 # from .MicroIndiAnalysis import indicators
 # from .MicroIndiAnalysis import analysistools
 
-__version__ = "1.0.1" # data processing functions are not included in this version
+__version__ = "1.0.2" # data processing functions are not included in this version
 __author__ = 'Panagiotis G. Tzouras'
 __all__ = [latentEst, levelEst, processRowEst, coeffUpd,
            opp_cost_calc,
