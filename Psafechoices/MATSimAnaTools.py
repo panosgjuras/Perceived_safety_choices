@@ -126,32 +126,6 @@ def flowmeasure(events, network):
     df.id = df.id.astype(int)
     return df
 
-def seqLinks(events, scenario, mode = ['ebike', 'escoot']):
-    df = pd.DataFrame(columns=['link', 'vehicle', 'tmode'])
-
-    for y, event in enumerate(events):
-        if event.attrib.get('type') == "entered link":
-            link = event.attrib.get('link')
-            vehicle = event.attrib.get('vehicle')
-            if link and vehicle:  # Check if link and vehicle are present
-                tmode = 'car'
-                if 'ebike' in vehicle:
-                    tmode = 'ebike'
-                elif 'escoot' in vehicle:
-                    tmode = 'escoot'
-                
-                df = df.append({'link': link, 'vehicle': vehicle, 'tmode': tmode}, ignore_index=True)
-    
-    def clean_vehicle(vehicle):
-        if '_escoot' in vehicle or '_ebike' in vehicle:
-            return vehicle.split('_')[0]
-        return vehicle
-
-    df['vehicle'] = df['vehicle'].apply(clean_vehicle)
-
-    df_grouped = df.groupby(['vehicle', 'tmode'])['link'].apply(list).reset_index()
-    return df_grouped
-
 
 def seqLinks(events, scenario, mode=['ebike', 'escoot']):
     """

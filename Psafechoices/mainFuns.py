@@ -203,12 +203,50 @@ def odds_mc(cf, typ, tmode, level = None, n_sim=1000, seed=None):
     return odds  # can return mean, quantiles, etc. if preferred
 
 
-def plotOdds(tmode, cf_Athens, cf_Munich, xlim = None, l = 4, n = 1000):
-    """
-    It is a plotting function to compare Athens and Munich models
-
+def plotOdds(tmode, cf1, cf2, xlim = None, l = 4, n = 1000):
+    
     """
     
+    This function directly estimates the odds of two cities and plots their distributions
+        
+    This function visualizes the distributions of simulated odds for four 
+    predefined infrastructur types ("type1", "type2", "type4"), comparing perceptions of residents coming from two cities.
+    For "type3", it plots vertical lines at the mean of the simulated odds instead of a histogram.
+    
+    Parameters
+    ----------
+    tmode : str
+        The transport mode to simulate (e.g., "car", "bike", "pt").
+    
+    cf1 : object
+        The model sets (coefficients) of city 1, used as input to the `odds_mc` function.
+    
+    cf_Munich : object
+        The model sets (coefficients) of city 1, used as input to the `odds_mc` function.
+    
+    xlim : int or float, optional
+        Upper limit for the x-axis (odds values). Determines bin range for histograms.
+        If None, function may raise an error unless xlim is explicitly provided.
+    
+    l : int or float, default=4
+        Threshold safety level used in the `odds_mc` simulation,
+        so it is the chance of psafe being equal to or lower that the defined  threshold
+    
+    n : int, default=1000
+        Number of Monte Carlo simulations to run per transport mode
+    
+    Returns
+    -------
+    None
+        The function displays a matplotlib figure with histograms and vertical mean lines
+        for simulated odds. It does not return any object.
+    
+    Notes
+    -----
+    - The function depends on an external `odds_mc()` function which is defined in the mainFuns.py
+    """
+    
+
     def returnLabel(x, typ, city):
         maxX = np.max(x)
         meanX = np.mean(x)
@@ -225,12 +263,12 @@ def plotOdds(tmode, cf_Athens, cf_Munich, xlim = None, l = 4, n = 1000):
 
     for i, typ in enumerate(typex): 
         if typ == "type3":
-            odds_samples = odds_mc(cf_Athens, 'type3', tmode, level = l, n_sim = n)
+            odds_samples = odds_mc(cf1, 'type3', tmode, level = l, n_sim = n)
             mean_val = np.mean(odds_samples)
             label_text = returnLabel(odds_samples, 'Athens', typ)
             plt.axvline(mean_val, label= label_text, alpha=1, color = colors[i])
         else:
-            odds_samples = odds_mc(cf_Athens, typ, tmode, level = l, n_sim = n)
+            odds_samples = odds_mc(cf1, typ, tmode, level = l, n_sim = n)
             label_text = returnLabel(odds_samples, 'Athens', typ)
             
             sns.histplot(odds_samples, kde=False, color = colors[i], label= label_text, bins = bins,
@@ -240,12 +278,12 @@ def plotOdds(tmode, cf_Athens, cf_Munich, xlim = None, l = 4, n = 1000):
             
     for i, typ in enumerate(typex): 
         if typ == "type3":
-            odds_samples = odds_mc(cf_Munich, 'type3', tmode, level = l, n_sim = n)
+            odds_samples = odds_mc(cf2, 'type3', tmode, level = l, n_sim = n)
             mean_val = np.mean(odds_samples)
             label_text = returnLabel(odds_samples, 'Munich', typ)
             plt.axvline(mean_val, label= label_text, alpha=1, linestyle = '--', color = colors[i])
         else:
-            odds_samples = odds_mc(cf_Munich, typ, tmode, level = l, n_sim = n)
+            odds_samples = odds_mc(cf2, typ, tmode, level = l, n_sim = n)
             label_text = returnLabel(odds_samples, 'Munich', typ)
             
             sns.histplot(odds_samples, kde=False, color = light_colors[i], label= label_text, bins = bins,

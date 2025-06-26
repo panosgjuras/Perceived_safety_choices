@@ -93,8 +93,6 @@ def fusionWalkableCity(gdf, wlink, var, text = "variable1", tolerance = 10):
     #        gdf.loc[gdf["linkId"] == uid, text] = ff # we add this new input
     return gdf
 
-import matplotlib.pyplot as plt
-
 def infMapping(links, scen):
     """
     Useful function to understand the spatial variations of infrastructure types.

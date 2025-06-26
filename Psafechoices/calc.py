@@ -41,7 +41,7 @@ def inf_match(s_inf):
     return inf
 
 
-x = inf_match('Urban road with sidewalk more than 1.5 m wide')
+# x = inf_match('Urban road with sidewalk more than 1.5 m wide')
 
 
 def pav_match(s_pav):
