@@ -146,6 +146,7 @@ def coeffUpd(df):
     df.loc['kappa.5'] = df.loc['kappa.5'] - df.loc['constant']
     df.loc['constant'] = - df.loc['constant']
     df = df.rename(index={'constant': 'kappa.0'})
+    df.index = [name.replace("mean.", "") for name in df.index]
     return df
 
 

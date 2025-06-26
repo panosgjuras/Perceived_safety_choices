@@ -208,6 +208,9 @@ def plotPsafeLev(gdf, mod, xy=2, city = 'Athens', font = 20):
     plt.text(0.01, 0.01, f'CRS: {crs_info}', transform=ax.transAxes,
          fontsize=20, ha='left', va='bottom', bbox=dict(facecolor='white', alpha=0.7))
     
+    
+    plt.grid()
+    
     plt.show()
 
 def calculate_midpoint_coords(geometry):
@@ -260,5 +263,7 @@ def PsafeHeatmaps(gdf, mod, city = 'Athens', pmin = 4, xy = 2, font = 20):
     crs_info = gdf.crs.to_string() if gdf.crs else 'CRS information not available'
     plt.text(0.01, 0.01, f'CRS: {crs_info}', transform=plt.gca().transAxes,
          fontsize=20, ha='left', va='bottom', bbox=dict(facecolor='white', alpha=0.7))
+    
+    plt.grid()
     
     plt.show()
