@@ -15,7 +15,7 @@ from scipy.stats import ttest_rel
 
 #### PROBLEM
 # os.chdir("/Users/panosgtzouras/Desktop/github_tzouras/Perceived_safety_choices/Psafechoices")
-from calc import coeffUpd, levelEst
+from Psafechoices.calc import coeffUpd, levelEst
 
 color_dict = {
         '1: Urban road with sidewalk less than 1.5 m wide': '#E31A1C',
