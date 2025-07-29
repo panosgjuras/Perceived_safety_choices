@@ -1,0 +1,12 @@
+cff-version: 1.0.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Tzouras
+    given-names: Panagiotis G.
+    orcid: 
+title: "The Perceived Safety Choice"
+version: 1.0.2
+identifiers:
+  - type: url
+    value: https://github.com/panosgjuras/Perceived_safety_choices/tree/main/Psafechoices
+date-released: 2025-06-26
