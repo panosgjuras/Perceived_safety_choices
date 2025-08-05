@@ -8,8 +8,6 @@ The different functions of the model are parametric to take into account variati
 
 Based on this concept, the [Perceived_safety_choices](https://github.com/lotentua/Perceived_safety_choices) proposes some tools in order to investigate the overall impact of perceived safety on travel behavior, transport equity and transport system sustainability. There is a continuous development of these tools by the NTUA research team and external partners who still commit.
 
-Lastly, [Perceived_safety_choices](https://github.com/lotentua/Perceived_safety_choices) creates a path to combine agent-based transport modeling (e.g., [MATSim]( https://github.com/matsim-org)) with spatial analysis and GIS tools. 
-
 **The [Perceived_safety_choices](https://github.com/panogjuras/Perceived_safety_choices) repository contains:**
 - [Psafechoice](https://github.com/panosgjuras/Perceived_safety_choices/tree/main/Psafechoices): contains tools to import a shapefile with the links and nodes, estimate traffic parameters and perceived safety per link, export csv and xml files for further analysis and a routing model based on Value-of-Safety and new algorithms that define the shortest, fastest and safest path per transport mode.
 - [empirical](https://github.com/panosgjuras/Perceived_safety_choices/tree/main/empirical): contains advance modeling techniques based on [PandasBiogeme](https://github.com/michelbierlaire/biogeme) and [Rchoice](https://github.com/cran/Rchoice) package to compute first/last mile route/mode choice models.
