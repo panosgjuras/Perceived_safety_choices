@@ -24,10 +24,6 @@ import networkx as nx
 
 from Psafechoices.mapAnalysis import plotPsafeLev
  
-# root_dir = "/Users/panosgtzouras/Desktop/datasets"
-# os.chdir(root_dir)
-# out_dir = "/Users/panosgtzouras/Library/CloudStorage/OneDrive-UniversityofWestAttica/TZOURAS_paperz/paper61_VoS_navigation/results_May_2025"
-
 # PRE-PROSSESING FUNS
 def OSMnetwork(city, plot = True):
     G = ox.graph_from_place(city, network_type='drive')
