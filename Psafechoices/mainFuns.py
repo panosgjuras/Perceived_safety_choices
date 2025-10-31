@@ -585,5 +585,71 @@ def score_diff(links1, links2, cf1, cf2,
     
     return pd.DataFrame(results)
 
+def computeSignificantSafer(links_df, stats_df, alpha=0.05):
+    """
+    Compute the share of Athens links that are significantly perceived safer by people from city A,
+    significantly safer by people of city B, or not significantly different,
+    for each transport mode and each road environment attribute of psafe model.
 
+    Parameters
+    ----------
+    links_df : pd.DataFrame
+        links data (columns: ['id', 'inf', 'pav', 'cross', 'obst', ...])
+    stats_df : pd.DataFrame
+        Monte Carlo simulation results, comparison of perception of residents from two cities
+        It is the output of score_diff function, see the previous step
+        (columns: ['osm_id', 'mode', 'mean', 'p_value'])
+    alpha : float, optional
+        Significance level for the t-test, the default 0.05 or 95% confidence interval
+
+    Returns
+    -------
+    pd.DataFrame
+        Columns: ['mode', 'attribute', 'share_safer_Ath', 'share_safer_Mun', 'share_not_sig']
+    """
+
+    # Merge datasets
+    merged = stats_df.merge(links_df, left_on='osm_id', right_on='id', how='left')
+
+    # Define significance categories
+    merged['sig_group'] = pd.cut(
+        merged['p_value'],
+        bins=[-1, alpha, 1],
+        labels=['sig', 'not_sig']
+    )
+    merged['group'] = 'not_sig'
+    merged.loc[(merged['mean'] > 0) & (merged['p_value'] < alpha), 'group'] = 'safer_Ath'
+    merged.loc[(merged['mean'] < 0) & (merged['p_value'] < alpha), 'group'] = 'safer_Mun'
+
+    results = []
+    road_vars = ['inf', 'pav', 'obst', 'cross']
+
+    for mode in merged['mode'].unique():
+        mode_data = merged[merged['mode'] == mode]
+        for var in road_vars:
+            # Count frequencies of each significance group within each category
+            grouped = (
+                mode_data
+                .groupby([var, 'group'])
+                .size()
+                .unstack(fill_value=0)
+            )
+
+            # Convert to shares
+            grouped = grouped.div(grouped.sum(axis=1), axis=0).reset_index()
+
+            # Ensure all columns exist
+            for col in ['safer_Ath', 'safer_Mun', 'not_sig']:
+                if col not in grouped.columns:
+                    grouped[col] = 0
+
+            grouped['mode'] = mode
+            grouped['variable'] = var
+            grouped.rename(columns={var: 'attribute'}, inplace=True)
+            grouped = grouped[['mode', 'attribute', 'safer_Ath', 'safer_Mun', 'not_sig']]
+            results.append(grouped)
+
+    final_df = pd.concat(results, ignore_index=True)
+
+    return final_df
 
