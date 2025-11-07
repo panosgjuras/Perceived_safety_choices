@@ -47,47 +47,6 @@ def mode_params(df, mode):
     # print('Beta of travel time:', btime)
     return btime, bcost, bsafe
 
-# def opp_cost_calc(df, mode, speed, dcost):
-#     """
-#     It estimates the value of time, the value of safe time and the value of safe distance
-    
-
-#     Parameters
-#     ----------
-#     df : DataFrame
-#        the output of the choice model in df format
-#     mode : str
-#         the transport mode for which the data will be downloaded
-#     speed : float
-#         the mean travel speed of the transport mode in km/h
-#     dcost : float
-#         the mean cost per km of the transport mode in km/h
-
-#     Returns
-#     -------
-#     vot : float
-#         The value of time in euro/h
-#     vos1 : float
-#         The value of safe time in h/level
-#     vos2 : float
-#         The value of safe distance in km/level
-
-#     """
-    
-#     # mode = input("Select mode: car, ebike, escooter, walk?")
-#     btime = mode_params(df, mode)[0]
-#     bcost = mode_params(df, mode)[1]
-#     bsafe = mode_params(df, mode)[2]
-    
-#     vot = (btime/bcost)*60
-#     vos1 = (bsafe/bcost)/60
-#     vos2 = vos1 * speed
-#     print('The value of travel time of', mode, ' is: ', vot,' euros/h')
-#     print('The value of safety of', mode, ' is: ', vos1, ' h/level')
-#     print('Or the value of safety of', mode, ' is: ', vos2, 'km/level') # fix fix fix here
-#     # rparam = bin_model_coeff(vot, vos1, mode, speed, dcost)
-#     return vot, vos1, vos2
-
 def vosEstFun(df, mode, speed, dcost):
     """
     It estimates the value of time, the value of safe time and the value of safe distance

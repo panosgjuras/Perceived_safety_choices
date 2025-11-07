@@ -29,7 +29,7 @@ from .vosDijkstra import (OSMnetwork, osm_shp_match, upd_OSM_edge, VOSweight,
 __version__ = "1.0.2" # data processing functions are not included in this version
 __author__ = 'Panagiotis G. Tzouras'
 __all__ = [latentEst, levelEst, processRowEst, coeffUpd,
-           opp_cost_calc,
+           vosEstFun,
            InfTypeCheck, fusionWalkableCity, infMapping, plotPsafeLev, PsafeHeatmaps,
            
            nod_match, twoway, speed, capacity, netxml_cr, buildNetXML, updNetXML,
