@@ -12,7 +12,7 @@ National Technical University of Athens
 # from .microindianalysis import analysistools
 
 from .calc import latentEst, levelEst, processRowEst, coeffUpd
-from .vosEst import opp_cost_calc
+from .vosEst import vosEstFun
 from .mapAnalysis import (InfTypeCheck, fusionWalkableCity, infMapping, 
                           plotPsafeLev, PsafeHeatmaps)
 # from .MATSimAnaTools import readtrips, readevents, re
