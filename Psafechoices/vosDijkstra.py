@@ -8,7 +8,7 @@ National Technical University of Athens
 import pandas as pd
 import os
 import copy
-# import random
+import random
 import geopandas as gpd
 import math
 import matplotlib.pyplot as plt
@@ -24,6 +24,10 @@ import networkx as nx
 
 from Psafechoices.mapAnalysis import plotPsafeLev
  
+# root_dir = "/Users/panosgtzouras/Desktop/datasets"
+# os.chdir(root_dir)
+# out_dir = "/Users/panosgtzouras/Library/CloudStorage/OneDrive-UniversityofWestAttica/TZOURAS_paperz/paper61_VoS_navigation/results_May_2025"
+
 # PRE-PROSSESING FUNS
 def OSMnetwork(city, plot = True):
     G = ox.graph_from_place(city, network_type='drive')
@@ -73,8 +77,7 @@ def nearestNodes(G, orig, dest, distAssignCheck=False):
     else:
         return orig_node, dest_node
 
-def osm_shp_match(G, links, latitude, tolerance = 15, mapCheck = False):
-    
+def osm_shp_match(G, links, latitude, tolerance=15, mapCheck=False):
     """
     Match OSM network edges to preprocessed link geometries based on spatial proximity.
 
@@ -83,46 +86,60 @@ def osm_shp_match(G, links, latitude, tolerance = 15, mapCheck = False):
     It checks whether each link can be matched to an edge within a specified distance threshold,
     and optionally visualizes the match results.
 
+    A boolean column named `matched` is added to the output GeoDataFrame, indicating
+    whether each link was successfully matched to an OSM edge.
+
     Parameters
     ----------
     G : networkx.MultiDiGraph
         The input street network graph, typically from OSMnx.
     links : GeoDataFrame
         A GeoDataFrame containing the fully processed links to be matched with the network edges.
+    latitude : float
+        Latitude used for meter-to-degree conversion.
     tolerance : float, optional (default=15)
-        Maximum distance (in the units of the CRS) within which a link can be matched to an edge.
+        Maximum distance (in meters) within which a link can be matched to an edge.
     mapCheck : bool, optional (default=False)
         If True, visualizes the original links and the matched edges colored by perceived safety levels.
-        Assumes `plotPsafeLev()` is defined and takes a GeoDataFrame and mode string as input.
-    
+        Assumes `plotPsafeLev()` is defined.
+
     Returns
     -------
     GeoDataFrame
-        A new GeoDataFrame resulting from the spatial join, containing attributes from both `links` and `edges_gdf`.
-
+        GeoDataFrame resulting from the spatial join, including a boolean `matched`
+        column indicating whether each link was successfully matched.
     """
-    
+
     nodes_gdf, edges_gdf = ox.graph_to_gdfs(G)
-    edges_gdf = edges_gdf.reset_index() 
-    
-    # Links are less than the edges
-    # so one link is matched to more than one edge
-    
-    tolerance_deg = max(meters_to_degrees(tolerance, latitude)) # BECAUSE OF WGS 84 COORDINATE SYSTEM
-    match = gpd.sjoin_nearest(links, edges_gdf, max_distance = tolerance, how = 'left')
-    
-    unmatched_count = match['index_right'].isna().sum()
-    
+    edges_gdf = edges_gdf.reset_index()
+
+    # Convert tolerance from meters to degrees (WGS84)
+    tolerance_deg = max(meters_to_degrees(tolerance, latitude))
+
+    match = gpd.sjoin_nearest(
+        links,
+        edges_gdf,
+        max_distance=tolerance_deg,
+        how="left"
+    )
+
+    # Add boolean matched column
+    match["matched"] = match["index_right"].notna()
+
+    unmatched_count = (~match["matched"]).sum()
+
     if unmatched_count > 0:
-        print(f"Number of unmatched edges: {unmatched_count} out of {len(edges_gdf)}")
-        print("Increase the tolerance to ensure that all network edges are matched")
+        print(f"Number of unmatched links: {unmatched_count} out of {len(match)}")
+        print("Increase the tolerance to ensure that all links are matched")
     else:
-        print("All network edges matched successfully.")
-    
+        print("All links matched successfully.")
+
     if mapCheck:
         modes = ['ca', 'eb', 'es', 'wa']
-        for m in modes: plotPsafeLev(copy.deepcopy(links), m)
-        for m in modes: plotPsafeLev(copy.deepcopy(match), m)
+        for m in modes:
+            plotPsafeLev(copy.deepcopy(links), m)
+        for m in modes:
+            plotPsafeLev(copy.deepcopy(match), m)
 
     return match
 
@@ -195,8 +212,62 @@ def upd_OSM_edge(G, mat, select_mode):
     
     return G
 
+def monteCarloSpeed(inf, dictSpeed, default_speed):
+    """
+    Draw a speed from a uniform distribution based on infrastructure type.
+
+    The speed ranges are defined in km/h and provided via a dictionary.
+    The returned speed is converted to meters per second (m/s).
+    If the infrastructure type is not found in the dictionary, a default
+    speed is used.
+
+    Parameters
+    ----------
+    inf : str
+        Infrastructure type identifier. Must match one of the keys in
+        `dictSpeed` (e.g. "3: Urban road with cycle lane").
+    dictSpeed : dict
+        Dictionary mapping infrastructure types to speed ranges in km/h.
+        Each entry must contain the keys "min" and "max".
+        
+    default_speed : float
+        Default speed in km/h used when `inf` is not found in `dictSpeed`
+        or when an invalid speed range is provided.
+
+    Returns
+    -------
+    float
+        Sampled speed in meters per second (m/s).
+
+    Raises
+    ------
+    ValueError
+        If the speed range for a valid infrastructure type is invalid
+        (i.e. min >= max).
+    """
+
+    if inf not in dictSpeed:
+        return default_speed * 1000/3600
+
+    v_min = dictSpeed[inf]["min"]
+    v_max = dictSpeed[inf]["max"]
+
+    if v_min >= v_max:
+        raise ValueError(f"Invalid speed range for infrastructure {inf}")
+
+    v_speed = random.uniform(v_min, v_max)
+    return v_speed * 1000/3600
+
+
+speed_config = {
+    "1: Urban road with sidewalk less than 1.5 m wide": {"min": 15, "max": 20},  # km/h
+    "2: Urban road with sidewalk more than 1.5 m wide": {"min": 15, "max": 20},
+    "3: Urban road with cycle lane": {"min": 20, "max": 25},
+    "4: Shared space": {"min": 15, "max": 20}
+}
+
 # VOS funs
-def VOSweight(G, typ, VOS = 0, vcycle=20, vmixed=10, cpsafe = 7):
+def VOSweight(G, typ, VOS = 0, var_v = False, dictSpeed = speed_config, cpsafe = 7):
     """
     Assign a custom edge weight to a graph based on Value of Safety (VOS) and cycling infrastructure.
 
@@ -214,12 +285,23 @@ def VOSweight(G, typ, VOS = 0, vcycle=20, vmixed=10, cpsafe = 7):
     VOS : float
         Value of Safety — a coefficient that translates safety perception into distance penalty.
         Default is 20.
-    vcycle : float, optional
-        Average cycling speed in cycle highways (km/h). Default is 20.
-    vmixed : float, optional
-        Average cycling speed in mixed traffic (km/h). Default is 10.
-    vlane : float, optional
-        Average speed in bike lanes (km/h). Default is 15.
+    var_v: boolen, optional
+        True, then a Monte Carlo simulation is run to define the speed per link, else average speed is constant, equal to 20 km/h in all links. 
+        In that case, the shortest path is the fastest path
+        The default is False
+    dictSpeed : dict, optional (if var_v is True)
+        Dictionary mapping infrastructure types to speed ranges in km/h.
+        Each entry must contain the keys "min" and "max".
+        
+        Example:
+            
+            speed_config = {
+                "1: Urban road with sidewalk less than 1.5 m wide": {"min": 15, "max": 20},  # km/h
+                "2: Urban road with sidewalk more than 1.5 m wide": {"min": 15, "max": 20},
+                "3: Urban road with cycle lane": {"min": 20, "max": 25},
+                "4: Shared space": {"min": 15, "max": 20}
+            }
+            
     cpsafe: int, optional
             The threshold level. The default is equal to 7
 
@@ -230,11 +312,9 @@ def VOSweight(G, typ, VOS = 0, vcycle=20, vmixed=10, cpsafe = 7):
 
     """
     
-    vmixed_m_s = vmixed * 1000/3600
-    vcycle_m_s = vcycle * 1000/3600
-
-    
-    v_speed = vmixed_m_s
+    v_speed = 20 * 1000/3600 # default speed is equal to 20 km/h in all links
+    # vcycle_m_s = vcycle * 1000/3600
+    # v_speed = vmixed_m_s
         
     for u, v_, k, data in G.edges(keys=True, data=True):
         length = data.get("length", 0)  # in meters
@@ -242,19 +322,20 @@ def VOSweight(G, typ, VOS = 0, vcycle=20, vmixed=10, cpsafe = 7):
         # Default values
         sl = 1
         dpsafe = 0
-        inf = data.get('inf', 0)
         
-        if inf in ['3: Urban road with cycle lane']: v_speed = vcycle_m_s
-
+        if var_v:
+            v_speed = monteCarloSpeed(data.get('inf', 0), dictSpeed, v_speed) # draw a Monte Carlo Value
+            
         if typ in ['safest', 'combo']:
             psafe = data.get('psafe', 0)
             dpsafe = psafe - cpsafe
         
         # print(dpsafe)
+        # print(v_speed)
         # Placeholder: slope can be used in future
         if typ in ['flattest', 'combo']: sl = 1  # TODO: ADD SLOPE PENALTY IF AVAILABLE
 
-        data["VOSweight"] = (1 / sl) * ((length / v_speed) + (VOS * dpsafe) / vcycle_m_s)
+        data["VOSweight"] = (1 / sl) * ((length / v_speed) + (VOS * dpsafe) / v_speed)
 
     return G
 
@@ -382,7 +463,7 @@ def InfaBreakdown(G, path):
 
     return dict(inf_lengths)
 
-def descrStats_stations(df, normalize = False):
+def descrStats_stations(df, x = "difference"):
     """
     Computes descriptive statistics for the 'vos' and 'difference' columns, grouped by origin bike-sharing station ('from').
 
@@ -392,9 +473,9 @@ def descrStats_stations(df, normalize = False):
         DataFrame with columns 'from', 'vos', 'difference', and optionally 'slength'. The 'from' column represents the origin station,
         and the 'difference' column represents the difference between the safest and shortest paths.
     
-    normalize : bool, optional, default=False
-        If True, the 'difference' will be normalized by dividing by the 'slength' column, creating a new 'rel_difference' column.
-        If False, the 'difference' column will be used directly for the descriptive statistics.
+    x: string, optional
+        the variable for which descriptive statistics will be estimated.
+        The default is "difference"
 
     Returns
     -------
@@ -402,20 +483,13 @@ def descrStats_stations(df, normalize = False):
         A DataFrame containing the descriptive statistics (count, mean, std, min, 25%, 50%, 75%, max) for the 'difference' 
         (or 'rel_difference' if normalized) for each origin station ('from').
     """
-
-    if normalize:
-        x = "rel_difference"
-        df[x] = df["difference"]/df["slength"]
-        # Group by origin station ('from')
-    else:
-        x = "difference"
     
     grouped = df.groupby('from')
     stats = grouped[[x]].describe()
     
     return stats
 
-def genHist(df, bins=100):
+def genHist(df, bins=100, x = "difference"):
     """
     Plots a histogram for all the 'difference' values in the dataframe,
     adds a trend line and marks the mean.
@@ -425,27 +499,34 @@ def genHist(df, bins=100):
     df : pandas.DataFrame
         DataFrame with the 'difference' column.
     bins : int, optional
-        Number of bins for the histogram (default is 100).
+        Number of bins for the histogram (default is 100)
+    x: string, optional
+        the variable for which descriptive statistics will be estimated.
+        The default is "difference"    
+    
     """
     plt.figure(figsize=(10, 6), dpi=500)
     
     # Histogram
-    sns.histplot(df['difference'], bins=bins, kde=True, 
+    sns.histplot(df[x], bins=bins, kde=True, 
                  color='red', edgecolor='black', alpha = 0.4)
 
     # Compute mean and draw vertical line
-    mean_val = df['difference'].mean()
+    mean_val = df[x].mean()
     plt.axvline(mean_val, color='black', linestyle='--', linewidth=1.5, label=f"Mean = {mean_val:.2f}")
+    
+    if x == 'difference': pre = ' in m '
+    else: pre = ' '
 
     # Labels
-    plt.xlabel('length difference in m (safest - fastest path)', fontsize=12)
+    plt.xlabel('length ' + x + pre + '(safest - shortest path)', fontsize=12)
     plt.ylabel('frequency', fontsize=12)
     # plt.title('Histogram with Density and Mean Line', fontsize=14)
     # plt.legend()
 
     plt.show()
 
-def VOS_mean_max_double_plot(df):
+def VOS_mean_max_double_plot(df, x = "difference"):
     """
     Creates a side-by-side plot showing the maximum and mean 'difference' for each unique 'vos' value.
 
@@ -453,41 +534,46 @@ def VOS_mean_max_double_plot(df):
     ----------
     df : pandas.DataFrame
         DataFrame with 'vos' and 'difference' columns.
+    
+    x: string, optional
+        the variable for which descriptive statistics will be estimated.
+        The default is "difference"   
+    
     """
-    # Group by VOS and compute mean and max difference
-    grouped = df.groupby('vos')['difference'].agg(['mean', 'max']).reset_index()
+    
+    if x == 'difference': pre = ' in m '
+    else: pre = " "
+    
+    grouped = df.groupby('vos')[x].agg(['mean', 'max']).reset_index()
 
-    # Sort by VOS to ensure line continuity
     grouped = grouped.sort_values('vos')
 
-    # Create subplots (two side-by-side)
     fig, (ax2, ax1) = plt.subplots(1, 2, figsize=(15, 6), dpi=500)
 
-    # Plot the max difference on the left plot
-    ax1.plot(grouped['vos'], grouped['max'], label='Max Difference', color='red', linewidth=2)
+
+    ax1.plot(grouped['vos'], grouped['max'], label='Max ' + x , color='red', linewidth=2)
     ax1.set_title('Maximum values', fontsize=14)
     ax1.set_xlabel('VOS in m', fontsize=12)
-    ax1.set_ylabel('length difference in m (safest - shortest path)', fontsize=12)
+    ax1.set_ylabel('length ' + x + pre + '(safest - shortest path)', fontsize=12)
     ax1.grid(True, linestyle='--', alpha=0.5)
 
-    # Plot the mean difference on the right plot
-    ax2.plot(grouped['vos'], grouped['mean'], label='Mean Difference', color='blue', linewidth=2)
+
+    ax2.plot(grouped['vos'], grouped['mean'], label='Mean ' + x, color='blue', linewidth=2)
     ax2.set_title('Mean values', fontsize=14)
     ax2.set_xlabel('VOS in m', fontsize=12)
-    ax2.set_ylabel('length difference in m (safest - shortest path)', fontsize=12)
+    ax2.set_ylabel('length ' + x + pre + '(safest - shortest path)', fontsize=12)
     ax2.grid(True, linestyle='--', alpha=0.5)
 
     # Show legends
     # ax1.legend(loc='upper left')
     # ax2.legend(loc='upper left')
 
-    # Show the plot
     plt.tight_layout()
     plt.show()
 
 def bShareMapDiff(bShare, stats, links, legend_title="Mean Difference", size_factor=400):
     """
-    Plots a map of Munich's bike sharing stations with circle sizes based on the mean difference value, 
+    Plots a map of Munich's bike sharing stations with circle sizes based on the mean difference or ratio value, 
     and overlays the network of links. It also adds CRS and grid information to the plot.
 
     Parameters
@@ -497,6 +583,7 @@ def bShareMapDiff(bShare, stats, links, legend_title="Mean Difference", size_fac
     
     stats : pandas.DataFrame
         DataFrame containing statistics, with 'mean' values indexed by station names.
+        it can be ratio or differnce values
     
     links : geopandas.GeoDataFrame
         GeoDataFrame containing the links between bike sharing stations (edges), with geometry information.
