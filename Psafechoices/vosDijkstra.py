@@ -22,7 +22,7 @@ from shapely.geometry import Point, LineString
 import osmnx as ox
 import networkx as nx
 
-from Psafechoices.mapAnalysis import plotPsafeLev
+# from Psafechoices.mapAnalysis import plotPsafeLev
  
 # root_dir = "/Users/panosgtzouras/Desktop/datasets"
 # os.chdir(root_dir)
@@ -134,12 +134,12 @@ def osm_shp_match(G, links, latitude, tolerance=15, mapCheck=False):
     else:
         print("All links matched successfully.")
 
-    if mapCheck:
-        modes = ['ca', 'eb', 'es', 'wa']
-        for m in modes:
-            plotPsafeLev(copy.deepcopy(links), m)
-        for m in modes:
-            plotPsafeLev(copy.deepcopy(match), m)
+    # if mapCheck:
+    #     modes = ['ca', 'eb', 'es', 'wa']
+    #     for m in modes:
+    #         plotPsafeLev(copy.deepcopy(links), m)
+    #     for m in modes:
+    #         plotPsafeLev(copy.deepcopy(match), m)
 
     return match
 
