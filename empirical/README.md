@@ -67,4 +67,5 @@ The data were collected based on double state preferences experiment. The survey
 
 The dataset is open and can be found here:
 > Tzouras, P. G. (2025). Perceived safety and first/last mile mode choices. A dataset from image-based double stated preferences experiments (2.0) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.17779261
+
 Please cite the dataset, if you use it in your analyses.
