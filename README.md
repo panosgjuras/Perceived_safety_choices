@@ -6,6 +6,9 @@ While safety seems to be a significant factor when choosing to use these new mod
 
 The different functions of the model are parametric to take into account variations in "tastes" among individuals by proposing advance modeling techniques. All the parametric can be calibrated by collecting data related to safety perceptions considering various road environments with mixed traffic conditions and first/last mile mode/route choices in each urban area that are used. The repository contains example datasets and default models that can be used.
 
+The data were collected based on double state preferences experiment. The survey form is given below:
+<img src="https://user-images.githubusercontent.com/63541107/210239908-647afa5a-cbd2-4717-9e3f-d3696ae47619.png" height="750">
+
 Based on this concept, the [Perceived_safety_choices](https://github.com/lotentua/Perceived_safety_choices) proposes some tools in order to investigate the overall impact of perceived safety on travel behavior, transport equity and transport system sustainability. There is a continuous development of these tools by the NTUA research team and external partners who still commit.
 
 **The [Perceived_safety_choices](https://github.com/panogjuras/Perceived_safety_choices) repository contains:**
