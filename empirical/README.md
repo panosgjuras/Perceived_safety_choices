@@ -62,9 +62,6 @@ where:
 - $cost_{m,r}$: travel cost of using mode m in first/last mile route r;
 - $psafe_{j,l,\ \ m}$: perceived safety level of mode m in first/last mile route r, as it is experienced by individual r.
 
-The data were collected based on double state preferences experiment. The survey form is given below:
-<img src="https://user-images.githubusercontent.com/63541107/210239908-647afa5a-cbd2-4717-9e3f-d3696ae47619.png" height="750">
-
 The dataset is open and can be found here:
 > Tzouras, P. G. (2025). Perceived safety and first/last mile mode choices. A dataset from image-based double stated preferences experiments (2.0) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.17779261
 
