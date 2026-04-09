@@ -34,7 +34,7 @@ models_version = "_v1.2" # this one is with safety perceptions of Munich residen
 cf2 = modelPsafe_import(os.path.join(root_dir, "models" + models_version, 
                                     "psafe", "psafe_models.csv"))
 
-# %% Step 3: Esimtate perceived safety scores based on safety perception of Athens residents
+# %% Step 3.1: Esimtate perceived safety scores based on safety perception of Athens residents
 
 modes = ['car', 'ebike', 'escoot', 'walk']
 
@@ -56,7 +56,7 @@ for m in modes:
 
 # for m in modes: PsafeHeatmaps(links_1, m, city = network_city) # If you want to create a heatmap, showing the density of safe links per mode
 
-# %% Step 4: Esimtate perceived safety scores based on safety perception of Munich residents
+# %% Step 3.2: Esimtate perceived safety scores based on safety perception of Munich residents
 
 modes = ['car', 'ebike', 'escoot', 'walk']
 
@@ -76,3 +76,10 @@ for m in modes:
 # for m in modes: plotPsafeLev(links_2, m, city = network_city) # If you want to plot the scores for each
 
 # for m in modes: PsafeHeatmaps(links_2, m, city = network_city) # If you want to create a heatmap, showing the density of safe links per mode
+
+# %% Step 4: Run Monte-Carlo Simulation to compare perceptions
+
+r = 50 # draws, which 50 different travelers with different "tastes" regarding the influence of road infrastructure type
+df = score_diff(links_1, links_2, cf1, cf2, runs = r)
+df['geometry'] = df['geometry'].apply(lambda x: x[0] if isinstance(x, (list, df.array.GeometryArray)) else x)
+
