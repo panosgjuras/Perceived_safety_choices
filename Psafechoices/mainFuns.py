@@ -15,7 +15,7 @@ from scipy.stats import ttest_rel
 
 #### PROBLEM
 # os.chdir("/Users/panosgtzouras/Desktop/github_tzouras/Perceived_safety_choices/Psafechoices")
-from Psafechoices.calc import coeffUpd, levelEst
+# from Psafechoices.calc import coeffUpd, levelEst
 
 color_dict = {
         '1: Urban road with sidewalk less than 1.5 m wide': '#E31A1C',
@@ -26,6 +26,62 @@ color_dict = {
 
 # define transport modes for which perceived safety will be estimated
 modes = ['car', 'ebike', 'escoot', 'walk']
+
+def coeffUpd(df):
+    """
+    Kappa thresholds update, if the ordinal model contains a constant
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        A dataframe with the the default model coefficients.
+
+    Returns
+    -------
+    df : pd.DataFrame
+         The updated model parameters
+    """
+
+#    df = df.rename(columns={'Unnamed: 0': 'coeffs'})
+#    df = df.set_index('coeffs')
+    df.loc['kappa.1'] = df.loc['kappa.1'] - df.loc['constant']
+    df.loc['kappa.2'] = df.loc['kappa.2'] - df.loc['constant']
+    df.loc['kappa.3'] = df.loc['kappa.3'] - df.loc['constant']
+    df.loc['kappa.4'] = df.loc['kappa.4'] - df.loc['constant']
+    df.loc['kappa.5'] = df.loc['kappa.5'] - df.loc['constant']
+    df.loc['constant'] = - df.loc['constant']
+    df = df.rename(index={'constant': 'kappa.0'})
+    df.index = [name.replace("mean.", "") for name in df.index]
+    return df
+
+def levelEst(x, cf, mode):
+    """
+    It gives the perceived safety level (int) for one specific transport mode,
+    for one specific link.
+    It considers kappa thresholds
+
+    Parameters
+    ----------
+    x : float
+        the latent variable value of perceived safety
+    cf : pd.DataFrame
+        A dataframe with the the default model coefficients.
+    mode : str
+        The transport mode for which perceived safety level is estimated
+
+    Returns
+    -------
+    int
+    the pecrceived safety level estimation
+
+    """
+    k = cf.loc[['kappa.0', 'kappa.1', 'kappa.2',
+                'kappa.3', 'kappa.4', 'kappa.5'], mode].values
+
+    if x != 999:
+        return np.searchsorted(k, x) + 1
+    return 7
+
 
 def linksPsafe_import(scenario_path):
     """

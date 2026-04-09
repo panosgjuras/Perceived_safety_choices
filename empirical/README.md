@@ -11,7 +11,7 @@ Also, [logit_est_functons.py](https://github.com/lotentua/Perceived_safety_choic
 
 The model equations are summarized below: 
 
-$psafe_{l,j,m}^{*} + ε_{l,j,m} = ∑_{i=1}^{4} β_{soc_{i,m}}*soc_{i,j} + ∑_{i=1}^{5} β_{beh_{i,m}}*beh_{i,j} + ( β_{infr_{1,m}} * infr_{1,l} + β_{infr_{2,m}} * infr_{2,l} + β_{infr_{3,m}} * infr_{3,l} + $
+$psafe_{l,j,m}^{*} + ε_{l,j,m} = ∑_{i=1}^{4} β_{soc_{i,m}}*soc_{i,j} + ∑_{i=1}^{5} β_{beh_{i,m}}*beh_{i,j} + ( β_{infr_{1,m}} * infr_{1,l} + β_{infr_{2,m}} * infr_{2,l} + β_{infr_{4,m}} * infr_{4,l} + $
 $β_{pav_{m}}*pav_{l} + β_{obs_{m}} * obs_{l} + β_{crs_{1,m}} * crs_{1,l} + β_{crs_{2,m}} * crs_{2,l}) +$
 $(β_{veh_{m}} * veh_{l} + β_{bike_{m}} * bike_{l} + β_{ped_{m}} *ped_{l})  + ε_{l,j,m}$
 
@@ -40,7 +40,7 @@ where:
 
 - $β_{infr_{1,m}}$: 1, if there is an urban road with sidewalks less than 1.5 m wide and without cycle lane in urban road link l – type 1;
 - $β_{infr_{2,m}}$: 1, if there is an urban road with sidewalks equal to or more than 1.5 m wide and without cycle lane in urban road link l – type 2;
-- $β_{infr_{3,m}}$: 1, if shared space in urban road link l – type 3 (all infr parameters equal to 0, if there is an urban road with sidewalks equal to or more than 1.5 m wide and with cycle lane – type 0);
+- $β_{infr_{4,m}}$: 1, if shared space in urban road link l – type 3 (all infr parameters equal to 0, if there is an urban road with sidewalks equal to or more than 1.5 m wide and with cycle lane – type 0);
 - $pav_{i}$: 1, if the pavement of the urban road is in a good condition urban road link l;
 - $obs_{i}$: 1, if there are obstacles in the road environment urban road link l;
 - $crs_{1,l}$: 1, if there is an unsignalized zebra pedestrian crossing in the next 200 meters of urban road link l;
@@ -62,9 +62,7 @@ where:
 - $cost_{m,r}$: travel cost of using mode m in first/last mile route r;
 - $psafe_{j,l,\ \ m}$: perceived safety level of mode m in first/last mile route r, as it is experienced by individual r.
 
-The data were collected based on double state preferences experiment. The survey form is given below:
-<img src="https://user-images.githubusercontent.com/63541107/210239908-647afa5a-cbd2-4717-9e3f-d3696ae47619.png" height="750">
-
 The dataset is open and can be found here:
-> Tzouras, P. G. 2025. Perceived safety and first/last mile mode choices. A dataset from image-based double stated preferences experiments (1.0) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.14967130
+> Tzouras, P. G. (2025). Perceived safety and first/last mile mode choices. A dataset from image-based double stated preferences experiments (2.0) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.17779261
+
 Please cite the dataset, if you use it in your analyses.
