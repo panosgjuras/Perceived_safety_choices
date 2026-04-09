@@ -10,9 +10,10 @@ Based on this concept, the [Perceived_safety_choices](https://github.com/lotentu
 
 **The [Perceived_safety_choices](https://github.com/panogjuras/Perceived_safety_choices) repository contains:**
 - [Psafechoice](https://github.com/panosgjuras/Perceived_safety_choices/tree/main/Psafechoices): contains tools to import a shapefile with the links and nodes, estimate traffic parameters and perceived safety per link, export csv and xml files for further analysis and a routing model based on Value-of-Safety and new algorithms that define the shortest, fastest and safest path per transport mode.
+- [data](https://github.com/panosgjuras/Perceived_safety_choices/tree/vosUpdates/data): contains networks and estimated models that can be utilized for new experimentation.
 - [empirical](https://github.com/panosgjuras/Perceived_safety_choices/tree/main/empirical): contains advance modeling techniques based on [PandasBiogeme](https://github.com/michelbierlaire/biogeme) and [Rchoice](https://github.com/cran/Rchoice) package to compute first/last mile route/mode choice models.
 
-The jupyter notebook of [scenario_athens](https://github.com/panosgjuras/Perceived_safety_choices/blob/main/scenario_Athens.ipynb) gives analytical guidelines how some of the developed functions can be used. It considers an example scenario developed in Athens, Greece.
+The jupyter notebook of [demo](https://github.com/panosgjuras/Perceived_safety_choices/blob/vosUpdates/demo.py) gives analytical guidelines how some of the developed functions can be used. It considers an example scenario developed in Athens, Greece.
 
 Lastly, [Perceived_safety_choices](https://github.com/lotentua/Perceived_safety_choices) creates a path to combine agent-based transport modeling and [MATSim]( https://github.com/matsim-org) with spatial analysis and GIS tools. The contribution in MATSim framework have been developed and can be found: [Psafe module](https://github.com/panosgjuras/Psafe). In essence, it is an updated version of [Bicycle](https://github.com/matsim-org/matsim-libs/tree/master/contribs/bicycle) Module following a more universal approach fully based on perceived safety parameter and covering all first/last mile modes. A randomized marginal utility for the perceived safety parameter is applied in this model. The model is firstly tested using the experimental scenario in Athens.
 
