@@ -18,7 +18,7 @@ Based on this concept, the [Perceived_safety_choices](https://github.com/lotentu
 
 The jupyter notebooks ([demo1](https://github.com/panosgjuras/Perceived_safety_choices/blob/main/demo1.py) and [demo2](https://github.com/panosgjuras/Perceived_safety_choices/blob/main/demo2.py)) give analytical guidelines how some of the developed functions can be used. It considers an example scenario developed in Athens, Greece.
 
-Lastly, [Perceived_safety_choices](https://github.com/lotentua/Perceived_safety_choices) creates a path to combine agent-based transport modeling and [MATSim]( https://github.com/matsim-org) with spatial analysis and GIS tools. The contribution in MATSim framework have been developed and can be found: [Psafe module](https://github.com/panosgjuras/Psafe). In essence, it is an updated version of [Bicycle](https://github.com/matsim-org/matsim-libs/tree/master/contribs/bicycle) Module following a more universal approach fully based on perceived safety parameter and covering all first/last mile modes. A randomized marginal utility for the perceived safety parameter is applied in this model. The model is firstly tested using the experimental scenario in Athens.
+Lastly, [Perceived_safety_choices](https://github.com/lotentua/Perceived_safety_choices) creates a path to combine agent-based transport modeling and [MATSim]( https://github.com/matsim-org) with spatial analysis and GIS tools. The contribution in MATSim framework have been developed and can be found: [Perceived Safety contrib](https://github.com/matsim-org/matsim-libs/tree/main/contribs/perceived-safety).
 
 To install the PsafeChoices package (ONLY) please type:
 ```bash
