@@ -24,15 +24,17 @@ def nod_match(links,nodes):
     links: gpd.DataFrame
         the updated links file
     """
-    for i in range(0,len(links)): 
-        fr1 = nodes.loc[(nodes.x==links.loc[i,'x_start']) & (nodes.y==links.loc[i,'y_start']),'id']
-        fr2 = nodes.loc[(nodes.x==links.loc[i,'x_end']) & (nodes.y==links.loc[i,'y_end']),'id']
-        if len(fr1)>0: # check if you found matches, if not 9999
-           links.loc[i,'from1']=fr1.iloc[0] # select each time the first match
-        else: links.loc[i,'from1'] = 999
-        if len(fr2)>0:
-           links.loc[i,'to1']=fr2.iloc[0]
-        else: links.loc[i,'to1'] = 999
+    links = links.copy()
+    start_nodes = nodes[['id', 'x', 'y']].drop_duplicates(subset=['x', 'y']).rename(columns={'id': 'from1'})
+    end_nodes = nodes[['id', 'x', 'y']].drop_duplicates(subset=['x', 'y']).rename(columns={'id': 'to1'})
+
+    links = links.merge(start_nodes, how='left', left_on=['x_start', 'y_start'],
+                        right_on=['x', 'y']).drop(columns=['x', 'y'])
+    links = links.merge(end_nodes, how='left', left_on=['x_end', 'y_end'],
+                        right_on=['x', 'y']).drop(columns=['x', 'y'])
+
+    links['from1'] = links['from1'].fillna(999).astype('Int64')
+    links['to1'] = links['to1'].fillna(999).astype('Int64')
     return links
 
 def twoway(df, no_resp_prior = 'walk'):
@@ -62,60 +64,37 @@ def twoway(df, no_resp_prior = 'walk'):
     
     # the meaning of the walk links is to design opposite direction links in oneways for pedestrians only.
     
-    x = len(df)
-    dc = pd.DataFrame(columns = ['id','matchid','from1','to1'])
+    df = df.copy()
+    original = df.copy()
     text = 'walk'
-    dl = pd.DataFrame(columns = ['id','matchid','from1','to1'])
-    c = 0
-    l = 0
-    for i in range(0, x):
-        if df.oneway.iloc[i]== 0:
-                        
-            dc = pd.concat([dc, pd.DataFrame({'id': 100000 + df.id.iloc[i], 'matchid': df.id.iloc[i], 
-                                  'from1': df.to1.iloc[i], 'to1': df.from1.iloc[i]}, index=[0])], ignore_index=True)
-            
-            # dc = pd.concat({'id': 100000 + df.id.iloc[i], 'matchid': df.id.iloc[i], # it needs to start from 1, otherwise it requires upd
-            #     'from1':df.to1.iloc[i], 'to1': df.from1.iloc[i]}, ignore_index = True)
-            
-            c = c + 1
-            # print(c)
-        
-        if df.oneway.iloc[i]==1 and (text in df.modes.iloc[i]) and (pedl == 'walk_links' 
-                                                                    or pedl == 'walk_escoot_links' or pedl == 'walk_ebike_escoot_links'):
-            
-            dl = pd.concat([dl, pd.DataFrame({'id': 100000 + df.id.iloc[i], 'matchid': df.id.iloc[i], 
-                                  'from1': df.to1.iloc[i], 'to1': df.from1.iloc[i]}, index=[0])], ignore_index=True)
-            
-            
-            # dl = dl.append({'id': 100000 + df.id.iloc[i], 'matchid': df.id.iloc[i], # it needs to start from 1, otherwise it requires upd
-            #     'from1':df.to1.iloc[i], 'to1': df.from1.iloc[i]}, ignore_index = True)
-            
-            l = l + 1
-            # print(l)
-   
-    dc = pd.merge(left=dc, right=df.drop(columns=['from1','to1']), how="inner", left_on='matchid', right_on='id').drop(columns=['id_y', 'matchid']).rename(columns={'id_x':'id'})
-    df = pd.concat([df, dc], axis=0, ignore_index=True, sort=False).dropna()
-    
-    if pedl == 'walk_links': 
-        dl = pd.merge(left = dl, right = df.drop(columns=['from1','to1']), how="inner", left_on='matchid', right_on='id').drop(columns=['id_y', 'matchid']).rename(columns={'id_x':'id'})
-        dl["modes"] = 'walk'
-        df = pd.concat([df, dl], axis=0, ignore_index=True, sort=False).dropna()
-    
-    if pedl == 'walk_escoot_links':
-        dl = pd.merge(left = dl, right = df.drop(columns=['from1','to1']), how="inner", left_on='matchid', right_on='id').drop(columns=['id_y', 'matchid']).rename(columns={'id_x':'id'})
-        dl["modes"] = 'escoot,walk'
-        df = pd.concat([df, dl], axis=0, ignore_index=True, sort=False).dropna()
-        
-    if pedl == 'walk_ebike_escoot_links':
-        dl = pd.merge(left = dl, right = df.drop(columns=['from1','to1']), how="inner", left_on='matchid', right_on='id').drop(columns=['id_y', 'matchid']).rename(columns={'id_x':'id'})
-        dl["modes"] = 'ebike,escoot,walk'
-        df = pd.concat([df, dl], axis=0, ignore_index=True, sort=False).dropna()
-    
-    df.oneway = df.oneway.replace({0:1})
-    
-    # print(c)
-    # print(l)
-    
+
+    twoway_mask = original['oneway'] == 0
+    dc = original.loc[twoway_mask].copy()
+    if not dc.empty:
+        dc[['from1', 'to1']] = dc[['to1', 'from1']].to_numpy()
+        dc['id'] = 100000 + dc['id']
+        dc['oneway'] = 1
+        df = pd.concat([df, dc], axis=0, ignore_index=True, sort=False)
+
+    if pedl in {'walk_links', 'walk_escoot_links', 'walk_ebike_escoot_links'}:
+        ped_mask = (original['oneway'] == 1) & original['modes'].fillna('').str.contains(text)
+        dl = original.loc[ped_mask].copy()
+        if not dl.empty:
+            dl[['from1', 'to1']] = dl[['to1', 'from1']].to_numpy()
+            dl['id'] = 100000 + dl['id']
+            dl['oneway'] = 1
+
+            if pedl == 'walk_links':
+                dl['modes'] = 'walk'
+            elif pedl == 'walk_escoot_links':
+                dl['modes'] = 'escoot,walk'
+            elif pedl == 'walk_ebike_escoot_links':
+                dl['modes'] = 'ebike,escoot,walk'
+
+            df = pd.concat([df, dl], axis=0, ignore_index=True, sort=False)
+
+    df['oneway'] = df['oneway'].replace({0: 1})
+
     return df
 
 def speed(df, cr = 1, delr = 1):
@@ -169,12 +148,12 @@ def capacity(df, dwn = 1, simp = 'simple',  w = 13.5, kjam = 125):
     
     freespeed = df.freespeed * 3600/1000
     
-    for i in range(0,len(df)):
-        if simp == 'simple': 
-            df.loc[i, 'capacity'] = dwn * (df.permlanes.iloc[i]*1200) # very simplistic approach.
-        elif simp == 'kinematic_waves':
-            df.loc[i, 'capacity']= dwn * (df.permlanes.iloc[i] * kjam * freespeed.iloc[i] * w)/(freespeed.iloc[i] + w)
-        else: df.capacity.iloc[i] = 9999 # here a new extension will be written based on speed compliance rate and speed limit
+    if simp == 'simple':
+        df['capacity'] = dwn * (df['permlanes'] * 1200)
+    elif simp == 'kinematic_waves':
+        df['capacity'] = dwn * (df['permlanes'] * kjam * freespeed * w) / (freespeed + w)
+    else:
+        df['capacity'] = 9999
     return df
 
 def netxml_cr(network, path):
